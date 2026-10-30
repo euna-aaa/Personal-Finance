@@ -756,7 +756,7 @@
                 </div>
             </div>
 
-            <!-- 통장 쪼개기 설정 카드 UI (소유자 / 은행 / 통장표시명 / 이체금액 순으로 수정 & 드래그 적용) -->
+            <!-- 통장 쪼개기 설정 카드 UI -->
             <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm space-y-4">
                 <div class="border-b border-slate-100 pb-3">
                     <h2 class="text-sm font-bold text-slate-800 flex items-center gap-2">
@@ -1008,12 +1008,12 @@
                 { id: 1793334564979, name: "경조사비", owner: "euna", accountId: "acc_1793333040491", monthly: 100000, rate: 0, total: 100000 }
             ],
             stocks: [
-                { id: 1, market: "US", name: "Apple (AAPL)", owner: "taejun", accountId: "acc4", qty: 15, eval: 3260 },
-                { id: 2, market: "KR", name: "삼성전자", owner: "euna", accountId: "acc_1793332901875", qty: 50, eval: 11600000 },
-                { id: 1793334676677, market: "US", name: "SPY", owner: "common", accountId: "acc_1793332856223", qty: 1, eval: 560 }
+                { id: 1, market: "US", name: "Apple (AAPL)", owner: "taejun", accountId: "acc4", qty: 15, eval: 3260, rate: "+5.40%" },
+                { id: 2, market: "KR", name: "삼성전자", owner: "euna", accountId: "acc_1793332901875", qty: 50, eval: 11600000, rate: "-2.10%" },
+                { id: 1793334676677, market: "US", name: "SPY", owner: "common", accountId: "acc_1793332856223", qty: 1, eval: 560, rate: "+1.20%" }
             ],
             pensions: [
-                { id: 1, name: "TDF2050 연금펀드", owner: "taejun", accountId: "acc4", qty: 100, eval: 8500000 }
+                { id: 1, name: "TDF2050 연금펀드", owner: "taejun", accountId: "acc4", qty: 100, eval: 8500000, rate: "+4.20%" }
             ],
             assetHistory: [
                 { month: "2026-09", eunaFin: 8076679, taejunFin: 650000, commonFin: 100000, re: 780000000, debt: 415000000 }
@@ -1654,7 +1654,6 @@
             calculateMonthlySummary();
         }
 
-        // 통장 쪼개기 설정 목록 렌더링 (소유자/은행/통장명/이체금액 순서 및 드래그 적용)
         function renderSplitRules() {
             const body = document.getElementById('split-rules-list-body');
             if (!body) return;
@@ -1715,7 +1714,6 @@
             calculateMonthlySummary();
         }
 
-        // 유효 통장 목록 렌더링 (모드 필터링 적용)
         function renderSettingsAccounts() {
             const tbody = document.getElementById('settings-account-table-body');
             if (!tbody) return;
@@ -1844,18 +1842,6 @@
             renderAccountSelects();
         }
 
-        // 주식/개인연금 항목 관련 통장 직접 수정 핸들러
-        function updateItemAccount(type, id, newAccountId) {
-            const item = appData[type].find(x => x.id === id);
-            if (item) {
-                item.accountId = newAccountId;
-                const acc = appData.accounts.find(a => a.id === newAccountId);
-                if (acc) item.owner = acc.owner;
-                saveDataSync();
-                renderInvestments();
-            }
-        }
-
         function renderInvestments() {
             const savBody = document.getElementById('savings-table-body');
             if (savBody) {
@@ -1887,9 +1873,6 @@
                 return true;
             });
 
-            // 선택 가능 통장 옵션 HTML
-            const accountOptions = appData.accounts.map(a => `<option value="${a.id}">[${a.bank || ''}] ${a.name}</option>`).join('');
-
             const stkBody = document.getElementById('stock-table-body');
             if (stkBody) {
                 stkBody.innerHTML = filteredStocks.map((st, idx) => {
@@ -1898,23 +1881,28 @@
                     const evalWon = isUS ? Math.round(st.eval * currentExchangeRate) : st.eval;
                     const estPriceWon = Math.round(evalWon / qty);
                     const marketBadge = isUS ? '<span class="bg-slate-900 text-white font-extrabold px-1.5 py-0.5 rounded text-[10px] mr-1">US</span>' : '<span class="bg-slate-800 text-white font-extrabold px-1.5 py-0.5 rounded text-[10px] mr-1">KR</span>';
+                    const acc = appData.accounts.find(a => a.id === st.accountId);
+
+                    // 수익률 -는 초록색, +는 빨간색 로직 적용
+                    const rateVal = st.rate || '+0.00%';
+                    const isNegative = rateVal.trim().startsWith('-');
+                    const rateColorClass = isNegative ? 'text-emerald-600' : 'text-rose-600';
 
                     return `
                         <tr class="hover:bg-slate-50 transition draggable-row" draggable="true" ondragstart="handleDragStart(event, 'stocks', ${idx})" ondragover="handleDragOver(event)" ondrop="handleDrop(event, 'stocks', ${idx})">
                             <td class="p-3 text-slate-400"><i class="fa-solid fa-grip-lines"></i></td>
                             <td class="p-3"><div class="flex items-center">${marketBadge}${getAccountOwnerBadge(st.owner)}</div></td>
                             <td class="p-3 font-bold text-slate-800">${st.name}</td>
-                            <td class="p-3">
-                                <select onchange="updateItemAccount('stocks', ${st.id}, this.value)" class="border border-slate-200 rounded p-1 text-xs bg-white font-medium text-slate-700">
-                                    ${appData.accounts.map(a => `<option value="${a.id}" ${a.id === st.accountId ? 'selected' : ''}>[${a.bank || ''}] ${a.name}</option>`).join('')}
-                                </select>
+                            <td class="p-3 font-semibold text-slate-600 flex items-center justify-between">
+                                <span>${acc ? `[${acc.bank || ''}] ${acc.name}` : '-'}</span>
+                                ${acc ? getAccountOwnerBadge(acc.owner) : ''}
                             </td>
                             <td class="p-3 text-right font-bold text-slate-800 editable-cell" ondblclick="makeEditable(this, 'stocks', ${st.id}, 'qty')">${qty} 주</td>
-                            <td class="p-3 text-right font-black text-emerald-600 editable-cell" ondblclick="makeEditable(this, 'stocks', ${st.id}, 'eval')">
+                            <td class="p-3 text-right font-black text-emerald-600">
                                 ${evalWon.toLocaleString()} 원 ${isUS ? `<span class="text-[10px] text-slate-400 font-normal">($${st.eval.toLocaleString()})</span>` : ''}
                             </td>
                             <td class="p-3 text-right font-semibold text-slate-600">${estPriceWon.toLocaleString()} 원</td>
-                            <td class="p-3 text-right font-bold text-rose-600 editable-cell" ondblclick="makeEditable(this, 'stocks', ${st.id}, 'rate')">${st.rate || '+3.50%'}</td>
+                            <td class="p-3 text-right font-bold ${rateColorClass} editable-cell" ondblclick="makeEditable(this, 'stocks', ${st.id}, 'rate')">${rateVal}</td>
                             <td class="p-3 text-center"><button onclick="deleteInvestment('stocks', ${st.id})" class="text-rose-400 hover:text-rose-600"><i class="fa-solid fa-trash-can"></i></button></td>
                         </tr>
                     `;
@@ -1932,20 +1920,26 @@
                 penBody.innerHTML = filteredPensions.map((p, idx) => {
                     const qty = p.qty || 1;
                     const estPrice = Math.round(p.eval / qty);
+                    const acc = appData.accounts.find(a => a.id === p.accountId);
+
+                    // 수익률 -는 초록색, +는 빨간색 로직 적용
+                    const rateVal = p.rate || '+0.00%';
+                    const isNegative = rateVal.trim().startsWith('-');
+                    const rateColorClass = isNegative ? 'text-emerald-600' : 'text-rose-600';
+
                     return `
                         <tr class="hover:bg-slate-50 transition draggable-row" draggable="true" ondragstart="handleDragStart(event, 'pensions', ${idx})" ondragover="handleDragOver(event)" ondrop="handleDrop(event, 'pensions', ${idx})">
                             <td class="p-3 text-slate-400"><i class="fa-solid fa-grip-lines"></i></td>
                             <td class="p-3">${getAccountOwnerBadge(p.owner)}</td>
                             <td class="p-3 font-bold text-slate-800">${p.name}</td>
-                            <td class="p-3">
-                                <select onchange="updateItemAccount('pensions', ${p.id}, this.value)" class="border border-slate-200 rounded p-1 text-xs bg-white font-medium text-slate-700">
-                                    ${appData.accounts.map(a => `<option value="${a.id}" ${a.id === p.accountId ? 'selected' : ''}>[${a.bank || ''}] ${a.name}</option>`).join('')}
-                                </select>
+                            <td class="p-3 font-semibold text-slate-600 flex items-center justify-between">
+                                <span>${acc ? `[${acc.bank || ''}] ${acc.name}` : '-'}</span>
+                                ${acc ? getAccountOwnerBadge(acc.owner) : ''}
                             </td>
                             <td class="p-3 text-right font-bold text-slate-800 editable-cell" ondblclick="makeEditable(this, 'pensions', ${p.id}, 'qty')">${qty} 주</td>
-                            <td class="p-3 text-right font-black text-purple-600 editable-cell" ondblclick="makeEditable(this, 'pensions', ${p.id}, 'eval')">${p.eval.toLocaleString()} 원</td>
+                            <td class="p-3 text-right font-black text-purple-600">${p.eval.toLocaleString()} 원</td>
                             <td class="p-3 text-right font-semibold text-slate-600">${estPrice.toLocaleString()} 원</td>
-                            <td class="p-3 text-right font-bold text-rose-600 editable-cell" ondblclick="makeEditable(this, 'pensions', ${p.id}, 'rate')">${p.rate || '+4.20%'}</td>
+                            <td class="p-3 text-right font-bold ${rateColorClass} editable-cell" ondblclick="makeEditable(this, 'pensions', ${p.id}, 'rate')">${rateVal}</td>
                             <td class="p-3 text-center"><button onclick="deleteInvestment('pensions', ${p.id})" class="text-rose-400 hover:text-rose-600"><i class="fa-solid fa-trash-can"></i></button></td>
                         </tr>
                     `;
@@ -1955,7 +1949,7 @@
         }
 
         function makeEditable(cell, type, id, field) {
-            const currentText = cell.innerText.replace(/[^0-9.-]/g, '');
+            const currentText = cell.innerText.trim();
             cell.innerHTML = `<input type="text" value="${currentText}" class="w-20 border border-indigo-500 rounded px-1 py-0.5 text-right font-bold text-xs" onblur="saveInlineEdit(this, '${type}', ${id}, '${field}')" onkeydown="if(event.key==='Enter') this.blur()">`;
             cell.querySelector('input').focus();
         }
@@ -1964,7 +1958,7 @@
             const item = appData[type].find(x => x.id === id);
             if (item) {
                 if (field === 'qty' || field === 'eval') {
-                    item[field] = parseFloat(input.value) || 0;
+                    item[field] = parseFloat(input.value.replace(/[^0-9.-]/g, '')) || 0;
                 } else {
                     item[field] = input.value;
                 }
@@ -2061,7 +2055,7 @@
             const evalAmt = parseFloat(document.getElementById('stock-eval').value) || 0;
             if (!name) return;
             const acc = appData.accounts.find(a => a.id === accId);
-            appData.stocks.push({ id: Date.now(), market, name, owner: acc ? acc.owner : 'common', accountId: accId, qty, eval: evalAmt });
+            appData.stocks.push({ id: Date.now(), market, name, owner: acc ? acc.owner : 'common', accountId: accId, qty, eval: evalAmt, rate: '+0.00%' });
             saveDataSync();
             renderInvestments();
             document.getElementById('stock-name').value = '';
@@ -2076,7 +2070,7 @@
             const evalAmt = parseFloat(document.getElementById('pension-eval').value) || 0;
             if (!name) return;
             const acc = appData.accounts.find(a => a.id === accId);
-            appData.pensions.push({ id: Date.now(), name, owner: acc ? acc.owner : 'common', accountId: accId, qty, eval: evalAmt });
+            appData.pensions.push({ id: Date.now(), name, owner: acc ? acc.owner : 'common', accountId: accId, qty, eval: evalAmt, rate: '+0.00%' });
             saveDataSync();
             renderInvestments();
             document.getElementById('pension-name').value = '';
@@ -2322,7 +2316,6 @@
                 });
             }
 
-            // 개인연금 히스토리 (디자인 Slate 톤으로 개선)
             const pensionHistoryBody = document.getElementById('pension-history-table-body');
             if (pensionHistoryBody) {
                 pensionHistoryBody.innerHTML = appData.pensionHistory.map(ph => {
@@ -2339,7 +2332,6 @@
                 }).join('');
             }
 
-            // 개인연금 추이 차트 (대비되는 파스텔 톤 적용)
             const ctxPension = document.getElementById('pension-combo-chart');
             if (ctxPension) {
                 if (pensionComboChart) pensionComboChart.destroy();
@@ -2352,8 +2344,8 @@
                     data: {
                         labels: labels,
                         datasets: [
-                            { type: 'bar', label: '은아 개인연금', data: eunaPenData, backgroundColor: '#f472b6', order: 2 }, // 파스텔 핑크/로즈
-                            { type: 'bar', label: '태준 개인연금', data: taejunPenData, backgroundColor: '#38bdf8', order: 2 }, // 파스텔 스카이/블루
+                            { type: 'bar', label: '은아 개인연금', data: eunaPenData, backgroundColor: '#f472b6', order: 2 },
+                            { type: 'bar', label: '태준 개인연금', data: taejunPenData, backgroundColor: '#38bdf8', order: 2 },
                             { type: 'line', label: '합계 연금자산', data: totalPenData, borderColor: '#7e22ce', borderWidth: 3, order: 1 }
                         ]
                     },
