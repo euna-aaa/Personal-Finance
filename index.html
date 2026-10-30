@@ -54,7 +54,7 @@
                     </div>
                     <div>
                         <div class="flex items-center gap-2">
-                            <h1 class="font-bold text-base sm:text-lg tracking-tight">은아 & 태준 스마트 가계부</h1>
+                            <h1 class="font-bold text-base sm:text-lg tracking-tight">은아 & 태준 가계부 v1.0</h1>
                             <span class="text-[11px] bg-emerald-500 text-slate-900 px-1.5 py-0.5 rounded font-black"> V1.0 </span>
                             <!-- Firebase status badge -->
                             <span id="firebase-status-badge" class="text-[10px] px-2 py-0.5 rounded-full font-bold flex items-center gap-1 bg-amber-500/20 text-amber-300 border border-amber-400/30">
@@ -378,6 +378,7 @@
                                         <th class="p-3 w-8"></th>
                                         <th class="p-3">시장/소유</th>
                                         <th class="p-3">종목명</th>
+                                        <th class="p-3">관련 통장</th>
                                         <th class="p-3 text-right">수량</th>
                                         <th class="p-3 text-right">평가 금액 (원화 환산)</th>
                                         <th class="p-3 text-right">추정 평단가</th>
@@ -429,6 +430,7 @@
                                         <th class="p-3 w-8"></th>
                                         <th class="p-3">소유 구분</th>
                                         <th class="p-3">종목명</th>
+                                        <th class="p-3">관련 통장</th>
                                         <th class="p-3 text-right">수량</th>
                                         <th class="p-3 text-right">평가 금액</th>
                                         <th class="p-3 text-right">추정 평단가</th>
@@ -639,22 +641,23 @@
                 </div>
             </div>
 
+            <!-- 개인연금 히스토리 (디자인을 금융 히스토리 스타일로 통일) -->
             <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm space-y-4">
                 <div class="flex justify-between items-center border-b border-slate-100 pb-3">
-                    <h3 class="text-xs font-bold text-purple-800 flex items-center gap-1.5">
-                        <i class="fa-solid fa-table text-purple-600"></i> 개인연금 자산 히스토리 관리
+                    <h3 class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+                        <i class="fa-solid fa-table text-slate-600"></i> 개인연금 자산 히스토리 관리
                     </h3>
                     <span class="text-[11px] text-slate-400">설정된 개인연금 자산 항목 기준 합계</span>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-xs border-collapse">
                         <thead>
-                            <tr class="bg-purple-50/60 text-purple-900 border-b border-purple-100">
+                            <tr class="bg-slate-100 text-slate-600 border-b">
                                 <th class="p-2.5">기준 연월</th>
                                 <th class="p-2.5">은아 개인연금</th>
                                 <th class="p-2.5">태준 개인연금</th>
                                 <th class="p-2.5">공통 개인연금</th>
-                                <th class="p-2.5 font-bold text-purple-950">합계 연금자산</th>
+                                <th class="p-2.5 font-bold text-navy-950">합계 연금자산</th>
                             </tr>
                         </thead>
                         <tbody id="pension-history-table-body" class="divide-y divide-slate-100"></tbody>
@@ -753,23 +756,36 @@
                 </div>
             </div>
 
-            <!-- 통장 쪼개기 설정 카드 UI -->
+            <!-- 통장 쪼개기 설정 카드 UI (소유자 / 은행 / 통장표시명 / 이체금액 순으로 수정 & 드래그 적용) -->
             <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm space-y-4">
                 <div class="border-b border-slate-100 pb-3">
                     <h2 class="text-sm font-bold text-slate-800 flex items-center gap-2">
                         <i class="fa-solid fa-diagram-project text-emerald-600"></i> 통장 쪼개기 설정
                     </h2>
-                    <p class="text-xs text-slate-500 mt-0.5">고정지출 차감 후 설정 금액이 배분되며, 남은 금액은 비상금 통장으로 이납됩니다.</p>
+                    <p class="text-xs text-slate-500 mt-0.5">고정지출 차감 후 설정 금액이 배분되며, 남은 금액은 비상금 통장으로 이납됩니다. (행 드래그 가능)</p>
                 </div>
                 <div class="bg-slate-50/80 p-3.5 rounded-xl border border-slate-200/80 space-y-3">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 text-xs">
-                        <input type="text" id="split-purpose-input" placeholder="통장 명칭 (예: 공통 생활비 통장)" class="border border-slate-300 p-2 rounded-lg bg-white font-medium md:col-span-2">
-                        <input type="number" id="split-amount-input" placeholder="이체 정액 (원)" class="border border-slate-300 p-2 rounded-lg bg-white font-bold text-right">
-                        <select id="split-owner-input" class="border border-slate-300 p-2 rounded-lg bg-white font-bold text-slate-700">
-                            <option value="common">부부 공통</option>
-                            <option value="euna">은아 통장</option>
-                            <option value="taejun">태준 통장</option>
-                        </select>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-12 gap-2 text-xs">
+                        <!-- 1. 소유자 -->
+                        <div class="md:col-span-2">
+                            <select id="split-owner-input" class="w-full border border-slate-300 p-2 rounded-lg bg-white font-bold text-slate-700">
+                                <option value="common">부부 공통</option>
+                                <option value="euna">은아 통장</option>
+                                <option value="taejun">태준 통장</option>
+                            </select>
+                        </div>
+                        <!-- 2. 은행/증권사 -->
+                        <div class="md:col-span-3">
+                            <input type="text" id="split-bank-input" placeholder="은행/증권사 (예: 카카오뱅크)" class="w-full border border-slate-300 p-2 rounded-lg bg-white font-medium">
+                        </div>
+                        <!-- 3. 통장표시명 -->
+                        <div class="md:col-span-4">
+                            <input type="text" id="split-purpose-input" placeholder="통장 표시명 (예: 공통 생활비 통장)" class="w-full border border-slate-300 p-2 rounded-lg bg-white font-medium">
+                        </div>
+                        <!-- 4. 이체 금액 -->
+                        <div class="md:col-span-3">
+                            <input type="number" id="split-amount-input" placeholder="이체 금액 (원)" class="w-full border border-slate-300 p-2 rounded-lg bg-white font-bold text-right">
+                        </div>
                     </div>
                     <div class="flex items-center justify-between">
                         <label class="flex items-center gap-1.5 text-xs font-semibold text-slate-600 cursor-pointer">
@@ -780,7 +796,22 @@
                         </button>
                     </div>
                 </div>
-                <div id="split-rules-list" class="space-y-2"></div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50 text-slate-500 border-b border-slate-100 font-semibold">
+                                <th class="p-3 w-8"></th>
+                                <th class="p-3 w-20">소유자</th>
+                                <th class="p-3 w-28">은행/증권사</th>
+                                <th class="p-3">통장 표시명</th>
+                                <th class="p-3 text-right w-36">이체 금액</th>
+                                <th class="p-3 text-center w-16">삭제</th>
+                            </tr>
+                        </thead>
+                        <tbody id="split-rules-list-body" class="divide-y divide-slate-100"></tbody>
+                    </table>
+                </div>
             </div>
 
             <!-- 유효 통장 목록 설정 -->
@@ -906,7 +937,7 @@
         const STORAGE_KEY_MONTHLY = 'SMART_LEDGER_V35_MONTHLY_MAP';
         const STORAGE_KEY_FIREBASE_CONFIG = 'SMART_LEDGER_V35_FIREBASE_CONFIG';
 
-        // 기본 제공해주신 Firebase Config 정보 (코드 고정)
+        // 기본 Firebase Config 정보
         const DEFAULT_FIREBASE_CONFIG = {
             apiKey: "AIzaSyCPYkBo2JIvyTwzASt8dF47w-XWZYS3b_I",
             authDomain: "storage-d7e4f.firebaseapp.com",
@@ -960,10 +991,10 @@
             categories: ["생필품", "경조사", "집밥", "배달/외식/포장", "모임비 (친구/회사)", "데이트", "카페/간식"],
             fixedCategories: ["주담대 원리금", "아파트 관리비", "통신비", "보험료", "구독료", "교통비(톨비/유류비)", "취미 (수영)"],
             splitRules: [
-                { id: "s1", owner: "common", accountId: "acc_1793332856223", amount: 1500000, purpose: "월 공통 생활비" },
-                { id: "s2", owner: "common", accountId: "acc_1793333072307", amount: 2000000, purpose: "부부 공동 저축 및 투자" },
-                { id: "s3", owner: "euna", accountId: "acc_1793332882188", amount: 400000, purpose: "은아 개인 용돈" },
-                { id: "s4", owner: "taejun", accountId: "acc4", amount: 400000, purpose: "태준 개인 용돈" }
+                { id: "s1", owner: "common", bank: "토스뱅크", accountId: "acc_1793332856223", amount: 1500000, purpose: "월 공통 생활비" },
+                { id: "s2", owner: "common", bank: "한국투자증권", accountId: "acc_1793333072307", amount: 2000000, purpose: "부부 공동 저축 및 투자" },
+                { id: "s3", owner: "euna", bank: "하나은행", accountId: "acc_1793332882188", amount: 400000, purpose: "은아 개인 용돈" },
+                { id: "s4", owner: "taejun", bank: "토스뱅크", accountId: "acc4", amount: 400000, purpose: "태준 개인 용돈" }
             ],
             schedules: [
                 { id: 1793333573004, day: 20, owner: "euna", category: "통신비", title: "통신비", accountId: "acc_1793332937965", amount: 16910 },
@@ -1087,7 +1118,6 @@
 
                 const docRef = doc(dbInstance, 'smart_ledger', 'shared_data');
 
-                // 초기 데이터 확인 및 존재하지 않을 경우 생성
                 const docSnap = await getDoc(docRef);
                 if (!docSnap.exists()) {
                     await setDoc(docRef, {
@@ -1097,7 +1127,6 @@
                     });
                 }
 
-                // 실시간 스냅샷 구독 (onSnapshot)
                 if (unsubscribeSnapshot) unsubscribeSnapshot();
                 unsubscribeSnapshot = onSnapshot(docRef, (snapshot) => {
                     if (snapshot.exists()) {
@@ -1219,6 +1248,7 @@
             renderInvestments();
             renderReviewDashboard();
             renderAssetChartsAndTables();
+            renderSplitRules();
         }
 
         function switchTab(tabId) {
@@ -1387,7 +1417,7 @@
                         <div class="bg-slate-50/80 p-3 rounded-xl border border-slate-200/60 flex justify-between items-center">
                             <div>
                                 <div class="flex items-center gap-2">
-                                    <span class="font-bold text-xs text-slate-800">${acc ? `[${acc.bank || ''}] ${acc.name}` : '통장 정보 없음'}</span>
+                                    <span class="font-bold text-xs text-slate-800">${acc ? `[${acc.bank || ''}] ${acc.name}` : (rule.purpose || '통장')}</span>
                                     ${ownerBadge}
                                 </div>
                                 <span class="text-[10px] text-slate-400">${rule.purpose || '자동 배분'}</span>
@@ -1624,37 +1654,48 @@
             calculateMonthlySummary();
         }
 
+        // 통장 쪼개기 설정 목록 렌더링 (소유자/은행/통장명/이체금액 순서 및 드래그 적용)
         function renderSplitRules() {
-            const container = document.getElementById('split-rules-list');
-            if (!container) return;
-            container.innerHTML = appData.splitRules.map(rule => {
+            const body = document.getElementById('split-rules-list-body');
+            if (!body) return;
+
+            const filteredRules = appData.splitRules.filter(r => {
+                if (currentMode === 'euna') return r.owner === 'euna' || r.owner === 'common';
+                if (currentMode === 'taejun') return r.owner === 'taejun';
+                return true;
+            });
+
+            body.innerHTML = filteredRules.map((rule, idx) => {
                 const acc = appData.accounts.find(a => a.id === rule.accountId);
+                const bankName = rule.bank || (acc ? acc.bank : '-');
+                const purposeName = rule.purpose || (acc ? acc.name : '-');
+
                 return `
-                    <div class="bg-white p-3 rounded-xl border border-slate-200 flex justify-between items-center text-xs">
-                        <div>
-                            <span class="font-bold text-slate-800">${rule.purpose || (acc ? acc.name : '통장')}</span>
-                            ${getAccountOwnerBadge(rule.owner)}
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <span class="font-extrabold text-emerald-700">${rule.amount.toLocaleString()}원</span>
-                            <button onclick="deleteSplitRule('${rule.id}')" class="text-rose-400 hover:text-rose-600 font-bold">삭제</button>
-                        </div>
-                    </div>
+                    <tr class="hover:bg-slate-50 transition draggable-row" draggable="true" ondragstart="handleDragStart(event, 'splitRules', ${idx})" ondragover="handleDragOver(event)" ondrop="handleDrop(event, 'splitRules', ${idx})">
+                        <td class="p-3 text-slate-400"><i class="fa-solid fa-grip-lines"></i></td>
+                        <td class="p-3">${getAccountOwnerBadge(rule.owner)}</td>
+                        <td class="p-3 font-bold text-indigo-600">${bankName}</td>
+                        <td class="p-3 font-bold text-slate-800">${purposeName}</td>
+                        <td class="p-3 text-right font-extrabold text-emerald-700">${rule.amount.toLocaleString()} 원</td>
+                        <td class="p-3 text-center"><button onclick="deleteSplitRule('${rule.id}')" class="text-rose-400 hover:text-rose-600"><i class="fa-solid fa-trash-can"></i></button></td>
+                    </tr>
                 `;
             }).join('');
         }
 
         function addSplitRule() {
+            const owner = document.getElementById('split-owner-input').value;
+            const bank = document.getElementById('split-bank-input').value.trim();
             const purpose = document.getElementById('split-purpose-input').value.trim();
             const amount = parseFloat(document.getElementById('split-amount-input').value);
-            const owner = document.getElementById('split-owner-input').value;
             if (!amount) return;
 
             const acc = appData.accounts.find(a => (owner === 'common' ? a.owner === 'common' : a.owner === owner));
             appData.splitRules.push({
                 id: 's_' + Date.now(),
                 owner,
-                accountId: acc ? acc.id : 'acc1',
+                bank: bank || (acc ? acc.bank : ''),
+                accountId: acc ? acc.id : '',
                 amount,
                 purpose: purpose || '통장 배분'
             });
@@ -1662,6 +1703,7 @@
             saveDataSync();
             renderSplitRules();
             calculateMonthlySummary();
+            document.getElementById('split-bank-input').value = '';
             document.getElementById('split-purpose-input').value = '';
             document.getElementById('split-amount-input').value = '';
         }
@@ -1673,10 +1715,18 @@
             calculateMonthlySummary();
         }
 
+        // 유효 통장 목록 렌더링 (모드 필터링 적용)
         function renderSettingsAccounts() {
             const tbody = document.getElementById('settings-account-table-body');
             if (!tbody) return;
-            tbody.innerHTML = appData.accounts.map((acc, idx) => `
+
+            const filteredAccounts = appData.accounts.filter(acc => {
+                if (currentMode === 'euna') return acc.owner === 'euna' || acc.owner === 'common';
+                if (currentMode === 'taejun') return acc.owner === 'taejun';
+                return true;
+            });
+
+            tbody.innerHTML = filteredAccounts.map((acc, idx) => `
                 <tr class="hover:bg-slate-50 transition draggable-row" draggable="true" ondragstart="handleDragStart(event, 'accounts', ${idx})" ondragover="handleDragOver(event)" ondrop="handleDrop(event, 'accounts', ${idx})">
                     <td class="p-3 text-slate-400"><i class="fa-solid fa-grip-lines"></i></td>
                     <td class="p-3">${getAccountOwnerBadge(acc.owner)}</td>
@@ -1794,6 +1844,18 @@
             renderAccountSelects();
         }
 
+        // 주식/개인연금 항목 관련 통장 직접 수정 핸들러
+        function updateItemAccount(type, id, newAccountId) {
+            const item = appData[type].find(x => x.id === id);
+            if (item) {
+                item.accountId = newAccountId;
+                const acc = appData.accounts.find(a => a.id === newAccountId);
+                if (acc) item.owner = acc.owner;
+                saveDataSync();
+                renderInvestments();
+            }
+        }
+
         function renderInvestments() {
             const savBody = document.getElementById('savings-table-body');
             if (savBody) {
@@ -1825,6 +1887,9 @@
                 return true;
             });
 
+            // 선택 가능 통장 옵션 HTML
+            const accountOptions = appData.accounts.map(a => `<option value="${a.id}">[${a.bank || ''}] ${a.name}</option>`).join('');
+
             const stkBody = document.getElementById('stock-table-body');
             if (stkBody) {
                 stkBody.innerHTML = filteredStocks.map((st, idx) => {
@@ -1839,6 +1904,11 @@
                             <td class="p-3 text-slate-400"><i class="fa-solid fa-grip-lines"></i></td>
                             <td class="p-3"><div class="flex items-center">${marketBadge}${getAccountOwnerBadge(st.owner)}</div></td>
                             <td class="p-3 font-bold text-slate-800">${st.name}</td>
+                            <td class="p-3">
+                                <select onchange="updateItemAccount('stocks', ${st.id}, this.value)" class="border border-slate-200 rounded p-1 text-xs bg-white font-medium text-slate-700">
+                                    ${appData.accounts.map(a => `<option value="${a.id}" ${a.id === st.accountId ? 'selected' : ''}>[${a.bank || ''}] ${a.name}</option>`).join('')}
+                                </select>
+                            </td>
                             <td class="p-3 text-right font-bold text-slate-800 editable-cell" ondblclick="makeEditable(this, 'stocks', ${st.id}, 'qty')">${qty} 주</td>
                             <td class="p-3 text-right font-black text-emerald-600 editable-cell" ondblclick="makeEditable(this, 'stocks', ${st.id}, 'eval')">
                                 ${evalWon.toLocaleString()} 원 ${isUS ? `<span class="text-[10px] text-slate-400 font-normal">($${st.eval.toLocaleString()})</span>` : ''}
@@ -1867,6 +1937,11 @@
                             <td class="p-3 text-slate-400"><i class="fa-solid fa-grip-lines"></i></td>
                             <td class="p-3">${getAccountOwnerBadge(p.owner)}</td>
                             <td class="p-3 font-bold text-slate-800">${p.name}</td>
+                            <td class="p-3">
+                                <select onchange="updateItemAccount('pensions', ${p.id}, this.value)" class="border border-slate-200 rounded p-1 text-xs bg-white font-medium text-slate-700">
+                                    ${appData.accounts.map(a => `<option value="${a.id}" ${a.id === p.accountId ? 'selected' : ''}>[${a.bank || ''}] ${a.name}</option>`).join('')}
+                                </select>
+                            </td>
                             <td class="p-3 text-right font-bold text-slate-800 editable-cell" ondblclick="makeEditable(this, 'pensions', ${p.id}, 'qty')">${qty} 주</td>
                             <td class="p-3 text-right font-black text-purple-600 editable-cell" ondblclick="makeEditable(this, 'pensions', ${p.id}, 'eval')">${p.eval.toLocaleString()} 원</td>
                             <td class="p-3 text-right font-semibold text-slate-600">${estPrice.toLocaleString()} 원</td>
@@ -1923,6 +1998,7 @@
                 if (type === 'stocks' || type === 'pensions' || type === 'savings') renderInvestments();
                 if (type === 'schedules') renderSchedules();
                 if (type === 'accounts') renderSettingsAccounts();
+                if (type === 'splitRules') renderSplitRules();
             }
             draggedItemType = null;
             draggedItemIndex = null;
@@ -2246,6 +2322,7 @@
                 });
             }
 
+            // 개인연금 히스토리 (디자인 Slate 톤으로 개선)
             const pensionHistoryBody = document.getElementById('pension-history-table-body');
             if (pensionHistoryBody) {
                 pensionHistoryBody.innerHTML = appData.pensionHistory.map(ph => {
@@ -2253,15 +2330,16 @@
                     return `
                         <tr class="hover:bg-slate-50 transition">
                             <td class="p-2.5 font-bold text-slate-800">${ph.month}</td>
-                            <td class="p-2.5 text-purple-700">${ph.eunaPen.toLocaleString()} 원</td>
-                            <td class="p-2.5 text-purple-700">${ph.taejunPen.toLocaleString()} 원</td>
-                            <td class="p-2.5 text-purple-700">${ph.commonPen.toLocaleString()} 원</td>
-                            <td class="p-2.5 font-black text-purple-950">${totalPen.toLocaleString()} 원</td>
+                            <td class="p-2.5 text-slate-700">${ph.eunaPen.toLocaleString()} 원</td>
+                            <td class="p-2.5 text-slate-700">${ph.taejunPen.toLocaleString()} 원</td>
+                            <td class="p-2.5 text-slate-700">${ph.commonPen.toLocaleString()} 원</td>
+                            <td class="p-2.5 font-black text-navy-950">${totalPen.toLocaleString()} 원</td>
                         </tr>
                     `;
                 }).join('');
             }
 
+            // 개인연금 추이 차트 (대비되는 파스텔 톤 적용)
             const ctxPension = document.getElementById('pension-combo-chart');
             if (ctxPension) {
                 if (pensionComboChart) pensionComboChart.destroy();
@@ -2274,8 +2352,8 @@
                     data: {
                         labels: labels,
                         datasets: [
-                            { type: 'bar', label: '은아 개인연금', data: eunaPenData, backgroundColor: '#d8b4fe', order: 2 },
-                            { type: 'bar', label: '태준 개인연금', data: taejunPenData, backgroundColor: '#818cf8', order: 2 },
+                            { type: 'bar', label: '은아 개인연금', data: eunaPenData, backgroundColor: '#f472b6', order: 2 }, // 파스텔 핑크/로즈
+                            { type: 'bar', label: '태준 개인연금', data: taejunPenData, backgroundColor: '#38bdf8', order: 2 }, // 파스텔 스카이/블루
                             { type: 'line', label: '합계 연금자산', data: totalPenData, borderColor: '#7e22ce', borderWidth: 3, order: 1 }
                         ]
                     },
@@ -2285,7 +2363,7 @@
                         maintainAspectRatio: false,
                         plugins: {
                             datalabels: {
-                                color: '#581c87',
+                                color: '#475569',
                                 font: { size: 10, weight: 'bold' },
                                 formatter: function(value) { return formatAssetUnit(value); }
                             }
@@ -2335,13 +2413,11 @@
         window.onload = function() {
             loadFromLocalStorage();
 
-            // 1. 설정창 JSON 텍스트박스에 기본 Config 값 자동 표시
             const configTextarea = document.getElementById('firebase-config-json');
             if (configTextarea) {
                 configTextarea.value = JSON.stringify(DEFAULT_FIREBASE_CONFIG, null, 2);
             }
 
-            // 2. LocalStorage에 이전에 저장된 키가 있으면 사용하고, 없으면 DEFAULT_FIREBASE_CONFIG로 자동 연동
             const savedConfig = localStorage.getItem(STORAGE_KEY_FIREBASE_CONFIG);
             let activeConfig = DEFAULT_FIREBASE_CONFIG;
             
@@ -2354,7 +2430,6 @@
                 }
             }
 
-            // 페이지 들어오자마자 Firebase 자동 연결 시도
             connectFirebaseWithConfig(activeConfig);
 
             const today = new Date();
