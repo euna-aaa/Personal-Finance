@@ -58,7 +58,7 @@
                             <span class="text-[11px] bg-emerald-500 text-slate-900 px-1.5 py-0.5 rounded font-black">v3.5 Realtime</span>
                             <!-- Firebase status badge -->
                             <span id="firebase-status-badge" class="text-[10px] px-2 py-0.5 rounded-full font-bold flex items-center gap-1 bg-amber-500/20 text-amber-300 border border-amber-400/30">
-                                <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span> 오프라인 (Local)
+                                <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span> 연결 확인 중...
                             </span>
                         </div>
                         <p class="text-xs text-slate-400 hidden sm:block">10억 자산 달성을 위한 실시간 통장 쪼개기 & 부부 공용 가계부</p>
@@ -740,7 +740,7 @@
 
                 <div class="space-y-3 pt-1">
                     <label class="block text-xs font-bold text-slate-700">Firebase Config JSON 또는 키 항목 연동</label>
-                    <textarea id="firebase-config-json" rows="8" placeholder='{\n  "apiKey": "AIzaSy...",\n  "authDomain": "your-app.firebaseapp.com",\n  "projectId": "your-app-id",\n  "storageBucket": "your-app.appspot.com",\n  "messagingSenderId": "123456789",\n  "appId": "1:123456789:web:abcdef"\n}' class="w-full border border-slate-300 rounded-xl p-3 text-xs font-mono bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-500 transition"></textarea>
+                    <textarea id="firebase-config-json" rows="7" class="w-full border border-slate-300 rounded-xl p-3 text-xs font-mono bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-500 transition"></textarea>
                     
                     <div class="flex flex-wrap items-center gap-2">
                         <button onclick="saveAndConnectFirebase()" class="bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition shadow-sm flex items-center gap-1.5">
@@ -906,7 +906,7 @@
         const STORAGE_KEY_MONTHLY = 'SMART_LEDGER_V35_MONTHLY_MAP';
         const STORAGE_KEY_FIREBASE_CONFIG = 'SMART_LEDGER_V35_FIREBASE_CONFIG';
 
-        // Firebase Config 하드코딩 고정
+        // 기본 제공해주신 Firebase Config 정보 (코드 고정)
         const DEFAULT_FIREBASE_CONFIG = {
             apiKey: "AIzaSyCPYkBo2JIvyTwzASt8dF47w-XWZYS3b_I",
             authDomain: "storage-d7e4f.firebaseapp.com",
@@ -1114,7 +1114,7 @@
 
                 isFirebaseConnected = true;
                 updateFirebaseUIStatus(true, "온라인 (Firestore)");
-                localStorage.setItem(STORAGE_KEY_FIREBASE_CONFIG, JSON.stringify(configObj, null, 2));
+                localStorage.setItem(STORAGE_KEY_FIREBASE_CONFIG, JSON.stringify(configObj));
 
             } catch (err) {
                 console.error("Firebase 연결 실패:", err);
@@ -1825,4 +1825,547 @@
                 return true;
             });
 
-            const stkBody
+            const stkBody = document.getElementById('stock-table-body');
+            if (stkBody) {
+                stkBody.innerHTML = filteredStocks.map((st, idx) => {
+                    const qty = st.qty || 1;
+                    const isUS = st.market === 'US';
+                    const evalWon = isUS ? Math.round(st.eval * currentExchangeRate) : st.eval;
+                    const estPriceWon = Math.round(evalWon / qty);
+                    const marketBadge = isUS ? '<span class="bg-slate-900 text-white font-extrabold px-1.5 py-0.5 rounded text-[10px] mr-1">US</span>' : '<span class="bg-slate-800 text-white font-extrabold px-1.5 py-0.5 rounded text-[10px] mr-1">KR</span>';
+
+                    return `
+                        <tr class="hover:bg-slate-50 transition draggable-row" draggable="true" ondragstart="handleDragStart(event, 'stocks', ${idx})" ondragover="handleDragOver(event)" ondrop="handleDrop(event, 'stocks', ${idx})">
+                            <td class="p-3 text-slate-400"><i class="fa-solid fa-grip-lines"></i></td>
+                            <td class="p-3"><div class="flex items-center">${marketBadge}${getAccountOwnerBadge(st.owner)}</div></td>
+                            <td class="p-3 font-bold text-slate-800">${st.name}</td>
+                            <td class="p-3 text-right font-bold text-slate-800 editable-cell" ondblclick="makeEditable(this, 'stocks', ${st.id}, 'qty')">${qty} 주</td>
+                            <td class="p-3 text-right font-black text-emerald-600 editable-cell" ondblclick="makeEditable(this, 'stocks', ${st.id}, 'eval')">
+                                ${evalWon.toLocaleString()} 원 ${isUS ? `<span class="text-[10px] text-slate-400 font-normal">($${st.eval.toLocaleString()})</span>` : ''}
+                            </td>
+                            <td class="p-3 text-right font-semibold text-slate-600">${estPriceWon.toLocaleString()} 원</td>
+                            <td class="p-3 text-right font-bold text-rose-600 editable-cell" ondblclick="makeEditable(this, 'stocks', ${st.id}, 'rate')">${st.rate || '+3.50%'}</td>
+                            <td class="p-3 text-center"><button onclick="deleteInvestment('stocks', ${st.id})" class="text-rose-400 hover:text-rose-600"><i class="fa-solid fa-trash-can"></i></button></td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+            renderStockPieChart(filteredStocks);
+
+            const filteredPensions = appData.pensions.filter(p => {
+                if (currentMode === 'euna') return p.owner === 'euna' || p.owner === 'common';
+                if (currentMode === 'taejun') return p.owner === 'taejun';
+                return true;
+            });
+            const penBody = document.getElementById('pension-table-body');
+            if (penBody) {
+                penBody.innerHTML = filteredPensions.map((p, idx) => {
+                    const qty = p.qty || 1;
+                    const estPrice = Math.round(p.eval / qty);
+                    return `
+                        <tr class="hover:bg-slate-50 transition draggable-row" draggable="true" ondragstart="handleDragStart(event, 'pensions', ${idx})" ondragover="handleDragOver(event)" ondrop="handleDrop(event, 'pensions', ${idx})">
+                            <td class="p-3 text-slate-400"><i class="fa-solid fa-grip-lines"></i></td>
+                            <td class="p-3">${getAccountOwnerBadge(p.owner)}</td>
+                            <td class="p-3 font-bold text-slate-800">${p.name}</td>
+                            <td class="p-3 text-right font-bold text-slate-800 editable-cell" ondblclick="makeEditable(this, 'pensions', ${p.id}, 'qty')">${qty} 주</td>
+                            <td class="p-3 text-right font-black text-purple-600 editable-cell" ondblclick="makeEditable(this, 'pensions', ${p.id}, 'eval')">${p.eval.toLocaleString()} 원</td>
+                            <td class="p-3 text-right font-semibold text-slate-600">${estPrice.toLocaleString()} 원</td>
+                            <td class="p-3 text-right font-bold text-rose-600 editable-cell" ondblclick="makeEditable(this, 'pensions', ${p.id}, 'rate')">${p.rate || '+4.20%'}</td>
+                            <td class="p-3 text-center"><button onclick="deleteInvestment('pensions', ${p.id})" class="text-rose-400 hover:text-rose-600"><i class="fa-solid fa-trash-can"></i></button></td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+            renderPensionPieChart(filteredPensions);
+        }
+
+        function makeEditable(cell, type, id, field) {
+            const currentText = cell.innerText.replace(/[^0-9.-]/g, '');
+            cell.innerHTML = `<input type="text" value="${currentText}" class="w-20 border border-indigo-500 rounded px-1 py-0.5 text-right font-bold text-xs" onblur="saveInlineEdit(this, '${type}', ${id}, '${field}')" onkeydown="if(event.key==='Enter') this.blur()">`;
+            cell.querySelector('input').focus();
+        }
+
+        function saveInlineEdit(input, type, id, field) {
+            const item = appData[type].find(x => x.id === id);
+            if (item) {
+                if (field === 'qty' || field === 'eval') {
+                    item[field] = parseFloat(input.value) || 0;
+                } else {
+                    item[field] = input.value;
+                }
+                saveDataSync();
+                renderInvestments();
+            }
+        }
+
+        let draggedItemType = null;
+        let draggedItemIndex = null;
+
+        function handleDragStart(e, type, index) {
+            draggedItemType = type;
+            draggedItemIndex = index;
+            e.dataTransfer.effectAllowed = 'move';
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+        }
+
+        function handleDrop(e, type, index) {
+            e.preventDefault();
+            if (draggedItemType === type && draggedItemIndex !== null && draggedItemIndex !== index) {
+                const list = appData[type];
+                const movedItem = list.splice(draggedItemIndex, 1)[0];
+                list.splice(index, 0, movedItem);
+                
+                saveDataSync();
+                if (type === 'stocks' || type === 'pensions' || type === 'savings') renderInvestments();
+                if (type === 'schedules') renderSchedules();
+                if (type === 'accounts') renderSettingsAccounts();
+            }
+            draggedItemType = null;
+            draggedItemIndex = null;
+        }
+
+        function renderStockPieChart(stocksList) {
+            const ctx = document.getElementById('stock-pie-chart');
+            if (!ctx) return;
+            if (stockPieChart) stockPieChart.destroy();
+            const labels = stocksList.map(s => s.name);
+            const data = stocksList.map(s => s.market === 'US' ? Math.round(s.eval * currentExchangeRate) : s.eval);
+            stockPieChart = new Chart(ctx.getContext('2d'), {
+                type: 'doughnut',
+                data: {
+                    labels: labels.length > 0 ? labels : ['보유 종목 없음'],
+                    datasets: [{ data: data.length > 0 ? data : [1], backgroundColor: ['#bae6fd', '#a7f3d0', '#fef08a', '#fbcfe8', '#c7d2fe'] }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 10 } } } } }
+            });
+        }
+
+        function renderPensionPieChart(pensionList) {
+            const ctx = document.getElementById('pension-pie-chart');
+            if (!ctx) return;
+            if (pensionPieChart) pensionPieChart.destroy();
+            const labels = pensionList.map(p => p.name);
+            const data = pensionList.map(p => p.eval);
+            pensionPieChart = new Chart(ctx.getContext('2d'), {
+                type: 'doughnut',
+                data: {
+                    labels: labels.length > 0 ? labels : ['연금 항목 없음'],
+                    datasets: [{ data: data.length > 0 ? data : [1], backgroundColor: ['#ddd6fe', '#e9d5ff', '#f5d0fe', '#fae8ff'] }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 10 } } } } }
+            });
+        }
+
+        function addSavingsItem() {
+            const name = document.getElementById('sav-name').value.trim();
+            const accId = document.getElementById('sav-account').value;
+            const monthly = parseFloat(document.getElementById('sav-monthly').value) || 0;
+            const rate = parseFloat(document.getElementById('sav-rate').value) || 0;
+            const total = parseFloat(document.getElementById('sav-total').value) || 0;
+            if (!name) return;
+            const acc = appData.accounts.find(a => a.id === accId);
+            appData.savings.push({ id: Date.now(), name, owner: acc ? acc.owner : 'common', accountId: accId, monthly, rate, total });
+            saveDataSync();
+            renderInvestments();
+            document.getElementById('sav-name').value = '';
+            document.getElementById('sav-monthly').value = '';
+            document.getElementById('sav-rate').value = '';
+            document.getElementById('sav-total').value = '';
+        }
+
+        function addStockItem() {
+            const market = document.getElementById('stock-market').value;
+            const name = document.getElementById('stock-name').value.trim();
+            const accId = document.getElementById('stock-account').value;
+            const qty = parseFloat(document.getElementById('stock-qty').value) || 0;
+            const evalAmt = parseFloat(document.getElementById('stock-eval').value) || 0;
+            if (!name) return;
+            const acc = appData.accounts.find(a => a.id === accId);
+            appData.stocks.push({ id: Date.now(), market, name, owner: acc ? acc.owner : 'common', accountId: accId, qty, eval: evalAmt });
+            saveDataSync();
+            renderInvestments();
+            document.getElementById('stock-name').value = '';
+            document.getElementById('stock-qty').value = '';
+            document.getElementById('stock-eval').value = '';
+        }
+
+        function addPensionItem() {
+            const name = document.getElementById('pension-name').value.trim();
+            const accId = document.getElementById('pension-account').value;
+            const qty = parseFloat(document.getElementById('pension-qty').value) || 0;
+            const evalAmt = parseFloat(document.getElementById('pension-eval').value) || 0;
+            if (!name) return;
+            const acc = appData.accounts.find(a => a.id === accId);
+            appData.pensions.push({ id: Date.now(), name, owner: acc ? acc.owner : 'common', accountId: accId, qty, eval: evalAmt });
+            saveDataSync();
+            renderInvestments();
+            document.getElementById('pension-name').value = '';
+            document.getElementById('pension-qty').value = '';
+            document.getElementById('pension-eval').value = '';
+        }
+
+        function deleteInvestment(type, id) {
+            if (appData[type]) {
+                appData[type] = appData[type].filter(item => item.id !== id);
+                saveDataSync();
+                renderInvestments();
+            }
+        }
+
+        function setReviewExpenseType(type) {
+            reviewExpType = type;
+            const btnVar = document.getElementById('rev-btn-var');
+            const btnFix = document.getElementById('rev-btn-fix');
+            if (type === 'variable') {
+                btnVar.className = "px-3 py-1 rounded-md text-xs font-bold bg-white text-navy-950 shadow-sm";
+                btnFix.className = "px-3 py-1 rounded-md text-xs font-bold text-slate-600 hover:text-white";
+            } else {
+                btnVar.className = "px-3 py-1 rounded-md text-xs font-bold text-slate-600 hover:text-white";
+                btnFix.className = "px-3 py-1 rounded-md text-xs font-bold bg-white text-navy-950 shadow-sm";
+            }
+            renderReviewComparisonChart();
+        }
+
+        function renderReviewDashboard() {
+            const sal = parseFloat(document.getElementById('input-salary')?.value) || 8000000;
+            const bon = parseFloat(document.getElementById('input-bonus')?.value) || 500000;
+            const totalIn = sal + bon;
+
+            const filteredSchedules = appData.schedules.filter(s => {
+                if (currentMode === 'euna') return s.owner === 'euna' || s.owner === 'common';
+                if (currentMode === 'taejun') return s.owner === 'taejun';
+                return true;
+            });
+            const fixed = filteredSchedules.reduce((sum, s) => sum + s.amount, 0);
+
+            const filteredExpenses = appData.expenses.filter(e => {
+                if (currentMode === 'euna') return e.owner === 'euna' || e.owner === 'common';
+                if (currentMode === 'taejun') return e.owner === 'taejun';
+                return true;
+            });
+            const variable = filteredExpenses.reduce((sum, e) => sum + e.amount, 0);
+            const totalExp = fixed + variable;
+
+            const savingsRate = totalIn > 0 ? (((totalIn - totalExp) / totalIn) * 100).toFixed(1) : 0;
+            const expRate = totalIn > 0 ? ((totalExp / totalIn) * 100).toFixed(1) : 0;
+
+            document.getElementById('rev-total-income').innerText = `${totalIn.toLocaleString()} 원`;
+            document.getElementById('rev-total-expense').innerText = `${totalExp.toLocaleString()} 원`;
+            document.getElementById('rev-savings-rate').innerText = `${savingsRate} %`;
+            document.getElementById('rev-expense-rate').innerText = `${expRate} %`;
+
+            renderReviewMonthCheckboxes();
+            renderReviewComparisonChart();
+
+            document.getElementById('prev-goal-date-label').innerText = `[${currentMonth} 기준]`;
+            const g = appData.monthlyGoals[currentMonth];
+            if (g && g.goals) {
+                document.getElementById('goal-input-1').value = g.goals[0] || '';
+                document.getElementById('goal-input-2').value = g.goals[1] || '';
+                document.getElementById('goal-input-3').value = g.goals[2] || '';
+            } else {
+                document.getElementById('goal-input-1').value = '';
+                document.getElementById('goal-input-2').value = '';
+                document.getElementById('goal-input-3').value = '';
+            }
+            if (g && g.memos) {
+                document.getElementById('review-memo-euna').value = g.memos.euna || '';
+                document.getElementById('review-memo-taejun').value = g.memos.taejun || '';
+            }
+        }
+
+        function renderReviewMonthCheckboxes() {
+            const container = document.getElementById('review-month-checkboxes');
+            if (!container) return;
+            const months = Object.keys(monthlyDataMap).sort();
+            if (months.length === 0) months.push(currentMonth);
+
+            container.innerHTML = months.map(m => `
+                <label class="flex items-center gap-1.5 font-bold text-slate-700 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200 cursor-pointer">
+                    <input type="checkbox" value="${m}" checked onchange="renderReviewComparisonChart()" class="w-4 h-4 text-indigo-600 rounded border-slate-300"> ${m}
+                </label>
+            `).join('');
+        }
+
+        function renderReviewComparisonChart() {
+            const ctx = document.getElementById('review-comparison-chart');
+            if (!ctx) return;
+            if (reviewComparisonChart) reviewComparisonChart.destroy();
+
+            const checkedBoxes = document.querySelectorAll('#review-month-checkboxes input[type="checkbox"]:checked');
+            const selectedMonths = Array.from(checkedBoxes).map(cb => cb.value);
+
+            const categories = reviewExpType === 'variable' ? appData.categories : appData.fixedCategories;
+            const datasets = selectedMonths.map((m, idx) => {
+                const colors = ['#a7f3d0', '#fde047', '#fed7aa', '#fbcfe8', '#c7d2fe'];
+                let data = categories.map(cat => {
+                    if (reviewExpType === 'variable') {
+                        const mData = monthlyDataMap[m];
+                        if (!mData) return 0;
+                        return mData.expenses.filter(e => e.category === cat).reduce((s, e) => s + e.amount, 0);
+                    } else {
+                        return appData.schedules.filter(s => s.category === cat).reduce((s, sc) => s + sc.amount, 0);
+                    }
+                });
+                return {
+                    label: m,
+                    data: data,
+                    backgroundColor: colors[idx % colors.length],
+                    borderRadius: 4
+                };
+            });
+
+            reviewComparisonChart = new Chart(ctx.getContext('2d'), {
+                type: 'bar',
+                data: { labels: categories, datasets: datasets },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' } } }
+            });
+        }
+
+        function saveReviewGoals() {
+            const goals = [
+                document.getElementById('goal-input-1').value,
+                document.getElementById('goal-input-2').value,
+                document.getElementById('goal-input-3').value
+            ];
+            const memos = {
+                euna: document.getElementById('review-memo-euna').value,
+                taejun: document.getElementById('review-memo-taejun').value
+            };
+            appData.monthlyGoals[currentMonth] = { goals, memos };
+            saveDataSync();
+            alert(`${currentMonth} 회고 및 다음 달 다짐이 보관/동기화되었습니다.`);
+        }
+
+        function loadPreviousMonthGoals() {
+            const [yr, mo] = currentMonth.split('-').map(Number);
+            const prevDate = new Date(yr, mo - 2, 1);
+            const prevMonthKey = `${prevDate.getFullYear()}-${String(prevDate.getMonth() + 1).padStart(2, '0')}`;
+
+            const checklistEl = document.getElementById('prev-goal-checklist');
+            const g = appData.monthlyGoals[prevMonthKey];
+            if (g && g.goals && g.goals.length > 0) {
+                checklistEl.innerHTML = g.goals.map((goal, idx) => `
+                    <label class="flex items-center gap-2 font-medium cursor-pointer">
+                        <input type="checkbox" onchange="this.nextElementSibling.classList.toggle('line-through', this.checked)" class="w-4 h-4 text-indigo-600 rounded border-slate-300">
+                        <span>${goal}</span>
+                    </label>
+                `).join('');
+                alert(`${prevMonthKey} 기준 지난달 다짐 체크리스트를 불러왔습니다.`);
+            } else {
+                checklistEl.innerHTML = `<p class="text-rose-400 font-medium">저장된 지난달 다짐 내역이 없습니다 (${prevMonthKey}).</p>`;
+            }
+        }
+
+        function setAssetPerspective(p) {
+            assetPerspective = p;
+            document.getElementById('btn-persp-net').className = p === 'net' ? "px-3 py-1 rounded-md bg-navy-950 text-white shadow-sm" : "px-3 py-1 rounded-md text-slate-600 hover:text-white";
+            document.getElementById('btn-persp-gross').className = p === 'gross' ? "px-3 py-1 rounded-md bg-navy-950 text-white shadow-sm" : "px-3 py-1 rounded-md text-slate-600 hover:text-white";
+            renderAssetChartsAndTables();
+        }
+
+        function updateKBRealEstatePrice() {
+            const val = prompt("새로운 부동산 KB 시세를 입력하세요 (원):", kbRealEstatePrice);
+            if (val && !isNaN(val)) {
+                kbRealEstatePrice = parseFloat(val);
+                document.getElementById('kb-price-display').innerText = `${kbRealEstatePrice.toLocaleString()}원`;
+                if (appData.assetHistory.length > 0) {
+                    appData.assetHistory[appData.assetHistory.length - 1].re = kbRealEstatePrice;
+                }
+                saveDataSync();
+                renderAssetChartsAndTables();
+            }
+        }
+
+        function renderAssetChartsAndTables() {
+            const historyBody = document.getElementById('asset-history-table-body');
+            if (historyBody) {
+                historyBody.innerHTML = appData.assetHistory.map(h => {
+                    const totalFin = h.eunaFin + h.taejunFin + h.commonFin;
+                    const net = totalFin + h.re - h.debt;
+                    return `
+                        <tr class="hover:bg-slate-50 transition">
+                            <td class="p-2.5 font-bold text-slate-800">${h.month}</td>
+                            <td class="p-2.5 text-slate-700">${h.eunaFin.toLocaleString()} 원</td>
+                            <td class="p-2.5 text-slate-700">${h.taejunFin.toLocaleString()} 원</td>
+                            <td class="p-2.5 text-slate-700">${h.commonFin.toLocaleString()} 원</td>
+                            <td class="p-2.5 font-semibold text-emerald-700">${h.re.toLocaleString()} 원</td>
+                            <td class="p-2.5 font-bold text-rose-600">-${h.debt.toLocaleString()} 원</td>
+                            <td class="p-2.5 font-black text-navy-950">${net.toLocaleString()} 원</td>
+                            <td class="p-2.5 text-center"><button onclick="deleteAssetHistory('${h.month}')" class="text-rose-400 hover:text-rose-600"><i class="fa-solid fa-trash-can"></i></button></td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+
+            const latestAsset = appData.assetHistory[appData.assetHistory.length - 1];
+            if (latestAsset) {
+                const totalFin = latestAsset.eunaFin + latestAsset.taejunFin + latestAsset.commonFin;
+                const currentVal = assetPerspective === 'net' ? (totalFin + latestAsset.re - latestAsset.debt) : (totalFin + latestAsset.re);
+                const percent = Math.min(((currentVal / 1000000000) * 100), 100).toFixed(1);
+                document.getElementById('asset-goal-bar').style.width = `${percent}%`;
+                document.getElementById('asset-goal-percent').innerText = `${percent}% 달성`;
+            }
+
+            const ctxAsset = document.getElementById('asset-combo-chart');
+            if (ctxAsset) {
+                if (assetComboChart) assetComboChart.destroy();
+                const labels = appData.assetHistory.map(h => h.month);
+                const finData = appData.assetHistory.map(h => h.eunaFin + h.taejunFin + h.commonFin);
+                const reData = appData.assetHistory.map(h => h.re);
+                const netData = appData.assetHistory.map(h => (h.eunaFin + h.taejunFin + h.commonFin) + h.re - h.debt);
+                const debtData = appData.assetHistory.map(h => h.debt);
+
+                let datasets = [
+                    { type: 'bar', label: '금융자산', data: finData, backgroundColor: '#93c5fd', order: 2 },
+                    { type: 'bar', label: '부동산 시세', data: reData, backgroundColor: '#86efac', order: 2 },
+                    { type: 'line', label: '최종 순자산', data: netData, borderColor: '#0369a1', borderWidth: 3, order: 1 }
+                ];
+                if (assetPerspective === 'gross') {
+                    datasets.push({ type: 'line', label: '주담대/부채', data: debtData, borderColor: '#f87171', borderWidth: 2, order: 1 });
+                }
+
+                assetComboChart = new Chart(ctxAsset.getContext('2d'), {
+                    data: { labels: labels, datasets: datasets },
+                    plugins: [ChartDataLabels],
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            datalabels: {
+                                color: '#334155',
+                                font: { size: 10, weight: 'bold' },
+                                formatter: function(value) { return formatAssetUnit(value); }
+                            }
+                        }
+                    }
+                });
+            }
+
+            const pensionHistoryBody = document.getElementById('pension-history-table-body');
+            if (pensionHistoryBody) {
+                pensionHistoryBody.innerHTML = appData.pensionHistory.map(ph => {
+                    const totalPen = ph.eunaPen + ph.taejunPen + ph.commonPen;
+                    return `
+                        <tr class="hover:bg-slate-50 transition">
+                            <td class="p-2.5 font-bold text-slate-800">${ph.month}</td>
+                            <td class="p-2.5 text-purple-700">${ph.eunaPen.toLocaleString()} 원</td>
+                            <td class="p-2.5 text-purple-700">${ph.taejunPen.toLocaleString()} 원</td>
+                            <td class="p-2.5 text-purple-700">${ph.commonPen.toLocaleString()} 원</td>
+                            <td class="p-2.5 font-black text-purple-950">${totalPen.toLocaleString()} 원</td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+
+            const ctxPension = document.getElementById('pension-combo-chart');
+            if (ctxPension) {
+                if (pensionComboChart) pensionComboChart.destroy();
+                const labels = appData.pensionHistory.map(ph => ph.month);
+                const eunaPenData = appData.pensionHistory.map(ph => ph.eunaPen);
+                const taejunPenData = appData.pensionHistory.map(ph => ph.taejunPen);
+                const totalPenData = appData.pensionHistory.map(ph => ph.eunaPen + ph.taejunPen + ph.commonPen);
+
+                pensionComboChart = new Chart(ctxPension.getContext('2d'), {
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            { type: 'bar', label: '은아 개인연금', data: eunaPenData, backgroundColor: '#d8b4fe', order: 2 },
+                            { type: 'bar', label: '태준 개인연금', data: taejunPenData, backgroundColor: '#818cf8', order: 2 },
+                            { type: 'line', label: '합계 연금자산', data: totalPenData, borderColor: '#7e22ce', borderWidth: 3, order: 1 }
+                        ]
+                    },
+                    plugins: [ChartDataLabels],
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            datalabels: {
+                                color: '#581c87',
+                                font: { size: 10, weight: 'bold' },
+                                formatter: function(value) { return formatAssetUnit(value); }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        function deleteAssetHistory(month) {
+            appData.assetHistory = appData.assetHistory.filter(h => h.month !== month);
+            saveDataSync();
+            renderAssetChartsAndTables();
+        }
+
+        function exportJSON() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData, null, 2));
+            const dl = document.createElement('a');
+            dl.setAttribute("href", dataStr);
+            dl.setAttribute("download", `smart_ledger_backup_${currentMonth}.json`);
+            document.body.appendChild(dl);
+            dl.click();
+            dl.remove();
+        }
+
+        function importJSON(event) {
+            const fr = new FileReader();
+            fr.onload = function(e) {
+                try {
+                    appData = JSON.parse(e.target.result);
+                    saveDataSync();
+                    refreshAllUI();
+                    alert('데이터 복원 및 동기화가 완료되었습니다.');
+                } catch (err) {
+                    alert('올바르지 않은 JSON 파일 형식입니다.');
+                }
+            };
+            fr.readAsText(event.target.files[0]);
+        }
+
+        function saveCurrentMonthData() {
+            saveDataSync();
+            const [yr, mo] = currentMonth.split('-').map(Number);
+            alert(`${yr}년 ${mo}월 가계부 데이터가 안전하게 저장 및 실시간 동기화되었습니다.`);
+        }
+
+        window.onload = function() {
+            loadFromLocalStorage();
+
+            // 1. 설정창 JSON 텍스트박스에 기본 Config 값 자동 표시
+            const configTextarea = document.getElementById('firebase-config-json');
+            if (configTextarea) {
+                configTextarea.value = JSON.stringify(DEFAULT_FIREBASE_CONFIG, null, 2);
+            }
+
+            // 2. LocalStorage에 이전에 저장된 키가 있으면 사용하고, 없으면 DEFAULT_FIREBASE_CONFIG로 자동 연동
+            const savedConfig = localStorage.getItem(STORAGE_KEY_FIREBASE_CONFIG);
+            let activeConfig = DEFAULT_FIREBASE_CONFIG;
+            
+            if (savedConfig) {
+                try {
+                    activeConfig = JSON.parse(savedConfig);
+                    if (configTextarea) configTextarea.value = JSON.stringify(activeConfig, null, 2);
+                } catch (e) {
+                    console.error("저장된 Config 파싱 실패, 기본 설정으로 대체:", e);
+                }
+            }
+
+            // 페이지 들어오자마자 Firebase 자동 연결 시도
+            connectFirebaseWithConfig(activeConfig);
+
+            const today = new Date();
+            const yr = today.getFullYear();
+            const mo = String(today.getMonth() + 1).padStart(2, '0');
+            document.getElementById('selected-month').value = `${yr}-${mo}`;
+            loadMonthlyData();
+            updateScheduleAccountSelect();
+            renderCategoryManagementCards();
+            renderSplitRules();
+        };
+    </script>
+</body>
+</html>
