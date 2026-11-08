@@ -2,8 +2,8 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>은아 & 태준 가계부 v1.0 </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>은아 & 태준 가계부 v2.0 PRO</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Chart.js -->
@@ -31,49 +31,48 @@
     </script>
     <style>
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
-        body { font-family: 'Pretendard', sans-serif; }
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        html { font-size: clamp(13px, 1.2vw, 16px); }
+        body { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif; word-break: keep-all; }
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
         .scrollbar-none::-webkit-scrollbar { display: none; }
         .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
-        tr.draggable-row { cursor: grab; }
-        tr.draggable-row:active { cursor: grabbing; opacity: 0.6; }
-        .editable-cell { cursor: pointer; transition: background-color 0.2s; }
-        .editable-cell:hover { background-color: #f1f5f9; }
+        tr.draggable-row { cursor: grab; user-select: none; }
+        tr.draggable-row:active { cursor: grabbing; opacity: 0.5; background-color: #f1f5f9; }
+        tr.drag-over { border-top: 2px solid #6366f1 !important; }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col antialiased">
 
     <!-- Header Navigation Bar -->
     <header class="bg-navy-950 text-white shadow-md sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
-                <div class="flex items-center space-x-3">
-                    <div class="bg-navy-800 p-2 rounded-lg text-emerald-400">
-                        <i class="fa-solid fa-house-chimney-window text-xl"></i>
+                <div class="flex items-center space-x-2 sm:space-x-3">
+                    <div class="bg-navy-800 p-1.5 sm:p-2 rounded-lg text-emerald-400">
+                        <i class="fa-solid fa-house-chimney-window text-lg sm:text-xl"></i>
                     </div>
                     <div>
-                        <div class="flex items-center gap-2">
-                            <h1 class="font-bold text-base sm:text-lg tracking-tight">은아 & 태준 가계부 v1.0</h1>
-                            <span class="text-[11px] bg-emerald-500 text-slate-900 px-1.5 py-0.5 rounded font-black"> V1.0 </span>
-                            <!-- Firebase status badge -->
-                            <span id="firebase-status-badge" class="text-[10px] px-2 py-0.5 rounded-full font-bold flex items-center gap-1 bg-amber-500/20 text-amber-300 border border-amber-400/30">
+                        <div class="flex items-center gap-1.5 sm:gap-2">
+                            <h1 class="font-bold text-sm sm:text-lg tracking-tight">은아 & 태준 가계부</h1>
+                            <span class="text-[10px] sm:text-[11px] bg-emerald-500 text-slate-900 px-1.5 py-0.5 rounded font-black"> v2.0 PRO </span>
+                            <span id="firebase-status-badge" class="text-[9px] sm:text-[10px] px-2 py-0.5 rounded-full font-bold flex items-center gap-1 bg-amber-500/20 text-amber-300 border border-amber-400/30">
                                 <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span> 연결 확인 중...
                             </span>
                         </div>
-                        <p class="text-xs text-slate-400 hidden sm:block">은아와 태준이의 행복한 미래를 위한 가계부</p>
+                        <p class="text-[11px] text-slate-400 hidden sm:block">은아와 태준이의 행복한 미래를 위한 맞춤 가계부</p>
                     </div>
                 </div>
 
                 <div class="flex items-center bg-navy-800 p-1 rounded-lg border border-slate-700">
-                    <button onclick="setMode('euna')" id="btn-mode-euna" class="px-3 py-1.5 rounded-md text-xs font-semibold transition flex items-center gap-1.5 text-slate-300 hover:text-white">
-                        <i class="fa-solid fa-user text-rose-300"></i> 은아 <span class="text-[10px] text-rose-300">+공통</span>
+                    <button onclick="setMode('euna')" id="btn-mode-euna" class="px-2 sm:px-3 py-1 sm:py-1.5 rounded-md text-xs font-semibold transition flex items-center gap-1 text-slate-300 hover:text-white">
+                        <i class="fa-solid fa-user text-rose-300"></i> 은아
                     </button>
-                    <button onclick="setMode('taejun')" id="btn-mode-taejun" class="px-3 py-1.5 rounded-md text-xs font-semibold transition flex items-center gap-1.5 text-slate-300 hover:text-white">
-                        <i class="fa-solid fa-user text-sky-300"></i> 태준전용
+                    <button onclick="setMode('taejun')" id="btn-mode-taejun" class="px-2 sm:px-3 py-1 sm:py-1.5 rounded-md text-xs font-semibold transition flex items-center gap-1 text-slate-300 hover:text-white">
+                        <i class="fa-solid fa-user text-sky-300"></i> 태준
                     </button>
-                    <button onclick="setMode('all')" id="btn-mode-all" class="px-3 py-1.5 rounded-md text-xs font-semibold transition flex items-center gap-1.5 bg-white text-navy-950 shadow-sm">
-                        <i class="fa-solid fa-users text-emerald-600"></i> 합산 View
+                    <button onclick="setMode('all')" id="btn-mode-all" class="px-2 sm:px-3 py-1 sm:py-1.5 rounded-md text-xs font-semibold transition flex items-center gap-1 bg-white text-navy-950 shadow-sm">
+                        <i class="fa-solid fa-users text-emerald-600"></i> 합산
                     </button>
                 </div>
             </div>
@@ -88,7 +87,7 @@
                 <button onclick="switchTab('review')" id="tab-btn-review" class="tab-btn px-3 py-2 rounded-t-lg text-slate-300 hover:bg-navy-800 flex items-center gap-1.5 whitespace-nowrap">
                     <i class="fa-solid fa-magnifying-glass-chart"></i> 월간 리뷰
                 </button>
-                <div class="border-r border-slate-700 my-1 mx-1 sm:mx-2"></div>
+                <div class="border-r border-slate-700 my-1 mx-1"></div>
                 <button onclick="switchTab('assets')" id="tab-btn-assets" class="tab-btn px-3 py-2 rounded-t-lg text-slate-300 hover:bg-navy-800 flex items-center gap-1.5 whitespace-nowrap">
                     <i class="fa-solid fa-vault"></i> 자산 추이
                 </button>
@@ -102,14 +101,14 @@
         </div>
     </header>
 
-    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+    <main class="flex-grow max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-4 sm:space-y-6">
 
         <!-- TAB 1: 월별 가계부 -->
-        <section id="tab-monthly" class="tab-content space-y-6">
+        <section id="tab-monthly" class="tab-content space-y-4 sm:space-y-6">
             <div class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <div class="flex flex-wrap items-center gap-3">
+                <div class="flex flex-wrap items-center gap-3 w-full sm:w-auto">
                     <span id="monthly-current-badge" class="bg-indigo-50 text-indigo-800 font-extrabold px-3 py-2 rounded-xl text-xs flex items-center gap-2 border border-indigo-100">
-                        <i class="fa-solid fa-calendar-days text-indigo-600"></i> <span id="monthly-badge-text">[2026년 10월 기록 작성/조회 중]</span>
+                        <i class="fa-solid fa-calendar-days text-indigo-600"></i> <span id="monthly-badge-text">[26.10월 기록 작성/조회 중]</span>
                     </span>
                     <div class="flex items-center gap-1.5 border border-slate-200 px-3 py-1.5 rounded-xl bg-slate-50/50 text-xs font-bold text-slate-800">
                         <input type="month" id="selected-month" onchange="loadMonthlyData()" class="bg-transparent focus:outline-none cursor-pointer">
@@ -118,60 +117,60 @@
                         </button>
                     </div>
                 </div>
-                <button onclick="saveCurrentMonthData()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-4 py-2.5 rounded-xl font-bold transition flex items-center gap-1.5 shadow-sm">
-                    <i class="fa-solid fa-floppy-disk text-xs"></i> <span id="save-btn-month-label">[월별 가계부] 10월 기록 동기화/저장</span>
+                <button onclick="saveCurrentMonthData()" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-4 py-2.5 rounded-xl font-bold transition flex items-center justify-center gap-1.5 shadow-sm">
+                    <i class="fa-solid fa-floppy-disk text-xs"></i> <span id="save-btn-month-label">[월별 가계부] 26.10월 기록 동기화/저장</span>
                 </button>
             </div>
 
             <!-- 통장 잔액 입력 -->
-            <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm space-y-4">
+            <div class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-sm space-y-4">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-slate-100 pb-3">
                     <div>
                         <h2 class="text-sm font-bold text-slate-800 flex items-center gap-1.5">
                             <i class="fa-solid fa-piggy-bank text-amber-500"></i> 월급일 전 각 통장 잔액 입력 (직전달 자산 반영)
                         </h2>
-                        <p class="text-xs text-slate-500 mt-0.5">설정에서 [일반금융자산] 또는 [개인연금 자산] 집계에 체크된 통장만 기입 대상입니다.</p>
+                        <p class="text-xs text-slate-500 mt-0.5">설정 탭의 유효 통장 목록에 등록된 계좌만 조회 및 기입 대상입니다.</p>
                     </div>
-                    <button onclick="saveCurrentBalancesToAssets()" class="bg-slate-900 hover:bg-slate-800 text-white text-xs px-3.5 py-2 rounded-xl font-bold transition flex items-center gap-1.5 shadow-sm shrink-0">
+                    <button onclick="saveCurrentBalancesToAssets()" class="w-full sm:w-auto bg-slate-900 hover:bg-slate-800 text-white text-xs px-3.5 py-2 rounded-xl font-bold transition flex items-center justify-center gap-1.5 shadow-sm shrink-0">
                         <i class="fa-solid fa-arrow-up-from-bracket"></i> <span id="btn-save-prev-asset-label">직전달 자산으로 확정/기록</span>
                     </button>
                 </div>
                 <div id="account-balance-inputs" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 text-xs"></div>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm space-y-1 relative">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+                <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-sm space-y-1 relative">
                     <span class="text-xs font-semibold text-slate-500 block">총 수입 (월급 + 부수입)</span>
-                    <div class="text-xl font-extrabold text-slate-900" id="sum-total-income">0 원</div>
+                    <div class="text-lg sm:text-xl font-extrabold text-slate-900" id="sum-total-income">0 원</div>
                     <p class="text-[11px] text-slate-400 font-medium" id="sum-income-sub">월급 0 | 부수입 0</p>
                 </div>
-                <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm space-y-1 relative">
+                <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-sm space-y-1 relative">
                     <div class="flex justify-between items-center">
                         <span class="text-xs font-semibold text-slate-500">총 고정 지출</span>
                         <i class="fa-solid fa-lock text-rose-400 text-xs"></i>
                     </div>
-                    <div class="text-xl font-extrabold text-rose-600" id="sum-fixed-expenses">0 원</div>
+                    <div class="text-lg sm:text-xl font-extrabold text-rose-600" id="sum-fixed-expenses">0 원</div>
                     <p class="text-[11px] text-slate-400 font-medium">고정 설정 항목 기준</p>
                 </div>
-                <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm space-y-1 relative">
+                <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-sm space-y-1 relative">
                     <div class="flex justify-between items-center">
                         <span class="text-xs font-semibold text-slate-500">이번 달 개인 변동 지출</span>
                         <i class="fa-solid fa-cart-shopping text-amber-500 text-xs"></i>
                     </div>
-                    <div class="text-xl font-extrabold text-amber-600" id="sum-variable-expenses">0 원</div>
+                    <div class="text-lg sm:text-xl font-extrabold text-amber-600" id="sum-variable-expenses">0 원</div>
                     <p class="text-[11px] text-slate-400 font-medium">각자 모드별 집계</p>
                 </div>
-                <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm space-y-1 relative">
+                <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-sm space-y-1 relative">
                     <div class="flex justify-between items-center">
-                        <span class="text-xs font-semibold text-slate-500">고정지출 차감 후 잔액</span>
-                        <i class="fa-solid fa-scale-balanced text-indigo-500 text-xs"></i>
+                        <span class="text-xs font-semibold text-slate-500">비상금 / 잉여금</span>
+                        <i class="fa-solid fa-piggy-bank text-indigo-500 text-xs"></i>
                     </div>
-                    <div class="text-xl font-extrabold text-indigo-950" id="sum-net-income">0 원</div>
-                    <p class="text-[11px] text-slate-400 font-medium">통장 쪼개기 배분 기준 금액</p>
+                    <div class="text-lg sm:text-xl font-extrabold text-indigo-950" id="sum-net-income">0 원</div>
+                    <p class="text-[11px] text-slate-400 font-medium">공통 생활비 + 개인 용돈 제외</p>
                 </div>
             </div>
 
-            <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm space-y-4">
+            <div class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-sm space-y-4">
                 <h2 class="text-sm font-bold text-slate-800 flex items-center gap-2">
                     <i class="fa-solid fa-wallet text-indigo-600"></i> 수입 입력 (월급 & 부수입/상여금)
                 </h2>
@@ -188,22 +187,22 @@
             </div>
 
             <!-- 통장 쪼개기 배분 결과 -->
-            <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm space-y-4">
+            <div class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-sm space-y-4">
                 <div class="flex justify-between items-center">
                     <h2 class="text-sm font-bold text-slate-800 flex items-center gap-2">
                         <i class="fa-solid fa-diagram-project text-indigo-600"></i> 통장 쪼개기 배분 결과 (자동 시뮬레이션)
                     </h2>
-                    <span class="text-xs text-slate-400 font-medium hidden sm:inline">설정 탭의 규칙에 따라 고정지출 차감 후 잔액 배분</span>
+                    <span class="text-xs text-slate-400 font-medium hidden sm:inline">유효 통장 목록 연동 기준</span>
                 </div>
                 <div id="account-split-container" class="space-y-2.5"></div>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
                 <div class="lg:col-span-2 space-y-6">
-                    <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm space-y-4">
+                    <div class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-sm space-y-4">
                         <div class="flex justify-between items-center">
                             <h2 class="text-sm font-bold text-slate-800 flex items-center gap-2">
-                                <i class="fa-solid fa-receipt text-amber-600"></i> 변동 지출 내역 <span class="text-xs font-normal text-slate-400">(날짜 기준 내림차순 정렬)</span>
+                                <i class="fa-solid fa-receipt text-amber-600"></i> 변동 지출 내역 <span class="text-xs font-normal text-slate-400 hidden sm:inline">(드래그로 순서 변경 가능)</span>
                             </h2>
                         </div>
                         <div class="bg-slate-50/70 p-3 rounded-xl border border-slate-200/60 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-12 gap-2 text-xs">
@@ -228,15 +227,16 @@
                         </div>
 
                         <div class="overflow-x-auto">
-                            <table class="w-full text-left text-xs border-collapse">
+                            <table class="w-full text-left text-xs border-collapse min-w-[500px]">
                                 <thead>
                                     <tr class="bg-slate-50 text-slate-500 border-b border-slate-100 font-bold">
+                                        <th class="p-3 w-8"></th>
                                         <th class="p-3">날짜</th>
                                         <th class="p-3">카테고리</th>
                                         <th class="p-3">관련 통장</th>
                                         <th class="p-3">내역</th>
                                         <th class="p-3 text-right">금액</th>
-                                        <th class="p-3 text-center">소유 구분</th>
+                                        <th class="p-3 text-center">소유</th>
                                         <th class="p-3 text-center">삭제</th>
                                     </tr>
                                 </thead>
@@ -247,14 +247,14 @@
                 </div>
 
                 <div class="space-y-6">
-                    <div class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-sm flex flex-col aspect-square justify-between">
+                    <div class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-sm flex flex-col min-h-[300px] justify-between">
                         <div class="flex justify-between items-center border-b border-slate-100 pb-2">
                             <h2 class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
                                 <i class="fa-regular fa-calendar-days text-indigo-600"></i> 지출 달력
                             </h2>
                             <div class="flex items-center gap-1.5">
                                 <button onclick="changeCalendarMonth(-1)" class="w-5 h-5 flex items-center justify-center rounded-lg bg-slate-100 hover:bg-slate-200 text-[10px] text-slate-700 font-bold"><i class="fa-solid fa-chevron-left"></i></button>
-                                <span id="calendar-month-label" class="text-xs font-bold text-slate-800">2026년 10월</span>
+                                <span id="calendar-month-label" class="text-xs font-bold text-slate-800">26.10월</span>
                                 <button onclick="changeCalendarMonth(1)" class="w-5 h-5 flex items-center justify-center rounded-lg bg-slate-100 hover:bg-slate-200 text-[10px] text-slate-700 font-bold"><i class="fa-solid fa-chevron-right"></i></button>
                             </div>
                         </div>
@@ -265,14 +265,13 @@
                         </div>
                     </div>
 
-                    <div class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-sm flex flex-col aspect-square justify-between">
+                    <div class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-sm flex flex-col min-h-[250px] justify-between">
                         <div class="border-b border-slate-100 pb-2">
                             <h2 class="text-xs font-bold text-indigo-700 flex items-center gap-1.5">
                                 <i class="fa-solid fa-calendar-check"></i> 이달의 자동이체 & 지출 일정
                             </h2>
-                            <p class="text-[10px] text-slate-400 mt-0.5">주요 지출 일정에서 등록한 항목 연동</p>
                         </div>
-                        <div class="flex-grow overflow-y-auto my-2 space-y-2 pr-1 text-xs scrollbar-none" id="schedules-compact-list"></div>
+                        <div class="flex-grow overflow-y-auto my-2 space-y-2 pr-1 text-xs scrollbar-none max-h-48" id="schedules-compact-list"></div>
                         <div class="pt-2 border-t border-slate-100 flex justify-between items-center text-[10px]">
                             <span class="text-slate-400 font-medium">월 고정지출 합계:</span>
                             <span class="font-bold text-rose-600 text-xs" id="schedule-total-sum">0 원</span>
@@ -286,25 +285,24 @@
         <section id="tab-invest" class="tab-content hidden space-y-6">
             <div class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <span id="invest-current-badge" class="bg-indigo-50 text-indigo-800 font-extrabold px-3 py-2 rounded-xl text-xs flex items-center gap-2 border border-indigo-100">
-                    <i class="fa-solid fa-calendar-days text-indigo-600"></i> <span id="invest-badge-text">[2026년 10월 기록 작성/조회 중]</span>
+                    <i class="fa-solid fa-calendar-days text-indigo-600"></i> <span id="invest-badge-text">[26.10월 기록 작성/조회 중]</span>
                 </span>
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-start">
                     <div class="bg-amber-50 text-amber-800 px-3 py-2 rounded-xl text-xs font-bold border border-amber-200 flex items-center gap-1.5">
-                        <i class="fa-solid fa-dollar-sign"></i> 실시간 환율: <input type="number" id="exchange-rate-input" value="1380" onchange="updateExchangeRate(this.value)" class="w-16 bg-white border border-amber-300 rounded px-1.5 py-0.5 text-center font-extrabold text-amber-900"> 원
+                        <i class="fa-solid fa-dollar-sign"></i> 환율: <input type="number" id="exchange-rate-input" value="1380" onchange="updateExchangeRate(this.value)" class="w-16 bg-white border border-amber-300 rounded px-1.5 py-0.5 text-center font-extrabold text-amber-900"> 원
                     </div>
                     <button onclick="saveCurrentMonthData()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-4 py-2.5 rounded-xl font-bold transition flex items-center gap-1.5 shadow-sm">
-                        <i class="fa-solid fa-floppy-disk text-xs"></i> <span id="save-btn-invest-label">[저축/투자] 10월 기록 동기화/저장</span>
+                        <i class="fa-solid fa-floppy-disk text-xs"></i> <span id="save-btn-invest-label">[저축/투자] 26.10월 기록 동기화/저장</span>
                     </button>
                 </div>
             </div>
 
-            <!-- 1. 저축 포트폴리오 -->
-            <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm space-y-4">
+            <!-- 저축 포트폴리오 -->
+            <div class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-sm space-y-4">
                 <div class="flex justify-between items-center border-b border-slate-100 pb-3">
                     <h2 class="text-sm font-bold text-slate-800 flex items-center gap-1.5">
                         <i class="fa-solid fa-piggy-bank text-sky-600"></i> 저축 포트폴리오 (예/적금 & 청약)
                     </h2>
-                    <span class="text-xs text-slate-500">행 드래그로 순서 변경 가능</span>
                 </div>
                 <div class="bg-slate-50/80 p-3.5 rounded-xl border border-slate-200/80">
                     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 gap-2.5 text-xs">
@@ -319,7 +317,7 @@
                     </div>
                 </div>
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs border-collapse">
+                    <table class="w-full text-left text-xs border-collapse min-w-[600px]">
                         <thead>
                             <tr class="bg-slate-50 text-slate-500 border-b border-slate-100 font-semibold">
                                 <th class="p-3 w-8"></th>
@@ -337,8 +335,8 @@
                 </div>
             </div>
 
-            <!-- 2. 주식 포트폴리오 -->
-            <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm space-y-4">
+            <!-- 주식 포트폴리오 -->
+            <div class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-sm space-y-4">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-slate-100 pb-3">
                     <div class="flex items-center gap-3">
                         <h2 class="text-sm font-bold text-slate-800 flex items-center gap-1.5">
@@ -350,7 +348,6 @@
                             <option value="KR">국내주식 (KR)</option>
                         </select>
                     </div>
-                    <span class="text-xs text-slate-400">수량/평가금액/수익률 더블클릭 수정 | 드래그 순서 변경</span>
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
@@ -372,7 +369,7 @@
                         </div>
 
                         <div class="overflow-x-auto">
-                            <table class="w-full text-left text-xs border-collapse">
+                            <table class="w-full text-left text-xs border-collapse min-w-[650px]">
                                 <thead>
                                     <tr class="bg-slate-50 text-slate-500 border-b border-slate-100 font-semibold">
                                         <th class="p-3 w-8"></th>
@@ -380,7 +377,7 @@
                                         <th class="p-3">종목명</th>
                                         <th class="p-3">관련 통장</th>
                                         <th class="p-3 text-right">수량</th>
-                                        <th class="p-3 text-right">평가 금액 (원화 환산)</th>
+                                        <th class="p-3 text-right">평가 금액 (원화)</th>
                                         <th class="p-3 text-right">추정 평단가</th>
                                         <th class="p-3 text-right">수익률</th>
                                         <th class="p-3 text-center">삭제</th>
@@ -392,7 +389,7 @@
                     </div>
 
                     <div class="bg-slate-50/50 p-4 rounded-2xl border border-slate-200/80 flex flex-col items-center justify-center space-y-3">
-                        <span class="text-xs font-bold text-slate-700">자산 비중 차트</span>
+                        <span class="text-xs font-bold text-slate-700">주식 자산 비중 차트</span>
                         <div class="h-64 w-full relative flex justify-center items-center">
                             <canvas id="stock-pie-chart"></canvas>
                         </div>
@@ -400,13 +397,12 @@
                 </div>
             </div>
 
-            <!-- 3. 노후 준비 개인연금 -->
-            <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm space-y-4">
+            <!-- 노후 준비 개인연금 -->
+            <div class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-sm space-y-4">
                 <div class="flex justify-between items-center border-b border-slate-100 pb-3">
                     <h2 class="text-sm font-bold text-slate-800 flex items-center gap-1.5">
                         <i class="fa-solid fa-shield-halved text-purple-600"></i> 노후 준비 개인연금 (연금저축/IRP)
                     </h2>
-                    <span class="text-xs text-slate-500">수량/평가금액 더블클릭 수정 | 드래그 순서 변경</span>
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
@@ -424,7 +420,7 @@
                         </div>
 
                         <div class="overflow-x-auto">
-                            <table class="w-full text-left text-xs border-collapse">
+                            <table class="w-full text-left text-xs border-collapse min-w-[600px]">
                                 <thead>
                                     <tr class="bg-slate-50 text-slate-500 border-b border-slate-100 font-semibold">
                                         <th class="p-3 w-8"></th>
@@ -457,10 +453,10 @@
         <section id="tab-review" class="tab-content hidden space-y-6">
             <div class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <span id="review-current-badge" class="bg-indigo-50 text-indigo-800 font-extrabold px-3 py-2 rounded-xl text-xs flex items-center gap-2 border border-indigo-100">
-                    <i class="fa-solid fa-calendar-days text-indigo-600"></i> <span id="review-badge-text">[2026년 10월 기록 작성/조회 중]</span>
+                    <i class="fa-solid fa-calendar-days text-indigo-600"></i> <span id="review-badge-text">[26.10월 기록 작성/조회 중]</span>
                 </span>
-                <button onclick="saveCurrentMonthData()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-4 py-2.5 rounded-xl font-bold transition flex items-center gap-1.5 shadow-sm">
-                    <i class="fa-solid fa-floppy-disk text-xs"></i> <span id="save-btn-review-label">[월간 리뷰] 10월 기록 동기화/저장</span>
+                <button onclick="saveCurrentMonthData()" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-4 py-2.5 rounded-xl font-bold transition flex items-center justify-center gap-1.5 shadow-sm">
+                    <i class="fa-solid fa-floppy-disk text-xs"></i> <span id="save-btn-review-label">[월간 리뷰] 26.10월 기록 동기화/저장</span>
                 </button>
             </div>
 
@@ -487,7 +483,7 @@
                 </div>
             </div>
 
-            <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm space-y-4">
+            <div class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200 shadow-sm space-y-4">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-slate-100 pb-3">
                     <h3 class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
                         <i class="fa-solid fa-chart-bar text-navy-800"></i> 월별 카테고리 지출 변화 비교
@@ -509,112 +505,183 @@
                     <canvas id="review-comparison-chart"></canvas>
                 </div>
             </div>
-
-            <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm space-y-4">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-slate-100 pb-3">
-                    <h3 class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
-                        <i class="fa-solid fa-bullseye text-indigo-600"></i> 지난달 다짐 점검 & 다음 달 목표 다짐 작성
-                    </h3>
-                    <div class="flex items-center gap-2">
-                        <button onclick="loadPreviousMonthGoals()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-xl text-xs font-bold transition border border-slate-300">
-                            지난달 다짐 불러오기
-                        </button>
-                        <button onclick="saveReviewGoals()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3.5 py-1.5 rounded-xl text-xs font-bold transition shadow-sm">
-                            회고 및 다음 달 다짐 저장
-                        </button>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200/80 space-y-2">
-                        <div class="flex justify-between items-center">
-                            <span class="text-xs font-bold text-slate-700">지난달 다짐 체크리스트 (점검)</span>
-                            <span class="text-[10px] text-slate-400 font-bold" id="prev-goal-date-label">[기준 월]</span>
-                        </div>
-                        <div id="prev-goal-checklist" class="space-y-2 text-xs text-slate-600">
-                            <p class="text-slate-400">저장된 지난달 다짐이 없습니다. '지난달 다짐 불러오기'를 눌러보세요.</p>
-                        </div>
-                    </div>
-
-                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200/80 space-y-2">
-                        <span class="text-xs font-bold text-slate-700 block">다음 달 목표/다짐 (총 3가지)</span>
-                        <div class="space-y-2">
-                            <div class="flex items-center gap-2">
-                                <span class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 font-bold text-[10px] flex items-center justify-center shrink-0">1</span>
-                                <input type="text" id="goal-input-1" placeholder="예: 외식 횟수 주 2회로 제한하기" class="w-full border border-slate-300 rounded-lg p-2 bg-white text-xs font-medium">
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <span class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 font-bold text-[10px] flex items-center justify-center shrink-0">2</span>
-                                <input type="text" id="goal-input-2" placeholder="예: 비상금 통장에서 추가 지출 안 하기" class="w-full border border-slate-300 rounded-lg p-2 bg-white text-xs font-medium">
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <span class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 font-bold text-[10px] flex items-center justify-center shrink-0">3</span>
-                                <input type="text" id="goal-input-3" placeholder="예: 주식 저가 매수 적립 30만원 달성" class="w-full border border-slate-300 rounded-lg p-2 bg-white text-xs font-medium">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-                    <div class="space-y-1">
-                        <span class="text-xs font-bold text-rose-600">은아의 월간 한줄 회고</span>
-                        <textarea id="review-memo-euna" rows="2" placeholder="이번 달 지출 및 자산에 대한 은아의 한줄 회고..." class="w-full border border-slate-300 rounded-xl p-2.5 text-xs bg-white font-medium focus:outline-none focus:ring-1 focus:ring-rose-500"></textarea>
-                    </div>
-                    <div class="space-y-1">
-                        <span class="text-xs font-bold text-sky-600">태준의 월간 한줄 회고</span>
-                        <textarea id="review-memo-taejun" rows="2" placeholder="이번 달 지출 및 자산에 대한 태준의 한줄 회고..." class="w-full border border-slate-300 rounded-xl p-2.5 text-xs bg-white font-medium focus:outline-none focus:ring-1 focus:ring-sky-500"></textarea>
-                    </div>
-                </div>
-            </div>
         </section>
 
         <!-- TAB 4: 자산 추이 -->
         <section id="tab-assets" class="tab-content hidden space-y-6">
-            <div class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <div class="flex items-center gap-2">
-                    <span class="text-xs font-bold text-slate-700">자산 관점:</span>
-                    <div class="bg-slate-100 p-1 rounded-lg flex gap-1 text-xs font-bold">
-                        <button onclick="setAssetPerspective('net')" id="btn-persp-net" class="px-3 py-1 rounded-md bg-navy-950 text-white shadow-sm">순자산 (부채 차감)</button>
-                        <button onclick="setAssetPerspective('gross')" id="btn-persp-gross" class="px-3 py-1 rounded-md text-slate-600 hover:text-white">총자산 (부채 미반영)</button>
+
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-stretch">
+                <!-- 순자산 목표 UI -->
+                <div class="md:col-span-5 bg-indigo-50/40 border border-indigo-100 rounded-2xl p-5 sm:p-6 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <h2 class="text-base font-black text-slate-800 flex items-center gap-2 mb-1">
+                            <span>💸</span> 순자산 이만큼 늘었어요!
+                        </h2>
+                        <p class="text-xs text-slate-400">노란칸에 목표만 입력하면 나머지는 자동으로 채워져요.</p>
+                    </div>
+
+                    <div class="space-y-4 my-4 text-xs font-semibold">
+                        <div class="flex flex-wrap items-center justify-between gap-2">
+                            <span class="text-slate-600 shrink-0">올해 순자산 목표는</span>
+                            <div class="flex items-center gap-1">
+                                <span class="font-extrabold text-slate-800">₩</span>
+                                <input type="number" id="annual-asset-target" value="300000000" onchange="updateAssetGoalCalculation()" class="w-32 sm:w-36 bg-yellow-300 border border-yellow-400 rounded px-2 py-1 font-black text-right text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500">
+                                <span class="text-slate-800">원이고,</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-slate-600" id="asset-target-month-label">26.10월 기준 순자산</span>
+                            <span class="font-black text-slate-900 text-sm" id="asset-target-current-val">₩0</span>
+                        </div>
+                        <div class="flex items-center justify-between border-t border-indigo-100 pt-3">
+                            <span class="text-slate-600">목표 달성률은 약</span>
+                            <span class="font-black text-indigo-700 text-base" id="asset-target-rate">0%</span>
+                        </div>
+                    </div>
+
+                    <div class="text-[11px] text-indigo-500 font-bold bg-white p-2.5 rounded-xl border border-indigo-100 flex justify-between items-center">
+                        <span>KB 부동산 시세 기준:</span>
+                        <button onclick="updateKBRealEstatePrice()" class="underline font-black text-slate-800" id="kb-price-display">780,000,000원</button>
                     </div>
                 </div>
-                <div class="flex items-center gap-2">
-                    <button onclick="updateKBRealEstatePrice()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
-                        <i class="fa-solid fa-house-chimney"></i> KB 시세 수정: <span id="kb-price-display" class="underline font-black">780,000,000원</span>
-                    </button>
+
+                <!-- 월별 자산 비중 도넛 차트 -->
+                <div class="md:col-span-7 bg-white border border-slate-200/80 rounded-2xl p-5 sm:p-6 shadow-sm flex flex-col justify-between">
+                    <div class="flex flex-wrap justify-between items-center border-b border-slate-100 pb-3 gap-2">
+                        <h2 class="text-base font-black text-slate-800 flex items-center gap-2">
+                            <span>👀</span> 월별 자산 비중
+                        </h2>
+                        <div class="flex items-center gap-2">
+                            <select id="asset-pie-month-select" onchange="renderAssetPieChart()" class="bg-slate-100 border border-slate-300 rounded-lg text-xs font-bold px-3 py-1 text-slate-800 focus:outline-none"></select>
+                        </div>
+                    </div>
+                    <p class="text-[11px] text-slate-400 my-1">부동산, 노후(연금), 투자(주식), 저축(예적금) 합계 기준</p>
+
+                    <div class="h-64 sm:h-72 w-full relative flex justify-center items-center p-2">
+                        <canvas id="asset-pie-chart-main"></canvas>
+                    </div>
                 </div>
             </div>
 
-            <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm space-y-3">
-                <div class="flex justify-between items-center">
-                    <h2 class="text-sm font-bold text-slate-800 flex items-center gap-1.5">
-                        <i class="fa-solid fa-vault text-emerald-600"></i> 부부 순자산 성장 추이 & 10억 목표 달성 게이지
-                    </h2>
-                    <span class="text-sm font-black text-emerald-600" id="asset-goal-percent">0.0% 달성</span>
+            <!-- 월별 자산 흐름 한눈에 보기 -->
+            <div class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-sm space-y-4">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-100 pb-3 gap-3">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <h2 class="text-base font-black text-slate-800 flex items-center gap-1.5">
+                            <span>📊</span> 월별 자산 흐름 한눈에 보기
+                        </h2>
+                        <div class="flex items-center gap-1.5 ml-0 sm:ml-2 text-xs font-bold bg-slate-100 px-2.5 py-1 rounded-xl border border-slate-200">
+                            <select id="asset-flow-start-month" onchange="renderAssetComboChart()" class="bg-transparent focus:outline-none cursor-pointer"></select>
+                            <span class="text-slate-400">~</span>
+                            <select id="asset-flow-end-month" onchange="renderAssetComboChart()" class="bg-transparent focus:outline-none cursor-pointer"></select>
+                        </div>
+                    </div>
+                    <span class="text-xs text-slate-400 font-semibold">총자산(파랑) / 부채(빨강) / 순자산(노란선)</span>
                 </div>
-                <div class="w-full bg-slate-100 h-4 rounded-full overflow-hidden border border-slate-200">
-                    <div id="asset-goal-bar" class="bg-emerald-500 h-full transition-all duration-500" style="width: 0%"></div>
-                </div>
-            </div>
-
-            <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm space-y-4">
-                <h3 class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
-                    <i class="fa-solid fa-chart-column text-navy-900"></i> 금융자산 & 부동산 시세 성장 추이 (단위: 억/만원, 소수점 2자리)
-                </h3>
                 <div class="h-80 relative">
                     <canvas id="asset-combo-chart"></canvas>
                 </div>
             </div>
 
-            <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm space-y-4">
+            <!-- 연간 수입 / 지출 / 저축 대시보드 (3x1 세로 배열) -->
+            <div class="flex flex-col space-y-6">
+                <!-- 1행: 수입 리포트 -->
+                <div class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-sm space-y-4">
+                    <h3 class="text-sm font-black text-slate-800 flex items-center gap-1.5 border-b border-slate-100 pb-2">
+                        <span>💰</span> 올해 우리는 얼마나 벌었을까? (수입 리포트)
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+                        <div class="md:col-span-5 overflow-x-auto">
+                            <table class="w-full text-xs text-left border-collapse">
+                                <thead>
+                                    <tr class="bg-slate-100 text-slate-700 border-b">
+                                        <th class="p-2">월</th>
+                                        <th class="p-2 text-right">금액</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-yearly-income" class="divide-y divide-slate-100"></tbody>
+                                <tfoot>
+                                    <tr class="bg-slate-200 font-bold text-slate-900 border-t">
+                                        <td class="p-2">총 수입</td>
+                                        <td class="p-2 text-right font-black" id="total-yearly-income-val">₩0</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                        <div class="md:col-span-7 h-72 relative">
+                            <canvas id="chart-yearly-income"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2행: 지출 리포트 -->
+                <div class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-sm space-y-4">
+                    <h3 class="text-sm font-black text-slate-800 flex items-center gap-1.5 border-b border-slate-100 pb-2">
+                        <span>💸</span> 올해 우리는 얼마나 썼을까? (지출 리포트: 고정+변동)
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+                        <div class="md:col-span-5 overflow-x-auto">
+                            <table class="w-full text-xs text-left border-collapse">
+                                <thead>
+                                    <tr class="bg-slate-100 text-slate-700 border-b">
+                                        <th class="p-2">월</th>
+                                        <th class="p-2 text-right">금액</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-yearly-expense" class="divide-y divide-slate-100"></tbody>
+                                <tfoot>
+                                    <tr class="bg-slate-200 font-bold text-slate-900 border-t">
+                                        <td class="p-2">총 지출</td>
+                                        <td class="p-2 text-right font-black text-rose-600" id="total-yearly-expense-val">₩0</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                        <div class="md:col-span-7 h-72 relative">
+                            <canvas id="chart-yearly-expense"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3행: 저축 리포트 -->
+                <div class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-sm space-y-4">
+                    <h3 class="text-sm font-black text-slate-800 flex items-center gap-1.5 border-b border-slate-100 pb-2">
+                        <span>🏦</span> 올해 우리는 얼마나 모았을까? (저축 리포트: 수입-지출)
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+                        <div class="md:col-span-5 overflow-x-auto">
+                            <table class="w-full text-xs text-left border-collapse">
+                                <thead>
+                                    <tr class="bg-slate-100 text-slate-700 border-b">
+                                        <th class="p-2">월</th>
+                                        <th class="p-2 text-right">금액</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-yearly-savings" class="divide-y divide-slate-100"></tbody>
+                                <tfoot>
+                                    <tr class="bg-slate-200 font-bold text-slate-900 border-t">
+                                        <td class="p-2">총 저축</td>
+                                        <td class="p-2 text-right font-black text-emerald-700" id="total-yearly-savings-val">₩0</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                        <div class="md:col-span-7 h-72 relative">
+                            <canvas id="chart-yearly-savings"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 종합 금융/부동산 자산 히스토리 관리 테이블 -->
+            <div class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-sm space-y-4">
                 <div class="flex justify-between items-center border-b border-slate-100 pb-3">
                     <h3 class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
                         <i class="fa-solid fa-table text-slate-600"></i> 종합 금융/부동산 자산 히스토리 관리
                     </h3>
-                    <span class="text-[11px] text-slate-400">설정된 일반 금융자산 및 부동산/부채 반영</span>
                 </div>
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs border-collapse">
+                    <table class="w-full text-left text-xs border-collapse min-w-[650px]">
                         <thead>
                             <tr class="bg-slate-100 text-slate-600 border-b">
                                 <th class="p-2.5">기준 연월</th>
@@ -632,48 +699,15 @@
                 </div>
             </div>
 
-            <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm space-y-4">
-                <h3 class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
-                    <i class="fa-solid fa-shield-halved text-purple-600"></i> 노후 준비 개인연금 자산 추이 (단위: 억/만원, 소수점 2자리)
-                </h3>
-                <div class="h-80 relative">
-                    <canvas id="pension-combo-chart"></canvas>
-                </div>
-            </div>
-
-            <!-- 개인연금 히스토리 (디자인을 금융 히스토리 스타일로 통일) -->
-            <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm space-y-4">
-                <div class="flex justify-between items-center border-b border-slate-100 pb-3">
-                    <h3 class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
-                        <i class="fa-solid fa-table text-slate-600"></i> 개인연금 자산 히스토리 관리
-                    </h3>
-                    <span class="text-[11px] text-slate-400">설정된 개인연금 자산 항목 기준 합계</span>
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs border-collapse">
-                        <thead>
-                            <tr class="bg-slate-100 text-slate-600 border-b">
-                                <th class="p-2.5">기준 연월</th>
-                                <th class="p-2.5">은아 개인연금</th>
-                                <th class="p-2.5">태준 개인연금</th>
-                                <th class="p-2.5">공통 개인연금</th>
-                                <th class="p-2.5 font-bold text-navy-950">합계 연금자산</th>
-                            </tr>
-                        </thead>
-                        <tbody id="pension-history-table-body" class="divide-y divide-slate-100"></tbody>
-                    </table>
-                </div>
-            </div>
         </section>
 
         <!-- TAB 5: 고정 지출 일정 -->
         <section id="tab-schedules" class="tab-content hidden space-y-6">
-            <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm space-y-4">
+            <div class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-sm space-y-4">
                 <div class="flex justify-between items-center border-b border-slate-100 pb-3">
                     <h2 class="text-sm font-bold text-slate-800 flex items-center gap-1.5">
                         <i class="fa-regular fa-clock text-indigo-600"></i> 매달 자동이체 & 카드값 지출 일정 설정
                     </h2>
-                    <span class="text-xs text-slate-400">행 드래그로 순서 변경 가능</span>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-12 gap-2 text-xs bg-slate-50/80 p-3.5 rounded-xl border border-slate-200/80">
@@ -707,7 +741,7 @@
                 </div>
 
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs border-collapse">
+                    <table class="w-full text-left text-xs border-collapse min-w-[600px]">
                         <thead>
                             <tr class="bg-slate-50 text-slate-500 border-b border-slate-100 font-semibold">
                                 <th class="p-3 w-8"></th>
@@ -728,22 +762,20 @@
 
         <!-- TAB 6: 설정 / Firebase -->
         <section id="tab-settings" class="tab-content hidden space-y-6">
-            
             <!-- Firebase Firestore 설정 카드 UI -->
-            <div class="bg-white rounded-2xl p-5 border border-amber-200/90 shadow-sm space-y-4 relative overflow-hidden">
+            <div class="bg-white rounded-2xl p-4 sm:p-5 border border-amber-200/90 shadow-sm space-y-4 relative overflow-hidden">
                 <div class="bg-amber-500/10 -mx-5 -mt-5 p-4 border-b border-amber-200/80 flex items-center justify-between">
                     <div>
                         <h2 class="text-sm font-black text-amber-900 flex items-center gap-2">
                             <i class="fa-solid fa-fire text-amber-600 text-base"></i> Google Firebase Firestore 실시간 연동 설정
                         </h2>
-                        <p class="text-xs text-amber-700 mt-0.5">Firebase Config를 등록하면 부부 각자의 스마트폰에서 데이터가 실시간으로 수 초 내에 상호 동기화됩니다.</p>
                     </div>
                     <span id="firebase-setting-status" class="text-xs font-extrabold px-3 py-1 rounded-full bg-amber-100 text-amber-800 border border-amber-300">연동 대기 중</span>
                 </div>
 
                 <div class="space-y-3 pt-1">
-                    <label class="block text-xs font-bold text-slate-700">Firebase Config JSON 또는 키 항목 연동</label>
-                    <textarea id="firebase-config-json" rows="7" class="w-full border border-slate-300 rounded-xl p-3 text-xs font-mono bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-500 transition"></textarea>
+                    <label class="block text-xs font-bold text-slate-700">Firebase Config JSON 문자열</label>
+                    <textarea id="firebase-config-json" rows="6" class="w-full border border-slate-300 rounded-xl p-3 text-xs font-mono bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-500 transition"></textarea>
                     
                     <div class="flex flex-wrap items-center gap-2">
                         <button onclick="saveAndConnectFirebase()" class="bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition shadow-sm flex items-center gap-1.5">
@@ -756,41 +788,26 @@
                 </div>
             </div>
 
-            <!-- 통장 쪼개기 설정 카드 UI -->
-            <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm space-y-4">
+            <!-- 통장 쪼개기 설정 카드 (유효 통장 드롭다운 지정 방식) -->
+            <div class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-sm space-y-4">
                 <div class="border-b border-slate-100 pb-3">
                     <h2 class="text-sm font-bold text-slate-800 flex items-center gap-2">
                         <i class="fa-solid fa-diagram-project text-emerald-600"></i> 통장 쪼개기 설정
                     </h2>
-                    <p class="text-xs text-slate-500 mt-0.5">고정지출 차감 후 설정 금액이 배분되며, 남은 금액은 비상금 통장으로 이납됩니다. (행 드래그 가능)</p>
                 </div>
                 <div class="bg-slate-50/80 p-3.5 rounded-xl border border-slate-200/80 space-y-3">
                     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-12 gap-2 text-xs">
-                        <!-- 1. 소유자 -->
-                        <div class="md:col-span-2">
-                            <select id="split-owner-input" class="w-full border border-slate-300 p-2 rounded-lg bg-white font-bold text-slate-700">
-                                <option value="common">부부 공통</option>
-                                <option value="euna">은아 통장</option>
-                                <option value="taejun">태준 통장</option>
-                            </select>
-                        </div>
-                        <!-- 2. 은행/증권사 -->
                         <div class="md:col-span-3">
-                            <input type="text" id="split-bank-input" placeholder="은행/증권사 (예: 카카오뱅크)" class="w-full border border-slate-300 p-2 rounded-lg bg-white font-medium">
+                            <select id="split-account-select" class="w-full border border-slate-300 p-2 rounded-lg bg-white font-bold text-slate-800"></select>
                         </div>
-                        <!-- 3. 통장표시명 -->
-                        <div class="md:col-span-4">
-                            <input type="text" id="split-purpose-input" placeholder="통장 표시명 (예: 공통 생활비 통장)" class="w-full border border-slate-300 p-2 rounded-lg bg-white font-medium">
+                        <div class="md:col-span-6">
+                            <input type="text" id="split-purpose-input" placeholder="통장 쪼개기 표기 목적 (예: 공통 생활비 통장)" class="w-full border border-slate-300 p-2 rounded-lg bg-white font-medium">
                         </div>
-                        <!-- 4. 이체 금액 -->
                         <div class="md:col-span-3">
                             <input type="number" id="split-amount-input" placeholder="이체 금액 (원)" class="w-full border border-slate-300 p-2 rounded-lg bg-white font-bold text-right">
                         </div>
                     </div>
-                    <div class="flex items-center justify-between">
-                        <label class="flex items-center gap-1.5 text-xs font-semibold text-slate-600 cursor-pointer">
-                            <input type="checkbox" id="split-is-invest-input" class="w-4 h-4 text-emerald-600 rounded border-slate-300"> 이 통장은 저축/투자 목적임
-                        </label>
+                    <div class="flex items-center justify-end">
                         <button onclick="addSplitRule()" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs px-4 py-2 rounded-lg transition shadow-sm">
                             통장 규칙 추가
                         </button>
@@ -798,7 +815,7 @@
                 </div>
 
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs border-collapse">
+                    <table class="w-full text-left text-xs border-collapse min-w-[550px]">
                         <thead>
                             <tr class="bg-slate-50 text-slate-500 border-b border-slate-100 font-semibold">
                                 <th class="p-3 w-8"></th>
@@ -815,14 +832,11 @@
             </div>
 
             <!-- 유효 통장 목록 설정 -->
-            <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm space-y-4">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-slate-100 pb-3">
-                    <div>
-                        <h2 class="text-sm font-bold text-slate-800 flex items-center gap-2">
-                            <i class="fa-solid fa-building-columns text-indigo-600"></i> 유효 통장 목록 및 자산 집계 체크 설정
-                        </h2>
-                        <p class="text-xs text-slate-500 mt-0.5">체크박스를 클릭하여 금융자산/개인연금 포함 여부를 바로 변경할 수 있습니다 (행 드래그 가능).</p>
-                    </div>
+            <div class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-sm space-y-4">
+                <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                    <h2 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+                        <i class="fa-solid fa-building-columns text-indigo-600"></i> 유효 통장 목록 및 자산 집계 체크 설정
+                    </h2>
                 </div>
 
                 <div class="bg-slate-50/80 p-3.5 rounded-xl border border-slate-200/80">
@@ -837,10 +851,10 @@
                         
                         <div class="flex items-center gap-3 py-1 shrink-0">
                             <label class="flex items-center gap-1.5 font-bold text-slate-700 cursor-pointer">
-                                <input type="checkbox" id="setting-acc-is-finance" checked class="w-4 h-4 text-indigo-600 rounded border-slate-300"> 일반금융자산 포함
+                                <input type="checkbox" id="setting-acc-is-finance" checked class="w-4 h-4 text-indigo-600 rounded border-slate-300"> 일반금융자산
                             </label>
                             <label class="flex items-center gap-1.5 font-bold text-purple-700 cursor-pointer">
-                                <input type="checkbox" id="setting-acc-is-pension" class="w-4 h-4 text-purple-600 rounded border-slate-300"> 개인연금 자산
+                                <input type="checkbox" id="setting-acc-is-pension" class="w-4 h-4 text-purple-600 rounded border-slate-300"> 개인연금자산
                             </label>
                         </div>
 
@@ -851,15 +865,15 @@
                 </div>
 
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs border-collapse">
+                    <table class="w-full text-left text-xs border-collapse min-w-[600px]">
                         <thead>
                             <tr class="bg-slate-50 text-slate-500 border-b border-slate-100 font-semibold">
                                 <th class="p-3 w-8"></th>
                                 <th class="p-3 w-16">소유자</th>
                                 <th class="p-3 w-28">은행/증권사</th>
                                 <th class="p-3">통장 표시명</th>
-                                <th class="p-3 text-center w-36">일반 금융자산 집계</th>
-                                <th class="p-3 text-center w-36">개인연금 집계</th>
+                                <th class="p-3 text-center w-36">일반 금융자산</th>
+                                <th class="p-3 text-center w-36">개인연금</th>
                                 <th class="p-3 text-center w-16">삭제</th>
                             </tr>
                         </thead>
@@ -868,36 +882,8 @@
                 </div>
             </div>
 
-            <!-- 고정/변동 지출 카테고리 관리 카드 UI -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm space-y-4">
-                    <div class="border-b border-slate-100 pb-3">
-                        <h2 class="text-sm font-bold text-slate-800 flex items-center gap-2">
-                            <i class="fa-solid fa-lock text-indigo-600"></i> 고정 지출 카테고리 관리
-                        </h2>
-                    </div>
-                    <div class="flex gap-2 text-xs">
-                        <input type="text" id="input-new-fix-cat" placeholder="카테고리명" class="flex-grow border border-slate-300 p-2.5 rounded-xl bg-white text-slate-800 font-medium">
-                        <button onclick="addFixCategory()" class="bg-slate-900 hover:bg-slate-800 text-white font-bold px-4 py-2.5 rounded-xl transition shrink-0">추가</button>
-                    </div>
-                    <div id="fix-category-list" class="divide-y divide-slate-100 text-xs"></div>
-                </div>
-
-                <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm space-y-4">
-                    <div class="border-b border-slate-100 pb-3">
-                        <h2 class="text-sm font-bold text-slate-800 flex items-center gap-2">
-                            <i class="fa-solid fa-tags text-amber-500"></i> 변동 지출 카테고리 관리
-                        </h2>
-                    </div>
-                    <div class="flex gap-2 text-xs">
-                        <input type="text" id="input-new-var-cat" placeholder="카테고리명" class="flex-grow border border-slate-300 p-2.5 rounded-xl bg-white text-slate-800 font-medium">
-                        <button onclick="addVarCategory()" class="bg-slate-900 hover:bg-slate-800 text-white font-bold px-4 py-2.5 rounded-xl transition shrink-0">추가</button>
-                    </div>
-                    <div id="var-category-list" class="divide-y divide-slate-100 text-xs"></div>
-                </div>
-            </div>
-
-            <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm space-y-4">
+            <!-- 백업 및 관리 -->
+            <div class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-sm space-y-4">
                 <h2 class="text-sm font-bold text-slate-800 border-b border-slate-100 pb-3 flex items-center gap-2">
                     <i class="fa-solid fa-database text-slate-600"></i> 데이터 백업 및 관리
                 </h2>
@@ -918,9 +904,8 @@
 
     </main>
 
-    <!-- FOOTER -->
     <footer class="mt-auto py-4 text-center text-xs text-slate-400 border-t border-slate-200 bg-white">
-        © 2026 은아 & 태준 가계부 v1.0
+        © 2026 은아 & 태준 가계부 v2.0 PRO
     </footer>
 
     <!-- Firebase SDK v10 (ES Modules) -->
@@ -931,13 +916,11 @@
         window.firebaseModules = { initializeApp, getApps, deleteApp, getFirestore, doc, onSnapshot, setDoc, getDoc };
     </script>
 
-    <!-- JAVASCRIPT STATE & CORE LOGIC -->
     <script>
-        const STORAGE_KEY_MAIN = 'SMART_LEDGER_V35_DATA';
-        const STORAGE_KEY_MONTHLY = 'SMART_LEDGER_V35_MONTHLY_MAP';
-        const STORAGE_KEY_FIREBASE_CONFIG = 'SMART_LEDGER_V35_FIREBASE_CONFIG';
+        const STORAGE_KEY_MAIN = 'SMART_LEDGER_V20_DATA';
+        const STORAGE_KEY_MONTHLY = 'SMART_LEDGER_V20_MONTHLY_MAP';
+        const STORAGE_KEY_FIREBASE_CONFIG = 'SMART_LEDGER_V20_FIREBASE_CONFIG';
 
-        // 기본 Firebase Config 정보
         const DEFAULT_FIREBASE_CONFIG = {
             apiKey: "AIzaSyCPYkBo2JIvyTwzASt8dF47w-XWZYS3b_I",
             authDomain: "storage-d7e4f.firebaseapp.com",
@@ -955,18 +938,21 @@
         let pensionPieChart = null;
         let reviewComparisonChart = null;
         let assetComboChart = null;
-        let pensionComboChart = null;
+        let assetPieChartMain = null;
 
-        let assetPerspective = 'net'; 
+        let chartYearlyIncome = null;
+        let chartYearlyExpense = null;
+        let chartYearlySavings = null;
+
         let reviewExpType = 'variable'; 
         let kbRealEstatePrice = 780000000;
         let currentExchangeRate = 1380;
 
-        // Firebase 연동 인스턴스
         let dbInstance = null;
         let unsubscribeSnapshot = null;
         let firebaseAppInstance = null;
         let isFirebaseConnected = false;
+        let draggedIndex = null;
 
         const defaultAppData = {
             accounts: [
@@ -991,66 +977,82 @@
             categories: ["생필품", "경조사", "집밥", "배달/외식/포장", "모임비 (친구/회사)", "데이트", "카페/간식"],
             fixedCategories: ["주담대 원리금", "아파트 관리비", "통신비", "보험료", "구독료", "교통비(톨비/유류비)", "취미 (수영)"],
             splitRules: [
-                { id: "s1", owner: "common", bank: "토스뱅크", accountId: "acc_1793332856223", amount: 1500000, purpose: "월 공통 생활비" },
-                { id: "s2", owner: "common", bank: "한국투자증권", accountId: "acc_1793333072307", amount: 2000000, purpose: "부부 공동 저축 및 투자" },
-                { id: "s3", owner: "euna", bank: "하나은행", accountId: "acc_1793332882188", amount: 400000, purpose: "은아 개인 용돈" },
-                { id: "s4", owner: "taejun", bank: "토스뱅크", accountId: "acc4", amount: 400000, purpose: "태준 개인 용돈" }
+                { id: "s_1794133467383", accountId: "acc_1793332882188", amount: 300000, purpose: "개인 용돈" },
+                { id: "s_1794133495080", accountId: "acc_1793332998956", amount: 180000, purpose: "관리비" },
+                { id: "s_1794133579298", accountId: "acc_1793332937965", amount: 65483, purpose: "구독료/통신비/인터넷" },
+                { id: "s_1794133639441", accountId: "acc_1793333007341", amount: 154393, purpose: "보험료" },
+                { id: "s_1794133667791", accountId: "acc_1793333040491", amount: 100000, purpose: "경조사" },
+                { id: "s_1794133714710", accountId: "acc_1793332856223", amount: 250000, purpose: "모임 통장 생활비" },
+                { id: "s_1794133735921", accountId: "acc_1793333022738", amount: 2107235, purpose: "주택담보대출" }
             ],
             schedules: [
-                { id: 1793333573004, day: 20, owner: "euna", category: "통신비", title: "통신비", accountId: "acc_1793332937965", amount: 16910 },
+                { id: 1793333803773, day: 21, owner: "euna", category: "구독료", title: "은아 구독료", accountId: "acc_1793332937965", amount: 25473 },
+                { id: 1793333912545, day: 21, owner: "common", category: "아파트 관리비", title: "아파트 관리비", accountId: "acc_1793332998956", amount: 180000 },
+                { id: 1794134007872, day: 21, owner: "common", category: "구독료", title: "인터넷", accountId: "acc_1793332937965", amount: 23100 },
                 { id: 1793333629074, day: 25, owner: "euna", category: "보험료", title: "흥국화재", accountId: "acc_1793333007341", amount: 84693 },
                 { id: 1793333645146, day: 25, owner: "euna", category: "보험료", title: "현대해상", accountId: "acc_1793333007341", amount: 69700 },
-                { id: 1793333803773, day: 21, owner: "euna", category: "구독료", title: "은아 구독료", accountId: "acc_1793332937965", amount: 25473 },
                 { id: 1793333845906, day: 4, owner: "common", category: "주담대 원리금", title: "주담대", accountId: "acc_1793333022738", amount: 2107235 },
-                { id: 1793333912545, day: 21, owner: "common", category: "아파트 관리비", title: "아파트 관리비", accountId: "acc_1793332998956", amount: 180000 }
+                { id: 1793333573004, day: 20, owner: "euna", category: "통신비", title: "통신비", accountId: "acc_1793332937965", amount: 16910 }
             ],
             savings: [
-                { id: 1793334564979, name: "경조사비", owner: "euna", accountId: "acc_1793333040491", monthly: 100000, rate: 0, total: 100000 }
+                { id: 1793334564979, name: "경조사 적금", owner: "euna", accountId: "acc_1793333040491", monthly: 100000, rate: 3.5, total: 1000000 }
             ],
             stocks: [
-                { id: 1, market: "US", name: "Apple (AAPL)", owner: "taejun", accountId: "acc4", qty: 15, eval: 3260, rate: "+5.40%" },
-                { id: 2, market: "KR", name: "삼성전자", owner: "euna", accountId: "acc_1793332901875", qty: 50, eval: 11600000, rate: "-2.10%" },
-                { id: 1793334676677, market: "US", name: "SPY", owner: "common", accountId: "acc_1793332856223", qty: 1, eval: 560, rate: "+1.20%" }
+                { id: 1793354770670, market: "US", name: "TSMC", owner: "euna", accountId: "acc_1793333115649", qty: 4, eval: 433.71, rate: "-15.4" },
+                { id: 1793354845866, market: "US", name: "퀄컴", owner: "euna", accountId: "acc_1793333115649", qty: 2, eval: 179.36, rate: "-1.37" },
+                { id: 1793354913411, market: "KR", name: "KODEX 미국빅테크10(H)", owner: "euna", accountId: "acc_1793333072307", qty: 40, eval: 2374400, rate: "19.6" }
             ],
             pensions: [
-                { id: 1, name: "TDF2050 연금펀드", owner: "taejun", accountId: "acc4", qty: 100, eval: 8500000, rate: "+4.20%" }
+                { id: 1, name: "TDF2050 연금펀드", owner: "taejun", accountId: "acc4", qty: 100, eval: 8500000, rate: "+4.20%" },
+                { id: 2, name: "NH 개인연금펀드", owner: "euna", accountId: "acc_1793333134512", qty: 250, eval: 17394284, rate: "+6.10%" }
             ],
             assetHistory: [
-                { month: "2026-09", eunaFin: 8076679, taejunFin: 650000, commonFin: 100000, re: 780000000, debt: 415000000 }
+                { month: "2026-01", eunaFin: 8719288, taejunFin: 650000, commonFin: 100000, re: 654250000, debt: 429303114 },
+                { month: "2026-02", eunaFin: 8800000, taejunFin: 700000, commonFin: 100000, re: 660000000, debt: 428000000 },
+                { month: "2026-03", eunaFin: 8088418, taejunFin: 1000000, commonFin: 0, re: 730000000, debt: 428701520 },
+                { month: "2026-04", eunaFin: 12721351, taejunFin: 1000000, commonFin: 0, re: 730000000, debt: 428097815 },
+                { month: "2026-05", eunaFin: 24224549, taejunFin: 1000000, commonFin: 0, re: 730000000, debt: 427491992 },
+                { month: "2026-09", eunaFin: 8076679, taejunFin: 650000, commonFin: 100000, re: 780000000, debt: 415000000 },
+                { month: "2026-10", eunaFin: 8826679, taejunFin: 650000, commonFin: 100000, re: 780000000, debt: 412000000 }
             ],
             pensionHistory: [
                 { month: "2026-08", eunaPen: 5000000, taejunPen: 8000000, commonPen: 0 },
                 { month: "2026-09", eunaPen: 5200000, taejunPen: 8300000, commonPen: 0 },
                 { month: "2026-10", eunaPen: 20038099, taejunPen: 8500000, commonPen: 0 }
-            ],
-            monthlyGoals: {
-                "2026-10": { goals: ["다음엔 잘하자", "", ""], memos: { euna: "", taejun: "" } }
-            }
+            ]
         };
 
         const defaultMonthlyMap = {
-            '2026-10': {
-                salary: 8000000,
-                bonus: 500000,
-                accounts: defaultAppData.accounts,
-                expenses: defaultAppData.expenses
-            }
+            '2026-01': { salary: 4200000, bonus: 0, expenses: [] },
+            '2026-02': { salary: 4516970, bonus: 0, expenses: [] },
+            '2026-03': { salary: 4189750, bonus: 0, expenses: [] },
+            '2026-04': { salary: 3939310, bonus: 0, expenses: [] },
+            '2026-05': { salary: 4000000, bonus: 0, expenses: [] },
+            '2026-10': { salary: 8000000, bonus: 500000, expenses: defaultAppData.expenses },
+            '2026-12': { salary: 12240763, bonus: 0, expenses: [] }
         };
 
         let appData = {};
         let monthlyDataMap = {};
 
-        // LocalStorage 저장
+        // 3. 날짜 포맷팅 함수: 2026-04 -> 26.04월
+        function formatDateShort(dateStr) {
+            if (!dateStr || !dateStr.includes('-')) return dateStr;
+            const parts = dateStr.split('-');
+            const year = parts[0].slice(-2);
+            const month = parts[1];
+            return `${year}.${month}월`;
+        }
+
         function saveToLocalStorage() {
             try {
                 localStorage.setItem(STORAGE_KEY_MAIN, JSON.stringify(appData));
                 localStorage.setItem(STORAGE_KEY_MONTHLY, JSON.stringify(monthlyDataMap));
             } catch (e) {
-                console.error("LocalStorage 저장 중 오류 발생:", e);
+                console.error("LocalStorage 저장 실패:", e);
             }
         }
 
-        // Firebase Firestore 및 LocalStorage 종합 데이터 싱크
         async function saveDataSync() {
             saveToLocalStorage();
             if (isFirebaseConnected && dbInstance && window.firebaseModules) {
@@ -1062,7 +1064,7 @@
                         updatedAt: new Date().toISOString()
                     });
                 } catch (err) {
-                    console.error("Firestore 동기화 저장 실패:", err);
+                    console.error("Firestore 저장 실패:", err);
                 }
             }
         }
@@ -1093,11 +1095,54 @@
             renderAssetChartsAndTables();
             renderSchedules();
             renderSettingsAccounts();
-            renderCategoryManagementCards();
             renderSplitRules();
         }
 
-        // Firebase 연동
+        // 2. 리스트 드래그 앤 드롭 (Drag & Drop) 순서 변경 바인딩
+        function makeTableDraggable(tableBodyId, dataArray, renderCallback) {
+            const tbody = document.getElementById(tableBodyId);
+            if (!tbody) return;
+
+            const rows = tbody.querySelectorAll('tr');
+            rows.forEach((row, index) => {
+                row.classList.add('draggable-row');
+                row.setAttribute('draggable', 'true');
+                row.setAttribute('data-index', index);
+
+                row.ondragstart = (e) => {
+                    draggedIndex = index;
+                    e.dataTransfer.effectAllowed = 'move';
+                    row.classList.add('opacity-50');
+                };
+
+                row.ondragend = () => {
+                    row.classList.remove('opacity-50');
+                    rows.forEach(r => r.classList.remove('drag-over'));
+                };
+
+                row.ondragover = (e) => {
+                    e.preventDefault();
+                    row.classList.add('drag-over');
+                };
+
+                row.ondragleave = () => {
+                    row.classList.remove('drag-over');
+                };
+
+                row.ondrop = (e) => {
+                    e.preventDefault();
+                    row.classList.remove('drag-over');
+                    const targetIndex = parseInt(row.getAttribute('data-index'));
+                    if (draggedIndex !== null && draggedIndex !== targetIndex) {
+                        const movedItem = dataArray.splice(draggedIndex, 1)[0];
+                        dataArray.splice(targetIndex, 0, movedItem);
+                        saveDataSync();
+                        renderCallback();
+                    }
+                };
+            });
+        }
+
         async function connectFirebaseWithConfig(configObj) {
             if (!window.firebaseModules) {
                 setTimeout(() => connectFirebaseWithConfig(configObj), 500);
@@ -1105,20 +1150,14 @@
             }
             try {
                 const { initializeApp, getApps, deleteApp, getFirestore, doc, onSnapshot, getDoc, setDoc } = window.firebaseModules;
-                
-                if (getApps().length > 0) {
-                    await deleteApp(getApps()[0]);
-                }
+                if (getApps().length > 0) await deleteApp(getApps()[0]);
 
                 firebaseAppInstance = initializeApp(configObj);
                 dbInstance = getFirestore(firebaseAppInstance);
 
-                const statusBadge = document.getElementById('firebase-status-badge');
-                const settingStatus = document.getElementById('firebase-setting-status');
-
                 const docRef = doc(dbInstance, 'smart_ledger', 'shared_data');
-
                 const docSnap = await getDoc(docRef);
+
                 if (!docSnap.exists()) {
                     await setDoc(docRef, {
                         appData: appData,
@@ -1136,17 +1175,12 @@
                         saveToLocalStorage();
                         refreshAllUI();
                     }
-                }, (error) => {
-                    console.error("Firebase Snapshot Error:", error);
-                    updateFirebaseUIStatus(false, "연동 오류");
                 });
 
                 isFirebaseConnected = true;
                 updateFirebaseUIStatus(true, "온라인 (Firestore)");
                 localStorage.setItem(STORAGE_KEY_FIREBASE_CONFIG, JSON.stringify(configObj));
-
             } catch (err) {
-                console.error("Firebase 연결 실패:", err);
                 updateFirebaseUIStatus(false, "연동 실패");
             }
         }
@@ -1154,10 +1188,9 @@
         function updateFirebaseUIStatus(isConnected, text) {
             const statusBadge = document.getElementById('firebase-status-badge');
             const settingStatus = document.getElementById('firebase-setting-status');
-            
             if (isConnected) {
                 if (statusBadge) {
-                    statusBadge.className = "text-[10px] px-2 py-0.5 rounded-full font-bold flex items-center gap-1 bg-emerald-500/20 text-emerald-300 border border-emerald-400/30";
+                    statusBadge.className = "text-[9px] sm:text-[10px] px-2 py-0.5 rounded-full font-bold flex items-center gap-1 bg-emerald-500/20 text-emerald-300 border border-emerald-400/30";
                     statusBadge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> ${text}`;
                 }
                 if (settingStatus) {
@@ -1166,7 +1199,7 @@
                 }
             } else {
                 if (statusBadge) {
-                    statusBadge.className = "text-[10px] px-2 py-0.5 rounded-full font-bold flex items-center gap-1 bg-amber-500/20 text-amber-300 border border-amber-400/30";
+                    statusBadge.className = "text-[9px] sm:text-[10px] px-2 py-0.5 rounded-full font-bold flex items-center gap-1 bg-amber-500/20 text-amber-300 border border-amber-400/30";
                     statusBadge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span> ${text}`;
                 }
                 if (settingStatus) {
@@ -1178,16 +1211,8 @@
 
         function saveAndConnectFirebase() {
             const raw = document.getElementById('firebase-config-json').value.trim();
-            if (!raw) {
-                alert("Firebase Config JSON 문자열을 입력하세요.");
-                return;
-            }
-            try {
-                const config = JSON.parse(raw);
-                connectFirebaseWithConfig(config);
-            } catch (e) {
-                alert("JSON 형식이 맞지 않습니다. JSON 올바른 포맷으로 적어주세요.");
-            }
+            if (!raw) return alert("Firebase Config JSON을 입력해주세요.");
+            try { connectFirebaseWithConfig(JSON.parse(raw)); } catch (e) { alert("JSON 형식이 올바르지 않습니다."); }
         }
 
         function disconnectFirebase() {
@@ -1200,9 +1225,8 @@
         }
 
         function resetDataToDefault() {
-            if (confirm("정말로 모든 데이터를 초기화하시겠습니까? (이 작업은 되돌릴 수 없습니다)")) {
-                localStorage.removeItem(STORAGE_KEY_MAIN);
-                localStorage.removeItem(STORAGE_KEY_MONTHLY);
+            if (confirm("정말로 모든 데이터를 초기화하시겠습니까?")) {
+                localStorage.clear();
                 appData = JSON.parse(JSON.stringify(defaultAppData));
                 monthlyDataMap = JSON.parse(JSON.stringify(defaultMonthlyMap));
                 saveDataSync();
@@ -1216,9 +1240,7 @@
         }
 
         function formatAssetUnit(val) {
-            if (val >= 100000000) return (val / 100000000).toFixed(2) + '억';
-            else if (val >= 10000) return (val / 10000).toFixed(2) + '만';
-            return val.toLocaleString() + '원';
+            return '₩' + (val || 0).toLocaleString();
         }
 
         function getAccountOwnerBadge(owner) {
@@ -1231,24 +1253,15 @@
             currentMode = mode;
             ['euna', 'taejun', 'all'].forEach(m => {
                 const btn = document.getElementById(`btn-mode-${m}`);
-                if (btn) btn.className = "px-3 py-1.5 rounded-md text-xs font-semibold transition flex items-center gap-1.5 text-slate-300 hover:text-white";
+                if (btn) btn.className = "px-2 sm:px-3 py-1 sm:py-1.5 rounded-md text-xs font-semibold transition flex items-center gap-1 text-slate-300 hover:text-white";
             });
             const activeBtn = document.getElementById(`btn-mode-${mode}`);
             if (activeBtn) {
-                activeBtn.className = mode === 'euna' ? "px-3 py-1.5 rounded-md text-xs font-semibold transition flex items-center gap-1.5 bg-rose-500 text-white shadow-sm"
-                    : mode === 'taejun' ? "px-3 py-1.5 rounded-md text-xs font-semibold transition flex items-center gap-1.5 bg-sky-500 text-white shadow-sm"
-                    : "px-3 py-1.5 rounded-md text-xs font-semibold transition flex items-center gap-1.5 bg-white text-navy-950 shadow-sm";
+                activeBtn.className = mode === 'euna' ? "px-2 sm:px-3 py-1 sm:py-1.5 rounded-md text-xs font-semibold transition flex items-center gap-1 bg-rose-500 text-white shadow-sm"
+                    : mode === 'taejun' ? "px-2 sm:px-3 py-1 sm:py-1.5 rounded-md text-xs font-semibold transition flex items-center gap-1 bg-sky-500 text-white shadow-sm"
+                    : "px-2 sm:px-3 py-1 sm:py-1.5 rounded-md text-xs font-semibold transition flex items-center gap-1 bg-white text-navy-950 shadow-sm";
             }
-            calculateMonthlySummary();
-            renderAccountBalances();
-            renderVariableExpenses();
-            renderSchedules();
-            renderCalendar();
-            renderSettingsAccounts();
-            renderInvestments();
-            renderReviewDashboard();
-            renderAssetChartsAndTables();
-            renderSplitRules();
+            refreshAllUI();
         }
 
         function switchTab(tabId) {
@@ -1267,7 +1280,6 @@
             if (tabId === 'invest') renderInvestments();
             if (tabId === 'settings') {
                 renderSettingsAccounts();
-                renderCategoryManagementCards();
                 renderSplitRules();
             }
         }
@@ -1279,14 +1291,14 @@
                 const [yr, mo] = inputMonth.split('-').map(Number);
                 calendarDate = new Date(yr, mo - 1, 1);
                 
-                const badgeText = `[${yr}년 ${mo}월 기록 작성/조회 중]`;
-                document.getElementById('monthly-badge-text').innerText = badgeText;
-                document.getElementById('invest-badge-text').innerText = badgeText;
-                document.getElementById('review-badge-text').innerText = badgeText;
+                const shortDateText = formatDateShort(currentMonth);
+                document.getElementById('monthly-badge-text').innerText = `[${shortDateText} 기록 작성/조회 중]`;
+                document.getElementById('invest-badge-text').innerText = `[${shortDateText} 기록 작성/조회 중]`;
+                document.getElementById('review-badge-text').innerText = `[${shortDateText} 기록 작성/조회 중]`;
 
-                document.getElementById('save-btn-month-label').innerText = `[월별 가계부] ${mo}월 기록 동기화/저장`;
-                document.getElementById('save-btn-invest-label').innerText = `[저축/투자] ${mo}월 기록 동기화/저장`;
-                document.getElementById('save-btn-review-label').innerText = `[월간 리뷰] ${mo}월 기록 동기화/저장`;
+                document.getElementById('save-btn-month-label').innerText = `[월별 가계부] ${shortDateText} 기록 동기화/저장`;
+                document.getElementById('save-btn-invest-label').innerText = `[저축/투자] ${shortDateText} 기록 동기화/저장`;
+                document.getElementById('save-btn-review-label').innerText = `[월간 리뷰] ${shortDateText} 기록 동기화/저장`;
 
                 if (!monthlyDataMap[currentMonth]) {
                     monthlyDataMap[currentMonth] = {
@@ -1303,7 +1315,8 @@
                 document.getElementById('input-bonus').value = monthlyDataMap[currentMonth].bonus || '';
 
                 const prevDate = new Date(yr, mo - 2, 1);
-                document.getElementById('btn-save-prev-asset-label').innerText = `${prevDate.getMonth() + 1}월 자산으로 확정/기록`;
+                const prevShortText = formatDateShort(`${prevDate.getFullYear()}-${String(prevDate.getMonth() + 1).padStart(2, '0')}`);
+                document.getElementById('btn-save-prev-asset-label').innerText = `${prevShortText} 자산으로 확정/기록`;
 
                 renderAccountBalances();
                 renderVariableExpenses();
@@ -1314,11 +1327,11 @@
             }
         }
 
+        // 1. 유효 통장 목록에 등록된 계좌만 표시
         function renderAccountBalances() {
             const container = document.getElementById('account-balance-inputs');
             if (!container) return;
             const filtered = appData.accounts.filter(acc => {
-                if (!acc.isFinance && !acc.isPension) return false;
                 if (currentMode === 'euna') return acc.owner === 'euna' || acc.owner === 'common';
                 if (currentMode === 'taejun') return acc.owner === 'taejun';
                 return true;
@@ -1327,7 +1340,7 @@
                 <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 flex flex-col gap-1">
                     <div class="flex justify-between items-center">
                         <span class="text-[10px] font-bold text-indigo-600">[${acc.bank || '기타'}]</span>
-                        <span class="px-2 py-0.5 rounded text-[10px] font-bold ${acc.owner === 'euna' ? 'bg-rose-100 text-rose-700' : acc.owner === 'taejun' ? 'bg-sky-100 text-sky-700' : 'bg-purple-100 text-purple-700'}">${acc.owner === 'euna' ? '은아' : acc.owner === 'taejun' ? '태준' : '공통'}</span>
+                        ${getAccountOwnerBadge(acc.owner)}
                     </div>
                     <span class="font-bold text-slate-800 text-xs truncate">${acc.name}</span>
                     <input type="number" value="${acc.balance || 0}" onchange="updateAccountBalance('${acc.id}', this.value)" class="w-full border border-slate-300 rounded px-2 py-1 font-bold text-slate-800 text-right bg-white text-xs">
@@ -1343,6 +1356,7 @@
             }
         }
 
+        // 1. 모든 셀렉트 박스가 유효 통장 목록과 완전 매핑되도록 업데이트
         function renderAccountSelects() {
             const catSelect = document.getElementById('var-exp-category');
             if (catSelect) catSelect.innerHTML = appData.categories.map(c => `<option value="${c}">${c}</option>`).join('');
@@ -1360,11 +1374,7 @@
                 return `<option value="${a.id}">[${a.bank || '통장'}] ${a.name}${ownerTag}</option>`;
             }).join('');
 
-            const varAcc = document.getElementById('var-exp-account');
-            if (varAcc) varAcc.innerHTML = accountOptionsHTML;
-            const schAcc = document.getElementById('sch-account');
-            if (schAcc) schAcc.innerHTML = accountOptionsHTML;
-            ['sav-account', 'stock-account', 'pension-account'].forEach(id => {
+            ['var-exp-account', 'sch-account', 'sav-account', 'stock-account', 'pension-account', 'split-account-select'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.innerHTML = accountOptionsHTML;
             });
@@ -1392,51 +1402,58 @@
                 return true;
             });
             const variable = filteredExpenses.reduce((sum, e) => sum + e.amount, 0);
-            const net = totalIn - fixed;
+
+            // 1. 유효 통장 목록 연동 통장 쪼개기 금액 계산
+            const filteredRules = appData.splitRules.filter(r => {
+                const acc = appData.accounts.find(a => a.id === r.accountId);
+                const owner = acc ? acc.owner : 'common';
+                if (currentMode === 'euna') return owner === 'euna' || owner === 'common';
+                if (currentMode === 'taejun') return owner === 'taejun';
+                return true;
+            });
+            const totalSplitAllocated = filteredRules.reduce((sum, r) => sum + r.amount, 0);
+
+            const emergencyBalance = totalIn - totalSplitAllocated;
 
             document.getElementById('sum-total-income').innerText = `${totalIn.toLocaleString()} 원`;
             document.getElementById('sum-income-sub').innerText = `월급 ${sal.toLocaleString()} | 부수입 ${bon.toLocaleString()}`;
             document.getElementById('sum-fixed-expenses').innerText = `${fixed.toLocaleString()} 원`;
             document.getElementById('sum-variable-expenses').innerText = `${variable.toLocaleString()} 원`;
-            document.getElementById('sum-net-income').innerText = `${net.toLocaleString()} 원`;
+            document.getElementById('sum-net-income').innerText = `${emergencyBalance.toLocaleString()} 원`;
 
+            // 1. 설정 탭의 통장 쪼개기 배분 결과 정보 동적 표기
             const splitContainer = document.getElementById('account-split-container');
             if (splitContainer) {
-                const filteredRules = appData.splitRules.filter(r => {
-                    if (currentMode === 'euna') return r.owner === 'euna' || r.owner === 'common';
-                    if (currentMode === 'taejun') return r.owner === 'taejun';
-                    return true;
-                });
-                const totalAllocated = filteredRules.reduce((sum, r) => sum + r.amount, 0);
-                const diffEmergency = net - totalAllocated;
-
                 let html = filteredRules.map(rule => {
                     const acc = appData.accounts.find(a => a.id === rule.accountId);
-                    const ownerBadge = getAccountOwnerBadge(rule.owner);
+                    const bankName = acc ? acc.bank : '통장';
+                    const nameDisplay = acc ? acc.name : (rule.purpose || '통장 배분');
+                    const ownerBadge = getAccountOwnerBadge(acc ? acc.owner : 'common');
+
                     return `
-                        <div class="bg-slate-50/80 p-3 rounded-xl border border-slate-200/60 flex justify-between items-center">
+                        <div class="bg-slate-50/80 p-3 rounded-xl border border-slate-200/60 flex justify-between items-center text-xs">
                             <div>
                                 <div class="flex items-center gap-2">
-                                    <span class="font-bold text-xs text-slate-800">${acc ? `[${acc.bank || ''}] ${acc.name}` : (rule.purpose || '통장')}</span>
+                                    <span class="font-bold text-slate-800">[${bankName}] ${nameDisplay}</span>
                                     ${ownerBadge}
                                 </div>
                                 <span class="text-[10px] text-slate-400">${rule.purpose || '자동 배분'}</span>
                             </div>
-                            <span class="text-sm font-extrabold text-slate-900">${rule.amount.toLocaleString()} 원</span>
+                            <span class="text-xs sm:text-sm font-extrabold text-slate-900">${rule.amount.toLocaleString()} 원</span>
                         </div>
                     `;
                 }).join('');
 
                 html += `
-                    <div class="bg-rose-50/60 p-3 rounded-xl border border-rose-200/60 flex justify-between items-center">
+                    <div class="bg-rose-50/60 p-3 rounded-xl border border-rose-200/60 flex justify-between items-center text-xs">
                         <div>
                             <div class="flex items-center gap-1.5">
                                 <i class="fa-solid fa-piggy-bank text-rose-500 text-xs"></i>
-                                <span class="font-bold text-xs text-slate-800">비상금 / 잉여금 (배분 잔액)</span>
+                                <span class="font-bold text-slate-800">비상금 / 잉여금 (배분 잔액)</span>
                             </div>
-                            <span class="text-[10px] text-slate-400">설정된 배분 후 차액</span>
+                            <span class="text-[10px] text-slate-400">총 수입 - 통장 쪼개기 합계 차액</span>
                         </div>
-                        <span class="text-sm font-extrabold ${diffEmergency < 0 ? 'text-rose-600' : 'text-emerald-600'}">${diffEmergency.toLocaleString()} 원</span>
+                        <span class="text-xs sm:text-sm font-extrabold ${emergencyBalance < 0 ? 'text-rose-600' : 'text-emerald-600'}">${emergencyBalance.toLocaleString()} 원</span>
                     </div>
                 `;
                 splitContainer.innerHTML = html;
@@ -1459,12 +1476,12 @@
                 hist.taejunFin = taejunFin;
                 hist.commonFin = commonFin;
             } else {
-                appData.assetHistory.push({ month: targetPrevMonth, eunaFin, taejunFin, commonFin, re: kbRealEstatePrice, debt: 415000000 });
+                appData.assetHistory.push({ month: targetPrevMonth, eunaFin, taejunFin, commonFin, re: kbRealEstatePrice, debt: 412000000 });
                 appData.assetHistory.sort((a, b) => a.month.localeCompare(b.month));
             }
             saveDataSync();
             renderAssetChartsAndTables();
-            alert(`직전달 자산 히스토리에 통장 잔액 합계가 성공적으로 보관/동기화되었습니다.`);
+            alert(`${formatDateShort(targetPrevMonth)} 자산 히스토리에 통장 잔액이 보관되었습니다.`);
         }
 
         function renderCalendar() {
@@ -1473,7 +1490,7 @@
             if (!grid) return;
             const year = calendarDate.getFullYear();
             const month = calendarDate.getMonth();
-            if (label) label.innerText = `${year}년 ${month + 1}월`;
+            if (label) label.innerText = formatDateShort(`${year}-${String(month + 1).padStart(2, '0')}`);
 
             const firstDay = new Date(year, month, 1).getDay();
             const totalDays = new Date(year, month + 1, 0).getDate();
@@ -1486,8 +1503,8 @@
                 const hasSchedule = appData.schedules.some(s => s.day === d);
 
                 html += `
-                    <div class="border border-slate-100 rounded-lg p-0.5 flex flex-col justify-between items-center min-h-[32px] ${dayExp > 0 ? 'bg-amber-50/50' : ''}">
-                        <span class="font-semibold text-slate-600">${d}</span>
+                    <div class="border border-slate-100 rounded-lg p-0.5 flex flex-col justify-between items-center min-h-[30px] ${dayExp > 0 ? 'bg-amber-50/50' : ''}">
+                        <span class="font-semibold text-slate-600 text-[10px]">${d}</span>
                         <div class="flex items-center gap-0.5">
                             ${hasSchedule ? '<span class="w-1.5 h-1.5 rounded-full bg-indigo-600 inline-block"></span>' : ''}
                             ${dayExp > 0 ? '<span class="w-1.5 h-1.5 rounded-full bg-rose-500 inline-block"></span>' : ''}
@@ -1516,7 +1533,7 @@
 
             const acc = appData.accounts.find(a => a.id === accountId);
             const owner = acc ? acc.owner : 'common';
-            appData.expenses.push({ id: Date.now(), date, category, accountId, title, amount, owner });
+            appData.expenses.unshift({ id: Date.now(), date, category, accountId, title, amount, owner });
 
             saveDataSync();
             renderVariableExpenses();
@@ -1542,26 +1559,26 @@
                 if (currentMode === 'taejun') return e.owner === 'taejun';
                 return true;
             });
-            filtered.sort((a, b) => b.date.localeCompare(a.date));
 
             tbody.innerHTML = filtered.map(e => {
                 const acc = appData.accounts.find(a => a.id === e.accountId);
                 const ownerBadge = getAccountOwnerBadge(e.owner);
                 return `
-                    <tr class="hover:bg-slate-50 transition">
-                        <td class="p-3 font-medium text-slate-600">${e.date}</td>
-                        <td class="p-3"><span class="bg-slate-100 text-slate-700 px-2 py-0.5 rounded-lg text-[11px] font-medium">${e.category}</span></td>
-                        <td class="p-3 font-semibold text-slate-600 flex items-center justify-between">
-                            <span>${acc ? `[${acc.bank || ''}] ${acc.name}` : '-'}</span>
-                            ${acc ? getAccountOwnerBadge(acc.owner) : ''}
+                    <tr class="hover:bg-slate-50 transition text-xs">
+                        <td class="p-2.5 text-slate-400 cursor-grab"><i class="fa-solid fa-grip-lines"></i></td>
+                        <td class="p-2.5 font-medium text-slate-600 whitespace-nowrap">${e.date}</td>
+                        <td class="p-2.5"><span class="bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded text-[10px] font-medium whitespace-nowrap">${e.category}</span></td>
+                        <td class="p-2.5 font-semibold text-slate-600 truncate max-w-[120px]">
+                            ${acc ? `[${acc.bank || ''}] ${acc.name}` : '-'}
                         </td>
-                        <td class="p-3 font-bold text-slate-800">${e.title}</td>
-                        <td class="p-3 text-right font-extrabold text-slate-900">${e.amount.toLocaleString()}원</td>
-                        <td class="p-3 text-center">${ownerBadge}</td>
-                        <td class="p-3 text-center"><button onclick="deleteExpense(${e.id})" class="text-rose-400 hover:text-rose-600"><i class="fa-solid fa-trash-can"></i></button></td>
+                        <td class="p-2.5 font-bold text-slate-800">${e.title}</td>
+                        <td class="p-2.5 text-right font-extrabold text-slate-900">${e.amount.toLocaleString()}원</td>
+                        <td class="p-2.5 text-center">${ownerBadge}</td>
+                        <td class="p-2.5 text-center"><button onclick="deleteExpense(${e.id})" class="text-rose-400 hover:text-rose-600"><i class="fa-solid fa-trash-can"></i></button></td>
                     </tr>
                 `;
             }).join('');
+            makeTableDraggable('var-expense-table-body', appData.expenses, renderVariableExpenses);
         }
 
         function updateScheduleAccountSelect() {
@@ -1592,38 +1609,33 @@
                 const sumTotal = filtered.reduce((sum, s) => sum + s.amount, 0);
                 document.getElementById('schedule-total-sum').innerText = `${sumTotal.toLocaleString()} 원`;
                 compactList.innerHTML = filtered.map(s => `
-                    <div class="bg-slate-50/90 p-3 rounded-xl border border-slate-200/60 flex justify-between items-center">
-                        <div class="flex items-center gap-2.5 truncate">
-                            <span class="w-7 h-7 flex items-center justify-center rounded-lg bg-white border text-slate-700 font-extrabold text-[11px] shrink-0">${s.day}일</span>
-                            <div class="truncate">
-                                <span class="font-bold text-slate-800 text-xs block truncate">${s.title}</span>
-                                <span class="text-[9px] text-indigo-600 font-bold block">${s.owner === 'euna' ? '은아' : s.owner === 'taejun' ? '태준' : '공통'}</span>
-                            </div>
+                    <div class="bg-slate-50/90 p-2.5 rounded-xl border border-slate-200/60 flex justify-between items-center text-xs">
+                        <div class="flex items-center gap-2 truncate">
+                            <span class="w-6 h-6 flex items-center justify-center rounded-lg bg-white border text-slate-700 font-extrabold text-[10px] shrink-0">${s.day}일</span>
+                            <span class="font-bold text-slate-800 truncate">${s.title}</span>
                         </div>
-                        <span class="font-extrabold text-slate-900 text-xs shrink-0 ml-2">${s.amount.toLocaleString()}원</span>
+                        <span class="font-extrabold text-slate-900 shrink-0 ml-2">${s.amount.toLocaleString()}원</span>
                     </div>
                 `).join('');
             }
 
             if (scheduleBody) {
-                scheduleBody.innerHTML = filtered.map((s, idx) => {
+                scheduleBody.innerHTML = filtered.map((s) => {
                     const acc = appData.accounts.find(a => a.id === s.accountId);
                     return `
-                        <tr class="hover:bg-slate-50 transition draggable-row" draggable="true" ondragstart="handleDragStart(event, 'schedules', ${idx})" ondragover="handleDragOver(event)" ondrop="handleDrop(event, 'schedules', ${idx})">
-                            <td class="p-3 text-slate-400"><i class="fa-solid fa-grip-lines"></i></td>
+                        <tr class="hover:bg-slate-50 transition text-xs">
+                            <td class="p-2.5 text-slate-400 cursor-grab"><i class="fa-solid fa-grip-lines"></i></td>
                             <td class="p-2.5 font-bold">매달 ${s.day}일</td>
                             <td class="p-2.5">${getAccountOwnerBadge(s.owner)}</td>
                             <td class="p-2.5 font-bold text-indigo-600">${s.category || '기타'}</td>
                             <td class="p-2.5 font-bold text-slate-800">${s.title}</td>
-                            <td class="p-2.5 font-semibold text-slate-600 flex items-center justify-between">
-                                <span>${acc ? `[${acc.bank || ''}] ${acc.name}` : '-'}</span>
-                                ${acc ? getAccountOwnerBadge(acc.owner) : ''}
-                            </td>
+                            <td class="p-2.5 font-semibold text-slate-600">${acc ? `[${acc.bank || ''}] ${acc.name}` : '-'}</td>
                             <td class="p-2.5 text-right font-black text-rose-600">${s.amount.toLocaleString()} 원</td>
                             <td class="p-2.5 text-center"><button onclick="deleteSchedule(${s.id})" class="text-rose-400 hover:text-rose-600"><i class="fa-solid fa-trash-can"></i></button></td>
                         </tr>
                     `;
                 }).join('');
+                makeTableDraggable('schedule-table-body', appData.schedules, renderSchedules);
             }
         }
 
@@ -1641,9 +1653,6 @@
             renderSchedules();
             renderCalendar();
             calculateMonthlySummary();
-            document.getElementById('sch-day').value = '';
-            document.getElementById('sch-title').value = '';
-            document.getElementById('sch-amount').value = '';
         }
 
         function deleteSchedule(id) {
@@ -1659,50 +1668,51 @@
             if (!body) return;
 
             const filteredRules = appData.splitRules.filter(r => {
-                if (currentMode === 'euna') return r.owner === 'euna' || r.owner === 'common';
-                if (currentMode === 'taejun') return r.owner === 'taejun';
+                const acc = appData.accounts.find(a => a.id === r.accountId);
+                const owner = acc ? acc.owner : 'common';
+                if (currentMode === 'euna') return owner === 'euna' || owner === 'common';
+                if (currentMode === 'taejun') return owner === 'taejun';
                 return true;
             });
 
-            body.innerHTML = filteredRules.map((rule, idx) => {
+            body.innerHTML = filteredRules.map((rule) => {
                 const acc = appData.accounts.find(a => a.id === rule.accountId);
-                const bankName = rule.bank || (acc ? acc.bank : '-');
-                const purposeName = rule.purpose || (acc ? acc.name : '-');
+                const bankName = acc ? acc.bank : '-';
+                const purposeName = acc ? acc.name : (rule.purpose || '-');
+                const ownerBadge = getAccountOwnerBadge(acc ? acc.owner : 'common');
 
                 return `
-                    <tr class="hover:bg-slate-50 transition draggable-row" draggable="true" ondragstart="handleDragStart(event, 'splitRules', ${idx})" ondragover="handleDragOver(event)" ondrop="handleDrop(event, 'splitRules', ${idx})">
-                        <td class="p-3 text-slate-400"><i class="fa-solid fa-grip-lines"></i></td>
-                        <td class="p-3">${getAccountOwnerBadge(rule.owner)}</td>
-                        <td class="p-3 font-bold text-indigo-600">${bankName}</td>
-                        <td class="p-3 font-bold text-slate-800">${purposeName}</td>
-                        <td class="p-3 text-right font-extrabold text-emerald-700">${rule.amount.toLocaleString()} 원</td>
-                        <td class="p-3 text-center"><button onclick="deleteSplitRule('${rule.id}')" class="text-rose-400 hover:text-rose-600"><i class="fa-solid fa-trash-can"></i></button></td>
+                    <tr class="hover:bg-slate-50 transition text-xs">
+                        <td class="p-2.5 text-slate-400 cursor-grab"><i class="fa-solid fa-grip-lines"></i></td>
+                        <td class="p-2.5">${ownerBadge}</td>
+                        <td class="p-2.5 font-bold text-indigo-600">${bankName}</td>
+                        <td class="p-2.5 font-bold text-slate-800">${purposeName}</td>
+                        <td class="p-2.5 text-right font-extrabold text-emerald-700">${rule.amount.toLocaleString()} 원</td>
+                        <td class="p-2.5 text-center"><button onclick="deleteSplitRule('${rule.id}')" class="text-rose-400 hover:text-rose-600"><i class="fa-solid fa-trash-can"></i></button></td>
                     </tr>
                 `;
             }).join('');
+            makeTableDraggable('split-rules-list-body', appData.splitRules, renderSplitRules);
         }
 
+        // 1. 설정 탭 통장 쪼개기 규칙 추가 - 유효 통장 목록 선택 드롭다운 연동
         function addSplitRule() {
-            const owner = document.getElementById('split-owner-input').value;
-            const bank = document.getElementById('split-bank-input').value.trim();
+            const accountId = document.getElementById('split-account-select').value;
             const purpose = document.getElementById('split-purpose-input').value.trim();
             const amount = parseFloat(document.getElementById('split-amount-input').value);
-            if (!amount) return;
+            if (!accountId || !amount) return;
 
-            const acc = appData.accounts.find(a => (owner === 'common' ? a.owner === 'common' : a.owner === owner));
+            const acc = appData.accounts.find(a => a.id === accountId);
             appData.splitRules.push({
                 id: 's_' + Date.now(),
-                owner,
-                bank: bank || (acc ? acc.bank : ''),
-                accountId: acc ? acc.id : '',
-                amount,
-                purpose: purpose || '통장 배분'
+                accountId: accountId,
+                amount: amount,
+                purpose: purpose || (acc ? acc.name : '통장 배분')
             });
 
             saveDataSync();
             renderSplitRules();
             calculateMonthlySummary();
-            document.getElementById('split-bank-input').value = '';
             document.getElementById('split-purpose-input').value = '';
             document.getElementById('split-amount-input').value = '';
         }
@@ -1724,21 +1734,22 @@
                 return true;
             });
 
-            tbody.innerHTML = filteredAccounts.map((acc, idx) => `
-                <tr class="hover:bg-slate-50 transition draggable-row" draggable="true" ondragstart="handleDragStart(event, 'accounts', ${idx})" ondragover="handleDragOver(event)" ondrop="handleDrop(event, 'accounts', ${idx})">
-                    <td class="p-3 text-slate-400"><i class="fa-solid fa-grip-lines"></i></td>
-                    <td class="p-3">${getAccountOwnerBadge(acc.owner)}</td>
-                    <td class="p-3 font-bold text-indigo-600">${acc.bank || '-'}</td>
-                    <td class="p-3 font-bold text-slate-800">${acc.name}</td>
-                    <td class="p-3 text-center">
-                        <input type="checkbox" ${acc.isFinance ? 'checked' : ''} onchange="toggleAccountCheck('${acc.id}', 'isFinance', this.checked)" class="w-4 h-4 text-emerald-600 rounded border-slate-300 cursor-pointer">
+            tbody.innerHTML = filteredAccounts.map((acc) => `
+                <tr class="hover:bg-slate-50 transition text-xs">
+                    <td class="p-2.5 text-slate-400 cursor-grab"><i class="fa-solid fa-grip-lines"></i></td>
+                    <td class="p-2.5">${getAccountOwnerBadge(acc.owner)}</td>
+                    <td class="p-2.5 font-bold text-indigo-600">${acc.bank || '-'}</td>
+                    <td class="p-2.5 font-bold text-slate-800">${acc.name}</td>
+                    <td class="p-2.5 text-center">
+                        <input type="checkbox" ${acc.isFinance ? 'checked' : ''} onchange="toggleAccountCheck('${acc.id}', 'isFinance', this.checked)" class="w-4 h-4 text-emerald-600 rounded border-slate-300">
                     </td>
-                    <td class="p-3 text-center">
-                        <input type="checkbox" ${acc.isPension ? 'checked' : ''} onchange="toggleAccountCheck('${acc.id}', 'isPension', this.checked)" class="w-4 h-4 text-purple-600 rounded border-slate-300 cursor-pointer">
+                    <td class="p-2.5 text-center">
+                        <input type="checkbox" ${acc.isPension ? 'checked' : ''} onchange="toggleAccountCheck('${acc.id}', 'isPension', this.checked)" class="w-4 h-4 text-purple-600 rounded border-slate-300">
                     </td>
-                    <td class="p-3 text-center"><button onclick="deleteAccountFromSettings('${acc.id}')" class="text-rose-400 hover:text-rose-600"><i class="fa-solid fa-trash-can"></i></button></td>
+                    <td class="p-2.5 text-center"><button onclick="deleteAccountFromSettings('${acc.id}')" class="text-rose-400 hover:text-rose-600"><i class="fa-solid fa-trash-can"></i></button></td>
                 </tr>
             `).join('');
+            makeTableDraggable('settings-account-table-body', appData.accounts, renderSettingsAccounts);
         }
 
         function toggleAccountCheck(accId, field, value) {
@@ -1764,8 +1775,6 @@
             renderSettingsAccounts();
             renderAccountBalances();
             renderAccountSelects();
-            document.getElementById('setting-acc-bank').value = '';
-            document.getElementById('setting-acc-name').value = '';
         }
 
         function deleteAccountFromSettings(accId) {
@@ -1777,92 +1786,25 @@
             renderAccountSelects();
         }
 
-        function renderCategoryManagementCards() {
-            const fixList = document.getElementById('fix-category-list');
-            const varList = document.getElementById('var-category-list');
-
-            if (fixList) {
-                fixList.innerHTML = appData.fixedCategories.map((cat, idx) => `
-                    <div class="py-2.5 flex justify-between items-center">
-                        <span class="font-bold text-slate-800">${cat}</span>
-                        <button onclick="deleteFixCategory(${idx})" class="text-rose-400 hover:text-rose-600"><i class="fa-solid fa-trash-can"></i></button>
-                    </div>
-                `).join('');
-            }
-
-            if (varList) {
-                varList.innerHTML = appData.categories.map((cat, idx) => `
-                    <div class="py-2.5 flex justify-between items-center">
-                        <span class="font-bold text-slate-800">${cat}</span>
-                        <button onclick="deleteVarCategory(${idx})" class="delete-var-cat-btn text-rose-400 hover:text-rose-600"><i class="fa-solid fa-trash-can"></i></button>
-                    </div>
-                `).join('');
-            }
-        }
-
-        function addFixCategory() {
-            const input = document.getElementById('input-new-fix-cat');
-            if (!input) return;
-            const val = input.value.trim();
-            if (val && !appData.fixedCategories.includes(val)) {
-                appData.fixedCategories.push(val);
-                saveDataSync();
-                input.value = '';
-                renderCategoryManagementCards();
-                renderAccountSelects();
-            }
-        }
-
-        function deleteFixCategory(index) {
-            if (appData.fixedCategories.length <= 1) return;
-            appData.fixedCategories.splice(index, 1);
-            saveDataSync();
-            renderCategoryManagementCards();
-            renderAccountSelects();
-        }
-
-        function addVarCategory() {
-            const input = document.getElementById('input-new-var-cat');
-            if (!input) return;
-            const val = input.value.trim();
-            if (val && !appData.categories.includes(val)) {
-                appData.categories.push(val);
-                saveDataSync();
-                input.value = '';
-                renderCategoryManagementCards();
-                renderAccountSelects();
-            }
-        }
-
-        function deleteVarCategory(index) {
-            if (appData.categories.length <= 1) return;
-            appData.categories.splice(index, 1);
-            saveDataSync();
-            renderCategoryManagementCards();
-            renderAccountSelects();
-        }
-
         function renderInvestments() {
             const savBody = document.getElementById('savings-table-body');
             if (savBody) {
-                savBody.innerHTML = appData.savings.map((s, idx) => {
+                savBody.innerHTML = appData.savings.map((s) => {
                     const acc = appData.accounts.find(a => a.id === s.accountId);
                     return `
-                        <tr class="hover:bg-slate-50 transition draggable-row" draggable="true" ondragstart="handleDragStart(event, 'savings', ${idx})" ondragover="handleDragOver(event)" ondrop="handleDrop(event, 'savings', ${idx})">
-                            <td class="p-3 text-slate-400"><i class="fa-solid fa-grip-lines"></i></td>
-                            <td class="p-3">${getAccountOwnerBadge(s.owner)}</td>
-                            <td class="p-3 font-bold text-slate-800">${s.name}</td>
-                            <td class="p-3 font-semibold text-slate-600 flex items-center justify-between">
-                                <span>${acc ? `[${acc.bank || ''}] ${acc.name}` : '-'}</span>
-                                ${acc ? getAccountOwnerBadge(acc.owner) : ''}
-                            </td>
-                            <td class="p-3 text-right font-medium">${(s.monthly || 0).toLocaleString()} 원</td>
-                            <td class="p-3 text-right font-bold text-sky-600">${s.rate ? s.rate.toFixed(1) + '%' : '-'}</td>
-                            <td class="p-3 text-right font-black text-sky-700">${(s.total || 0).toLocaleString()} 원</td>
-                            <td class="p-3 text-center"><button onclick="deleteInvestment('savings', ${s.id})" class="text-rose-400 hover:text-rose-600"><i class="fa-solid fa-trash-can"></i></button></td>
+                        <tr class="hover:bg-slate-50 transition text-xs">
+                            <td class="p-2.5 text-slate-400 cursor-grab"><i class="fa-solid fa-grip-lines"></i></td>
+                            <td class="p-2.5">${getAccountOwnerBadge(s.owner)}</td>
+                            <td class="p-2.5 font-bold text-slate-800">${s.name}</td>
+                            <td class="p-2.5 font-semibold text-slate-600">${acc ? `[${acc.bank || ''}] ${acc.name}` : '-'}</td>
+                            <td class="p-2.5 text-right font-medium">${(s.monthly || 0).toLocaleString()} 원</td>
+                            <td class="p-2.5 text-right font-bold text-sky-600">${s.rate ? s.rate.toFixed(1) + '%' : '-'}</td>
+                            <td class="p-2.5 text-right font-black text-sky-700">${(s.total || 0).toLocaleString()} 원</td>
+                            <td class="p-2.5 text-center"><button onclick="deleteInvestment('savings', ${s.id})" class="text-rose-400 hover:text-rose-600"><i class="fa-solid fa-trash-can"></i></button></td>
                         </tr>
                     `;
                 }).join('');
+                makeTableDraggable('savings-table-body', appData.savings, renderInvestments);
             }
 
             const filterMarket = document.getElementById('stock-market-filter')?.value || 'ALL';
@@ -1875,38 +1817,33 @@
 
             const stkBody = document.getElementById('stock-table-body');
             if (stkBody) {
-                stkBody.innerHTML = filteredStocks.map((st, idx) => {
+                stkBody.innerHTML = filteredStocks.map((st) => {
                     const qty = st.qty || 1;
                     const isUS = st.market === 'US';
                     const evalWon = isUS ? Math.round(st.eval * currentExchangeRate) : st.eval;
                     const estPriceWon = Math.round(evalWon / qty);
-                    const marketBadge = isUS ? '<span class="bg-slate-900 text-white font-extrabold px-1.5 py-0.5 rounded text-[10px] mr-1">US</span>' : '<span class="bg-slate-800 text-white font-extrabold px-1.5 py-0.5 rounded text-[10px] mr-1">KR</span>';
+                    const marketBadge = isUS ? '<span class="bg-slate-900 text-white font-extrabold px-1.5 py-0.5 rounded text-[9px] mr-1">US</span>' : '<span class="bg-slate-800 text-white font-extrabold px-1.5 py-0.5 rounded text-[9px] mr-1">KR</span>';
                     const acc = appData.accounts.find(a => a.id === st.accountId);
 
-                    // 수익률 -는 초록색, +는 빨간색 로직 적용
-                    const rateVal = st.rate || '+0.00%';
+                    const rateVal = String(st.rate || '+0.00%');
                     const isNegative = rateVal.trim().startsWith('-');
                     const rateColorClass = isNegative ? 'text-emerald-600' : 'text-rose-600';
 
                     return `
-                        <tr class="hover:bg-slate-50 transition draggable-row" draggable="true" ondragstart="handleDragStart(event, 'stocks', ${idx})" ondragover="handleDragOver(event)" ondrop="handleDrop(event, 'stocks', ${idx})">
-                            <td class="p-3 text-slate-400"><i class="fa-solid fa-grip-lines"></i></td>
-                            <td class="p-3"><div class="flex items-center">${marketBadge}${getAccountOwnerBadge(st.owner)}</div></td>
-                            <td class="p-3 font-bold text-slate-800">${st.name}</td>
-                            <td class="p-3 font-semibold text-slate-600 flex items-center justify-between">
-                                <span>${acc ? `[${acc.bank || ''}] ${acc.name}` : '-'}</span>
-                                ${acc ? getAccountOwnerBadge(acc.owner) : ''}
-                            </td>
-                            <td class="p-3 text-right font-bold text-slate-800 editable-cell" ondblclick="makeEditable(this, 'stocks', ${st.id}, 'qty')">${qty} 주</td>
-                            <td class="p-3 text-right font-black text-emerald-600">
-                                ${evalWon.toLocaleString()} 원 ${isUS ? `<span class="text-[10px] text-slate-400 font-normal">($${st.eval.toLocaleString()})</span>` : ''}
-                            </td>
-                            <td class="p-3 text-right font-semibold text-slate-600">${estPriceWon.toLocaleString()} 원</td>
-                            <td class="p-3 text-right font-bold ${rateColorClass} editable-cell" ondblclick="makeEditable(this, 'stocks', ${st.id}, 'rate')">${rateVal}</td>
-                            <td class="p-3 text-center"><button onclick="deleteInvestment('stocks', ${st.id})" class="text-rose-400 hover:text-rose-600"><i class="fa-solid fa-trash-can"></i></button></td>
+                        <tr class="hover:bg-slate-50 transition text-xs">
+                            <td class="p-2.5 text-slate-400 cursor-grab"><i class="fa-solid fa-grip-lines"></i></td>
+                            <td class="p-2.5"><div class="flex items-center">${marketBadge}${getAccountOwnerBadge(st.owner)}</div></td>
+                            <td class="p-2.5 font-bold text-slate-800">${st.name}</td>
+                            <td class="p-2.5 font-semibold text-slate-600">${acc ? `[${acc.bank || ''}] ${acc.name}` : '-'}</td>
+                            <td class="p-2.5 text-right font-bold text-slate-800">${qty} 주</td>
+                            <td class="p-2.5 text-right font-black text-emerald-600">${evalWon.toLocaleString()} 원</td>
+                            <td class="p-2.5 text-right font-semibold text-slate-600">${estPriceWon.toLocaleString()} 원</td>
+                            <td class="p-2.5 text-right font-bold ${rateColorClass}">${rateVal}</td>
+                            <td class="p-2.5 text-center"><button onclick="deleteInvestment('stocks', ${st.id})" class="text-rose-400 hover:text-rose-600"><i class="fa-solid fa-trash-can"></i></button></td>
                         </tr>
                     `;
                 }).join('');
+                makeTableDraggable('stock-table-body', appData.stocks, renderInvestments);
             }
             renderStockPieChart(filteredStocks);
 
@@ -1917,85 +1854,32 @@
             });
             const penBody = document.getElementById('pension-table-body');
             if (penBody) {
-                penBody.innerHTML = filteredPensions.map((p, idx) => {
+                penBody.innerHTML = filteredPensions.map((p) => {
                     const qty = p.qty || 1;
                     const estPrice = Math.round(p.eval / qty);
                     const acc = appData.accounts.find(a => a.id === p.accountId);
 
-                    // 수익률 -는 초록색, +는 빨간색 로직 적용
-                    const rateVal = p.rate || '+0.00%';
+                    const rateVal = String(p.rate || '+0.00%');
                     const isNegative = rateVal.trim().startsWith('-');
                     const rateColorClass = isNegative ? 'text-emerald-600' : 'text-rose-600';
 
                     return `
-                        <tr class="hover:bg-slate-50 transition draggable-row" draggable="true" ondragstart="handleDragStart(event, 'pensions', ${idx})" ondragover="handleDragOver(event)" ondrop="handleDrop(event, 'pensions', ${idx})">
-                            <td class="p-3 text-slate-400"><i class="fa-solid fa-grip-lines"></i></td>
-                            <td class="p-3">${getAccountOwnerBadge(p.owner)}</td>
-                            <td class="p-3 font-bold text-slate-800">${p.name}</td>
-                            <td class="p-3 font-semibold text-slate-600 flex items-center justify-between">
-                                <span>${acc ? `[${acc.bank || ''}] ${acc.name}` : '-'}</span>
-                                ${acc ? getAccountOwnerBadge(acc.owner) : ''}
-                            </td>
-                            <td class="p-3 text-right font-bold text-slate-800 editable-cell" ondblclick="makeEditable(this, 'pensions', ${p.id}, 'qty')">${qty} 주</td>
-                            <td class="p-3 text-right font-black text-purple-600">${p.eval.toLocaleString()} 원</td>
-                            <td class="p-3 text-right font-semibold text-slate-600">${estPrice.toLocaleString()} 원</td>
-                            <td class="p-3 text-right font-bold ${rateColorClass} editable-cell" ondblclick="makeEditable(this, 'pensions', ${p.id}, 'rate')">${rateVal}</td>
-                            <td class="p-3 text-center"><button onclick="deleteInvestment('pensions', ${p.id})" class="text-rose-400 hover:text-rose-600"><i class="fa-solid fa-trash-can"></i></button></td>
+                        <tr class="hover:bg-slate-50 transition text-xs">
+                            <td class="p-2.5 text-slate-400 cursor-grab"><i class="fa-solid fa-grip-lines"></i></td>
+                            <td class="p-2.5">${getAccountOwnerBadge(p.owner)}</td>
+                            <td class="p-2.5 font-bold text-slate-800">${p.name}</td>
+                            <td class="p-2.5 font-semibold text-slate-600">${acc ? `[${acc.bank || ''}] ${acc.name}` : '-'}</td>
+                            <td class="p-2.5 text-right font-bold text-slate-800">${qty} 주</td>
+                            <td class="p-2.5 text-right font-black text-purple-600">${p.eval.toLocaleString()} 원</td>
+                            <td class="p-2.5 text-right font-semibold text-slate-600">${estPrice.toLocaleString()} 원</td>
+                            <td class="p-2.5 text-right font-bold ${rateColorClass}">${rateVal}</td>
+                            <td class="p-2.5 text-center"><button onclick="deleteInvestment('pensions', ${p.id})" class="text-rose-400 hover:text-rose-600"><i class="fa-solid fa-trash-can"></i></button></td>
                         </tr>
                     `;
                 }).join('');
+                makeTableDraggable('pension-table-body', appData.pensions, renderInvestments);
             }
             renderPensionPieChart(filteredPensions);
-        }
-
-        function makeEditable(cell, type, id, field) {
-            const currentText = cell.innerText.trim();
-            cell.innerHTML = `<input type="text" value="${currentText}" class="w-20 border border-indigo-500 rounded px-1 py-0.5 text-right font-bold text-xs" onblur="saveInlineEdit(this, '${type}', ${id}, '${field}')" onkeydown="if(event.key==='Enter') this.blur()">`;
-            cell.querySelector('input').focus();
-        }
-
-        function saveInlineEdit(input, type, id, field) {
-            const item = appData[type].find(x => x.id === id);
-            if (item) {
-                if (field === 'qty' || field === 'eval') {
-                    item[field] = parseFloat(input.value.replace(/[^0-9.-]/g, '')) || 0;
-                } else {
-                    item[field] = input.value;
-                }
-                saveDataSync();
-                renderInvestments();
-            }
-        }
-
-        let draggedItemType = null;
-        let draggedItemIndex = null;
-
-        function handleDragStart(e, type, index) {
-            draggedItemType = type;
-            draggedItemIndex = index;
-            e.dataTransfer.effectAllowed = 'move';
-        }
-
-        function handleDragOver(e) {
-            e.preventDefault();
-            e.dataTransfer.dropEffect = 'move';
-        }
-
-        function handleDrop(e, type, index) {
-            e.preventDefault();
-            if (draggedItemType === type && draggedItemIndex !== null && draggedItemIndex !== index) {
-                const list = appData[type];
-                const movedItem = list.splice(draggedItemIndex, 1)[0];
-                list.splice(index, 0, movedItem);
-                
-                saveDataSync();
-                if (type === 'stocks' || type === 'pensions' || type === 'savings') renderInvestments();
-                if (type === 'schedules') renderSchedules();
-                if (type === 'accounts') renderSettingsAccounts();
-                if (type === 'splitRules') renderSplitRules();
-            }
-            draggedItemType = null;
-            draggedItemIndex = null;
         }
 
         function renderStockPieChart(stocksList) {
@@ -2008,9 +1892,9 @@
                 type: 'doughnut',
                 data: {
                     labels: labels.length > 0 ? labels : ['보유 종목 없음'],
-                    datasets: [{ data: data.length > 0 ? data : [1], backgroundColor: ['#bae6fd', '#a7f3d0', '#fef08a', '#fbcfe8', '#c7d2fe'] }]
+                    datasets: [{ data: data.length > 0 ? data : [1], backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#ec4899', '#8b5cf6', '#6366f1'] }]
                 },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 10 } } } } }
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top', labels: { boxWidth: 10, font: { size: 9 } } } } }
             });
         }
 
@@ -2024,9 +1908,9 @@
                 type: 'doughnut',
                 data: {
                     labels: labels.length > 0 ? labels : ['연금 항목 없음'],
-                    datasets: [{ data: data.length > 0 ? data : [1], backgroundColor: ['#ddd6fe', '#e9d5ff', '#f5d0fe', '#fae8ff'] }]
+                    datasets: [{ data: data.length > 0 ? data : [1], backgroundColor: ['#8b5cf6', '#a855f7', '#c084fc', '#e879f9', '#f472b6'] }]
                 },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 10 } } } } }
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top', labels: { boxWidth: 10, font: { size: 9 } } } } }
             });
         }
 
@@ -2041,10 +1925,6 @@
             appData.savings.push({ id: Date.now(), name, owner: acc ? acc.owner : 'common', accountId: accId, monthly, rate, total });
             saveDataSync();
             renderInvestments();
-            document.getElementById('sav-name').value = '';
-            document.getElementById('sav-monthly').value = '';
-            document.getElementById('sav-rate').value = '';
-            document.getElementById('sav-total').value = '';
         }
 
         function addStockItem() {
@@ -2058,9 +1938,6 @@
             appData.stocks.push({ id: Date.now(), market, name, owner: acc ? acc.owner : 'common', accountId: accId, qty, eval: evalAmt, rate: '+0.00%' });
             saveDataSync();
             renderInvestments();
-            document.getElementById('stock-name').value = '';
-            document.getElementById('stock-qty').value = '';
-            document.getElementById('stock-eval').value = '';
         }
 
         function addPensionItem() {
@@ -2073,9 +1950,6 @@
             appData.pensions.push({ id: Date.now(), name, owner: acc ? acc.owner : 'common', accountId: accId, qty, eval: evalAmt, rate: '+0.00%' });
             saveDataSync();
             renderInvestments();
-            document.getElementById('pension-name').value = '';
-            document.getElementById('pension-qty').value = '';
-            document.getElementById('pension-eval').value = '';
         }
 
         function deleteInvestment(type, id) {
@@ -2130,22 +2004,6 @@
 
             renderReviewMonthCheckboxes();
             renderReviewComparisonChart();
-
-            document.getElementById('prev-goal-date-label').innerText = `[${currentMonth} 기준]`;
-            const g = appData.monthlyGoals[currentMonth];
-            if (g && g.goals) {
-                document.getElementById('goal-input-1').value = g.goals[0] || '';
-                document.getElementById('goal-input-2').value = g.goals[1] || '';
-                document.getElementById('goal-input-3').value = g.goals[2] || '';
-            } else {
-                document.getElementById('goal-input-1').value = '';
-                document.getElementById('goal-input-2').value = '';
-                document.getElementById('goal-input-3').value = '';
-            }
-            if (g && g.memos) {
-                document.getElementById('review-memo-euna').value = g.memos.euna || '';
-                document.getElementById('review-memo-taejun').value = g.memos.taejun || '';
-            }
         }
 
         function renderReviewMonthCheckboxes() {
@@ -2155,8 +2013,8 @@
             if (months.length === 0) months.push(currentMonth);
 
             container.innerHTML = months.map(m => `
-                <label class="flex items-center gap-1.5 font-bold text-slate-700 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200 cursor-pointer">
-                    <input type="checkbox" value="${m}" checked onchange="renderReviewComparisonChart()" class="w-4 h-4 text-indigo-600 rounded border-slate-300"> ${m}
+                <label class="flex items-center gap-1.5 font-bold text-slate-700 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200 cursor-pointer text-xs">
+                    <input type="checkbox" value="${m}" checked onchange="renderReviewComparisonChart()" class="w-4 h-4 text-indigo-600 rounded border-slate-300"> ${formatDateShort(m)}
                 </label>
             `).join('');
         }
@@ -2182,7 +2040,7 @@
                     }
                 });
                 return {
-                    label: m,
+                    label: formatDateShort(m),
                     data: data,
                     backgroundColor: colors[idx % colors.length],
                     borderRadius: 4
@@ -2194,48 +2052,6 @@
                 data: { labels: categories, datasets: datasets },
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' } } }
             });
-        }
-
-        function saveReviewGoals() {
-            const goals = [
-                document.getElementById('goal-input-1').value,
-                document.getElementById('goal-input-2').value,
-                document.getElementById('goal-input-3').value
-            ];
-            const memos = {
-                euna: document.getElementById('review-memo-euna').value,
-                taejun: document.getElementById('review-memo-taejun').value
-            };
-            appData.monthlyGoals[currentMonth] = { goals, memos };
-            saveDataSync();
-            alert(`${currentMonth} 회고 및 다음 달 다짐이 보관/동기화되었습니다.`);
-        }
-
-        function loadPreviousMonthGoals() {
-            const [yr, mo] = currentMonth.split('-').map(Number);
-            const prevDate = new Date(yr, mo - 2, 1);
-            const prevMonthKey = `${prevDate.getFullYear()}-${String(prevDate.getMonth() + 1).padStart(2, '0')}`;
-
-            const checklistEl = document.getElementById('prev-goal-checklist');
-            const g = appData.monthlyGoals[prevMonthKey];
-            if (g && g.goals && g.goals.length > 0) {
-                checklistEl.innerHTML = g.goals.map((goal, idx) => `
-                    <label class="flex items-center gap-2 font-medium cursor-pointer">
-                        <input type="checkbox" onchange="this.nextElementSibling.classList.toggle('line-through', this.checked)" class="w-4 h-4 text-indigo-600 rounded border-slate-300">
-                        <span>${goal}</span>
-                    </label>
-                `).join('');
-                alert(`${prevMonthKey} 기준 지난달 다짐 체크리스트를 불러왔습니다.`);
-            } else {
-                checklistEl.innerHTML = `<p class="text-rose-400 font-medium">저장된 지난달 다짐 내역이 없습니다 (${prevMonthKey}).</p>`;
-            }
-        }
-
-        function setAssetPerspective(p) {
-            assetPerspective = p;
-            document.getElementById('btn-persp-net').className = p === 'net' ? "px-3 py-1 rounded-md bg-navy-950 text-white shadow-sm" : "px-3 py-1 rounded-md text-slate-600 hover:text-white";
-            document.getElementById('btn-persp-gross').className = p === 'gross' ? "px-3 py-1 rounded-md bg-navy-950 text-white shadow-sm" : "px-3 py-1 rounded-md text-slate-600 hover:text-white";
-            renderAssetChartsAndTables();
         }
 
         function updateKBRealEstatePrice() {
@@ -2251,15 +2067,242 @@
             }
         }
 
+        function updateAssetGoalCalculation() {
+            const targetVal = parseFloat(document.getElementById('annual-asset-target').value) || 300000000;
+            const latestAsset = appData.assetHistory[appData.assetHistory.length - 1];
+            if (latestAsset) {
+                const totalFin = latestAsset.eunaFin + latestAsset.taejunFin + latestAsset.commonFin;
+                const net = totalFin + latestAsset.re - latestAsset.debt;
+
+                document.getElementById('asset-target-month-label').innerText = `${formatDateShort(currentMonth)} 기준 순자산`;
+                document.getElementById('asset-target-current-val').innerText = `₩${net.toLocaleString()}`;
+
+                const rate = targetVal > 0 ? ((net / targetVal) * 100).toFixed(1) : 0;
+                document.getElementById('asset-target-rate').innerText = `${rate}% 입니다.`;
+            }
+        }
+
+        // 4. 파이/도넛 차트 라벨선 & 화면 이탈 방지 강화
+        function renderAssetPieChart() {
+            const selectedMonth = document.getElementById('asset-pie-month-select')?.value || currentMonth;
+            const ctx = document.getElementById('asset-pie-chart-main');
+            if (!ctx) return;
+            if (assetPieChartMain) assetPieChartMain.destroy();
+
+            const hist = appData.assetHistory.find(h => h.month === selectedMonth) || { re: kbRealEstatePrice };
+            const reVal = hist.re || kbRealEstatePrice;
+            const penVal = appData.pensions.reduce((sum, p) => sum + (p.eval || 0), 0);
+            const stockVal = appData.stocks.reduce((sum, st) => sum + (st.market === 'US' ? Math.round(st.eval * currentExchangeRate) : st.eval), 0);
+            const savVal = appData.savings.reduce((sum, s) => sum + (s.total || 0), 0);
+
+            const labels = ['부동산', '노후(개인연금)', '투자(주식)', '저축(예적금)'];
+            const data = [reVal, penVal, stockVal, savVal];
+            const sumData = data.reduce((a, b) => a + b, 0);
+
+            assetPieChartMain = new Chart(ctx.getContext('2d'), {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: sumData > 0 ? data : [1, 0, 0, 0],
+                        backgroundColor: ['#60a5fa', '#c084fc', '#34d399', '#fde047'],
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                plugins: [ChartDataLabels],
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    layout: { padding: 35 },
+                    plugins: {
+                        legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10, weight: 'bold' } } },
+                        datalabels: {
+                            color: '#0f172a',
+                            font: { size: 9, weight: 'bold' },
+                            anchor: 'end',
+                            align: 'end',
+                            offset: 8,
+                            clamp: true, // 화면 이탈 방지
+                            borderWidth: 1,
+                            borderColor: '#e2e8f0',
+                            borderRadius: 6,
+                            backgroundColor: '#ffffff',
+                            padding: 3,
+                            formatter: (value, ctx) => {
+                                if (sumData === 0 || value === 0) return '';
+                                const pct = ((value / sumData) * 100).toFixed(1);
+                                return `${ctx.chart.data.labels[ctx.dataIndex]}\n${pct}% (${Math.round(value/10000).toLocaleString()}만)`;
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // 3. 드롭다운 연월 표기 26.04월 형식으로 매핑
+        function updateMonthSelectDropdowns() {
+            const allMonthsKeys = ['2026-01', '2026-02', '2026-03', '2026-04', '2026-05', '2026-06', '2026-07', '2026-08', '2026-09', '2026-10', '2026-11', '2026-12'];
+            const optionsHTML = allMonthsKeys.map(m => `<option value="${m}">${formatDateShort(m)}</option>`).join('');
+
+            const pieSelect = document.getElementById('asset-pie-month-select');
+            if (pieSelect) {
+                pieSelect.innerHTML = optionsHTML;
+                pieSelect.value = currentMonth;
+            }
+
+            const startSelect = document.getElementById('asset-flow-start-month');
+            const endSelect = document.getElementById('asset-flow-end-month');
+            if (startSelect && endSelect) {
+                startSelect.innerHTML = optionsHTML;
+                endSelect.innerHTML = optionsHTML;
+                startSelect.value = '2026-01';
+                endSelect.value = currentMonth;
+            }
+        }
+
+        function renderAssetComboChart() {
+            const ctxAsset = document.getElementById('asset-combo-chart');
+            if (!ctxAsset) return;
+            if (assetComboChart) assetComboChart.destroy();
+
+            const startMonth = document.getElementById('asset-flow-start-month')?.value || '2026-01';
+            const endMonth = document.getElementById('asset-flow-end-month')?.value || '2026-10';
+            const allMonthsKeys = ['2026-01', '2026-02', '2026-03', '2026-04', '2026-05', '2026-06', '2026-07', '2026-08', '2026-09', '2026-10', '2026-11', '2026-12'];
+
+            const filteredMonths = allMonthsKeys.filter(m => m >= startMonth && m <= endMonth);
+            const labels = filteredMonths.map(m => formatDateShort(m));
+
+            const grossData = filteredMonths.map(m => {
+                const h = appData.assetHistory.find(x => x.month === m);
+                return h ? (h.eunaFin + h.taejunFin + h.commonFin + h.re) : 0;
+            });
+            const debtData = filteredMonths.map(m => {
+                const h = appData.assetHistory.find(x => x.month === m);
+                return h ? h.debt : 0;
+            });
+            const netData = filteredMonths.map(m => {
+                const h = appData.assetHistory.find(x => x.month === m);
+                return h ? (h.eunaFin + h.taejunFin + h.commonFin + h.re - h.debt) : 0;
+            });
+
+            assetComboChart = new Chart(ctxAsset.getContext('2d'), {
+                data: {
+                    labels: labels,
+                    datasets: [
+                        { type: 'bar', label: '총자산', data: grossData, backgroundColor: '#60a5fa', order: 2, barPercentage: 0.5 },
+                        { type: 'bar', label: '부채', data: debtData, backgroundColor: '#ef4444', order: 2, barPercentage: 0.5 },
+                        { type: 'line', label: '순자산', data: netData, borderColor: '#eab308', borderWidth: 3, pointBackgroundColor: '#eab308', order: 1 }
+                    ]
+                },
+                plugins: [ChartDataLabels],
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        datalabels: {
+                            color: (context) => context.dataset.type === 'line' ? '#ca8a04' : context.dataset.label === '총자산' ? '#2563eb' : '#dc2626',
+                            font: { size: 9, weight: 'bold' },
+                            align: 'top',
+                            formatter: (val) => val > 0 ? formatAssetUnit(val) : '₩0'
+                        }
+                    }
+                }
+            });
+        }
+
         function renderAssetChartsAndTables() {
+            updateMonthSelectDropdowns();
+            updateAssetGoalCalculation();
+            renderAssetPieChart();
+            renderAssetComboChart();
+
+            const allMonthsKeys = ['2026-01', '2026-02', '2026-03', '2026-04', '2026-05', '2026-06', '2026-07', '2026-08', '2026-09', '2026-10', '2026-11', '2026-12'];
+            const monthsShort = allMonthsKeys.map(m => formatDateShort(m));
+
+            const incData = allMonthsKeys.map(m => {
+                const md = monthlyDataMap[m];
+                return md ? (md.salary + md.bonus) : 0;
+            });
+
+            const expData = allMonthsKeys.map(m => {
+                const md = monthlyDataMap[m];
+                if (!md) return 0;
+                const varExp = (md.expenses || []).reduce((s, e) => s + e.amount, 0);
+                const fixExp = appData.schedules.reduce((s, sc) => s + sc.amount, 0);
+                return varExp > 0 ? (varExp + fixExp) : 0;
+            });
+
+            const savData = incData.map((inc, i) => inc - expData[i]);
+
+            const tbodyInc = document.getElementById('table-yearly-income');
+            if (tbodyInc) {
+                tbodyInc.innerHTML = monthsShort.map((m, i) => `
+                    <tr>
+                        <td class="p-1.5 font-semibold text-slate-700">${m}</td>
+                        <td class="p-1.5 text-right font-extrabold text-slate-900">${formatAssetUnit(incData[i])}</td>
+                    </tr>
+                `).join('');
+                document.getElementById('total-yearly-income-val').innerText = formatAssetUnit(incData.reduce((a, b) => a + b, 0));
+            }
+            if (document.getElementById('chart-yearly-income')) {
+                if (chartYearlyIncome) chartYearlyIncome.destroy();
+                chartYearlyIncome = new Chart(document.getElementById('chart-yearly-income').getContext('2d'), {
+                    type: 'bar',
+                    data: { labels: monthsShort, datasets: [{ label: '수입', data: incData, backgroundColor: '#93c5fd' }] },
+                    plugins: [ChartDataLabels],
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { font: { size: 8, weight: 'bold' }, color: '#3b82f6', align: 'top', formatter: (v) => v > 0 ? formatAssetUnit(v) : '₩0' } } }
+                });
+            }
+
+            const tbodyExp = document.getElementById('table-yearly-expense');
+            if (tbodyExp) {
+                tbodyExp.innerHTML = monthsShort.map((m, i) => `
+                    <tr>
+                        <td class="p-1.5 font-semibold text-slate-700">${m}</td>
+                        <td class="p-1.5 text-right font-extrabold text-rose-600">${formatAssetUnit(expData[i])}</td>
+                    </tr>
+                `).join('');
+                document.getElementById('total-yearly-expense-val').innerText = formatAssetUnit(expData.reduce((a, b) => a + b, 0));
+            }
+            if (document.getElementById('chart-yearly-expense')) {
+                if (chartYearlyExpense) chartYearlyExpense.destroy();
+                chartYearlyExpense = new Chart(document.getElementById('chart-yearly-expense').getContext('2d'), {
+                    type: 'bar',
+                    data: { labels: monthsShort, datasets: [{ label: '지출', data: expData, backgroundColor: '#fca5a5' }] },
+                    plugins: [ChartDataLabels],
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { font: { size: 8, weight: 'bold' }, color: '#ef4444', align: 'top', formatter: (v) => v > 0 ? formatAssetUnit(v) : '₩0' } } }
+                });
+            }
+
+            const tbodySav = document.getElementById('table-yearly-savings');
+            if (tbodySav) {
+                tbodySav.innerHTML = monthsShort.map((m, i) => `
+                    <tr>
+                        <td class="p-1.5 font-semibold text-slate-700">${m}</td>
+                        <td class="p-1.5 text-right font-extrabold ${savData[i] < 0 ? 'text-rose-500' : 'text-amber-600'}">${formatAssetUnit(savData[i])}</td>
+                    </tr>
+                `).join('');
+                document.getElementById('total-yearly-savings-val').innerText = formatAssetUnit(savData.reduce((a, b) => a + b, 0));
+            }
+            if (document.getElementById('chart-yearly-savings')) {
+                if (chartYearlySavings) chartYearlySavings.destroy();
+                chartYearlySavings = new Chart(document.getElementById('chart-yearly-savings').getContext('2d'), {
+                    type: 'bar',
+                    data: { labels: monthsShort, datasets: [{ label: '저축', data: savData, backgroundColor: '#fde047' }] },
+                    plugins: [ChartDataLabels],
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { font: { size: 8, weight: 'bold' }, color: '#d97706', align: 'top', formatter: (v) => v !== 0 ? formatAssetUnit(v) : '₩0' } } }
+                });
+            }
+
             const historyBody = document.getElementById('asset-history-table-body');
             if (historyBody) {
                 historyBody.innerHTML = appData.assetHistory.map(h => {
                     const totalFin = h.eunaFin + h.taejunFin + h.commonFin;
                     const net = totalFin + h.re - h.debt;
                     return `
-                        <tr class="hover:bg-slate-50 transition">
-                            <td class="p-2.5 font-bold text-slate-800">${h.month}</td>
+                        <tr class="hover:bg-slate-50 transition text-xs">
+                            <td class="p-2.5 font-bold text-slate-800">${formatDateShort(h.month)}</td>
                             <td class="p-2.5 text-slate-700">${h.eunaFin.toLocaleString()} 원</td>
                             <td class="p-2.5 text-slate-700">${h.taejunFin.toLocaleString()} 원</td>
                             <td class="p-2.5 text-slate-700">${h.commonFin.toLocaleString()} 원</td>
@@ -2271,104 +2314,14 @@
                     `;
                 }).join('');
             }
-
-            const latestAsset = appData.assetHistory[appData.assetHistory.length - 1];
-            if (latestAsset) {
-                const totalFin = latestAsset.eunaFin + latestAsset.taejunFin + latestAsset.commonFin;
-                const currentVal = assetPerspective === 'net' ? (totalFin + latestAsset.re - latestAsset.debt) : (totalFin + latestAsset.re);
-                const percent = Math.min(((currentVal / 1000000000) * 100), 100).toFixed(1);
-                document.getElementById('asset-goal-bar').style.width = `${percent}%`;
-                document.getElementById('asset-goal-percent').innerText = `${percent}% 달성`;
-            }
-
-            const ctxAsset = document.getElementById('asset-combo-chart');
-            if (ctxAsset) {
-                if (assetComboChart) assetComboChart.destroy();
-                const labels = appData.assetHistory.map(h => h.month);
-                const finData = appData.assetHistory.map(h => h.eunaFin + h.taejunFin + h.commonFin);
-                const reData = appData.assetHistory.map(h => h.re);
-                const netData = appData.assetHistory.map(h => (h.eunaFin + h.taejunFin + h.commonFin) + h.re - h.debt);
-                const debtData = appData.assetHistory.map(h => h.debt);
-
-                let datasets = [
-                    { type: 'bar', label: '금융자산', data: finData, backgroundColor: '#93c5fd', order: 2 },
-                    { type: 'bar', label: '부동산 시세', data: reData, backgroundColor: '#86efac', order: 2 },
-                    { type: 'line', label: '최종 순자산', data: netData, borderColor: '#0369a1', borderWidth: 3, order: 1 }
-                ];
-                if (assetPerspective === 'gross') {
-                    datasets.push({ type: 'line', label: '주담대/부채', data: debtData, borderColor: '#f87171', borderWidth: 2, order: 1 });
-                }
-
-                assetComboChart = new Chart(ctxAsset.getContext('2d'), {
-                    data: { labels: labels, datasets: datasets },
-                    plugins: [ChartDataLabels],
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            datalabels: {
-                                color: '#334155',
-                                font: { size: 10, weight: 'bold' },
-                                formatter: function(value) { return formatAssetUnit(value); }
-                            }
-                        }
-                    }
-                });
-            }
-
-            const pensionHistoryBody = document.getElementById('pension-history-table-body');
-            if (pensionHistoryBody) {
-                pensionHistoryBody.innerHTML = appData.pensionHistory.map(ph => {
-                    const totalPen = ph.eunaPen + ph.taejunPen + ph.commonPen;
-                    return `
-                        <tr class="hover:bg-slate-50 transition">
-                            <td class="p-2.5 font-bold text-slate-800">${ph.month}</td>
-                            <td class="p-2.5 text-slate-700">${ph.eunaPen.toLocaleString()} 원</td>
-                            <td class="p-2.5 text-slate-700">${ph.taejunPen.toLocaleString()} 원</td>
-                            <td class="p-2.5 text-slate-700">${ph.commonPen.toLocaleString()} 원</td>
-                            <td class="p-2.5 font-black text-navy-950">${totalPen.toLocaleString()} 원</td>
-                        </tr>
-                    `;
-                }).join('');
-            }
-
-            const ctxPension = document.getElementById('pension-combo-chart');
-            if (ctxPension) {
-                if (pensionComboChart) pensionComboChart.destroy();
-                const labels = appData.pensionHistory.map(ph => ph.month);
-                const eunaPenData = appData.pensionHistory.map(ph => ph.eunaPen);
-                const taejunPenData = appData.pensionHistory.map(ph => ph.taejunPen);
-                const totalPenData = appData.pensionHistory.map(ph => ph.eunaPen + ph.taejunPen + ph.commonPen);
-
-                pensionComboChart = new Chart(ctxPension.getContext('2d'), {
-                    data: {
-                        labels: labels,
-                        datasets: [
-                            { type: 'bar', label: '은아 개인연금', data: eunaPenData, backgroundColor: '#f472b6', order: 2 },
-                            { type: 'bar', label: '태준 개인연금', data: taejunPenData, backgroundColor: '#38bdf8', order: 2 },
-                            { type: 'line', label: '합계 연금자산', data: totalPenData, borderColor: '#7e22ce', borderWidth: 3, order: 1 }
-                        ]
-                    },
-                    plugins: [ChartDataLabels],
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            datalabels: {
-                                color: '#475569',
-                                font: { size: 10, weight: 'bold' },
-                                formatter: function(value) { return formatAssetUnit(value); }
-                            }
-                        }
-                    }
-                });
-            }
         }
 
         function deleteAssetHistory(month) {
-            appData.assetHistory = appData.assetHistory.filter(h => h.month !== month);
-            saveDataSync();
-            renderAssetChartsAndTables();
+            if (confirm(`${formatDateShort(month)} 자산 기록을 삭제하시겠습니까?`)) {
+                appData.assetHistory = appData.assetHistory.filter(h => h.month !== month);
+                saveDataSync();
+                renderAssetChartsAndTables();
+            }
         }
 
         function exportJSON() {
@@ -2398,28 +2351,22 @@
 
         function saveCurrentMonthData() {
             saveDataSync();
-            const [yr, mo] = currentMonth.split('-').map(Number);
-            alert(`${yr}년 ${mo}월 가계부 데이터가 안전하게 저장 및 실시간 동기화되었습니다.`);
+            alert(`${formatDateShort(currentMonth)} 가계부 데이터가 저장 및 실시간 동기화되었습니다.`);
         }
 
         window.onload = function() {
             loadFromLocalStorage();
 
             const configTextarea = document.getElementById('firebase-config-json');
-            if (configTextarea) {
-                configTextarea.value = JSON.stringify(DEFAULT_FIREBASE_CONFIG, null, 2);
-            }
+            if (configTextarea) configTextarea.value = JSON.stringify(DEFAULT_FIREBASE_CONFIG, null, 2);
 
             const savedConfig = localStorage.getItem(STORAGE_KEY_FIREBASE_CONFIG);
             let activeConfig = DEFAULT_FIREBASE_CONFIG;
-            
             if (savedConfig) {
                 try {
                     activeConfig = JSON.parse(savedConfig);
                     if (configTextarea) configTextarea.value = JSON.stringify(activeConfig, null, 2);
-                } catch (e) {
-                    console.error("저장된 Config 파싱 실패, 기본 설정으로 대체:", e);
-                }
+                } catch (e) {}
             }
 
             connectFirebaseWithConfig(activeConfig);
@@ -2430,7 +2377,6 @@
             document.getElementById('selected-month').value = `${yr}-${mo}`;
             loadMonthlyData();
             updateScheduleAccountSelect();
-            renderCategoryManagementCards();
             renderSplitRules();
         };
     </script>
