@@ -496,9 +496,21 @@
                     </div>
                 </div>
 
-                <div class="space-y-2">
-                    <label class="block text-xs font-bold text-slate-600">비교 대상 월 선택 (다중 선택 가능):</label>
-                    <div id="review-month-checkboxes" class="flex flex-wrap gap-3 text-xs"></div>
+                <!-- 2) 월 선택 (달력 month input) + 비교 추가 + 확정 기록 삭제 -->
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 bg-slate-50/80 p-3 rounded-xl border border-slate-200/70">
+                    <div class="flex flex-wrap items-center gap-2 text-xs">
+                        <span class="font-bold text-slate-700">대상 월 선택:</span>
+                        <div class="flex items-center gap-1.5 border border-slate-300 px-2.5 py-1.5 rounded-xl bg-white font-bold text-slate-800">
+                            <input type="month" id="review-selected-month" onchange="onReviewMonthChange()" class="bg-transparent focus:outline-none cursor-pointer">
+                        </div>
+                        <button type="button" onclick="addSelectedMonthToReviewCompare()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-xl font-bold transition flex items-center gap-1">
+                            <i class="fa-solid fa-plus text-[10px]"></i> 비교에 추가
+                        </button>
+                        <button type="button" onclick="deleteConfirmedMonthRecord()" class="bg-rose-600 hover:bg-rose-700 text-white px-3 py-1.5 rounded-xl font-bold transition flex items-center gap-1">
+                            <i class="fa-solid fa-trash-can text-[10px]"></i> 확정 기록 삭제
+                        </button>
+                    </div>
+                    <div id="review-active-compare-chips" class="flex flex-wrap items-center gap-1.5 text-xs"></div>
                 </div>
 
                 <div class="h-80 relative pt-2">
@@ -788,7 +800,7 @@
                 </div>
             </div>
 
-            <!-- 통장 쪼개기 설정 카드 (유효 통장 드롭다운 지정 방식) -->
+            <!-- 통장 쪼개기 설정 카드 -->
             <div class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-sm space-y-4">
                 <div class="border-b border-slate-100 pb-3">
                     <h2 class="text-sm font-bold text-slate-800 flex items-center gap-2">
@@ -798,10 +810,13 @@
                 <div class="bg-slate-50/80 p-3.5 rounded-xl border border-slate-200/80 space-y-3">
                     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-12 gap-2 text-xs">
                         <div class="md:col-span-3">
-                            <select id="split-account-select" class="w-full border border-slate-300 p-2 rounded-lg bg-white font-bold text-slate-800"></select>
+                            <select id="split-account-select" onchange="syncSplitDisplayNameDefault()" class="w-full border border-slate-300 p-2 rounded-lg bg-white font-bold text-slate-800"></select>
                         </div>
-                        <div class="md:col-span-6">
-                            <input type="text" id="split-purpose-input" placeholder="통장 쪼개기 표기 목적 (예: 공통 생활비 통장)" class="w-full border border-slate-300 p-2 rounded-lg bg-white font-medium">
+                        <div class="md:col-span-3">
+                            <input type="text" id="split-display-name-input" placeholder="통장 표시명" class="w-full border border-slate-300 p-2 rounded-lg bg-white font-bold text-slate-800">
+                        </div>
+                        <div class="md:col-span-3">
+                            <input type="text" id="split-purpose-input" placeholder="통장쪼개기 표기 목적 (자유 입력)" class="w-full border border-slate-300 p-2 rounded-lg bg-white font-medium">
                         </div>
                         <div class="md:col-span-3">
                             <input type="number" id="split-amount-input" placeholder="이체 금액 (원)" class="w-full border border-slate-300 p-2 rounded-lg bg-white font-bold text-right">
@@ -815,13 +830,14 @@
                 </div>
 
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs border-collapse min-w-[550px]">
+                    <table class="w-full text-left text-xs border-collapse min-w-[650px]">
                         <thead>
                             <tr class="bg-slate-50 text-slate-500 border-b border-slate-100 font-semibold">
                                 <th class="p-3 w-8"></th>
                                 <th class="p-3 w-20">소유자</th>
                                 <th class="p-3 w-28">은행/증권사</th>
                                 <th class="p-3">통장 표시명</th>
+                                <th class="p-3">통장쪼개기 표기 목적</th>
                                 <th class="p-3 text-right w-36">이체 금액</th>
                                 <th class="p-3 text-center w-16">삭제</th>
                             </tr>
@@ -933,6 +949,8 @@
         let currentMode = 'all'; 
         let currentMonth = '2026-10';
         let calendarDate = new Date(2026, 9, 1);
+        let reviewSelectedMonth = '2026-10';
+        let reviewCompareMonths = [];
         
         let stockPieChart = null;
         let pensionPieChart = null;
@@ -977,13 +995,13 @@
             categories: ["생필품", "경조사", "집밥", "배달/외식/포장", "모임비 (친구/회사)", "데이트", "카페/간식"],
             fixedCategories: ["주담대 원리금", "아파트 관리비", "통신비", "보험료", "구독료", "교통비(톨비/유류비)", "취미 (수영)"],
             splitRules: [
-                { id: "s_1794133467383", accountId: "acc_1793332882188", amount: 300000, purpose: "개인 용돈" },
-                { id: "s_1794133495080", accountId: "acc_1793332998956", amount: 180000, purpose: "관리비" },
-                { id: "s_1794133579298", accountId: "acc_1793332937965", amount: 65483, purpose: "구독료/통신비/인터넷" },
-                { id: "s_1794133639441", accountId: "acc_1793333007341", amount: 154393, purpose: "보험료" },
-                { id: "s_1794133667791", accountId: "acc_1793333040491", amount: 100000, purpose: "경조사" },
-                { id: "s_1794133714710", accountId: "acc_1793332856223", amount: 250000, purpose: "모임 통장 생활비" },
-                { id: "s_1794133735921", accountId: "acc_1793333022738", amount: 2107235, purpose: "주택담보대출" }
+                { id: "s_1794133467383", accountId: "acc_1793332882188", amount: 300000, displayName: "개인 용돈 체크", purpose: "개인 용돈" },
+                { id: "s_1794133495080", accountId: "acc_1793332998956", amount: 180000, displayName: "관리비", purpose: "관리비" },
+                { id: "s_1794133579298", accountId: "acc_1793332937965", amount: 65483, displayName: "구독료", purpose: "구독료/통신비/인터넷" },
+                { id: "s_1794133639441", accountId: "acc_1793333007341", amount: 154393, displayName: "보험", purpose: "보험료" },
+                { id: "s_1794133667791", accountId: "acc_1793333040491", amount: 100000, displayName: "경조사", purpose: "경조사" },
+                { id: "s_1794133714710", accountId: "acc_1793332856223", amount: 250000, displayName: "모임 통장 생활비", purpose: "모임 통장 생활비" },
+                { id: "s_1794133735921", accountId: "acc_1793333022738", amount: 2107235, displayName: "주담대", purpose: "주택담보대출" }
             ],
             schedules: [
                 { id: 1793333803773, day: 21, owner: "euna", category: "구독료", title: "은아 구독료", accountId: "acc_1793332937965", amount: 25473 },
@@ -1035,7 +1053,6 @@
         let appData = {};
         let monthlyDataMap = {};
 
-        // 3. 날짜 포맷팅 함수: 2026-04 -> 26.04월
         function formatDateShort(dateStr) {
             if (!dateStr || !dateStr.includes('-')) return dateStr;
             const parts = dateStr.split('-');
@@ -1078,6 +1095,16 @@
 
                 if (savedMonthly) monthlyDataMap = JSON.parse(savedMonthly);
                 else monthlyDataMap = JSON.parse(JSON.stringify(defaultMonthlyMap));
+
+                if (!Array.isArray(appData.splitRules)) appData.splitRules = [];
+                appData.splitRules = appData.splitRules.map(rule => {
+                    const acc = (appData.accounts || []).find(a => a.id === rule.accountId);
+                    return {
+                        ...rule,
+                        displayName: rule.displayName || (acc ? acc.name : (rule.purpose || '통장 표시명')),
+                        purpose: rule.purpose || ''
+                    };
+                });
             } catch (e) {
                 appData = JSON.parse(JSON.stringify(defaultAppData));
                 monthlyDataMap = JSON.parse(JSON.stringify(defaultMonthlyMap));
@@ -1098,7 +1125,6 @@
             renderSplitRules();
         }
 
-        // 2. 리스트 드래그 앤 드롭 (Drag & Drop) 순서 변경 바인딩
         function makeTableDraggable(tableBodyId, dataArray, renderCallback) {
             const tbody = document.getElementById(tableBodyId);
             if (!tbody) return;
@@ -1281,6 +1307,7 @@
             if (tabId === 'settings') {
                 renderSettingsAccounts();
                 renderSplitRules();
+                syncSplitDisplayNameDefault();
             }
         }
 
@@ -1327,7 +1354,6 @@
             }
         }
 
-        // 1. 유효 통장 목록에 등록된 계좌만 표시
         function renderAccountBalances() {
             const container = document.getElementById('account-balance-inputs');
             if (!container) return;
@@ -1356,7 +1382,6 @@
             }
         }
 
-        // 1. 모든 셀렉트 박스가 유효 통장 목록과 완전 매핑되도록 업데이트
         function renderAccountSelects() {
             const catSelect = document.getElementById('var-exp-category');
             if (catSelect) catSelect.innerHTML = appData.categories.map(c => `<option value="${c}">${c}</option>`).join('');
@@ -1378,6 +1403,15 @@
                 const el = document.getElementById(id);
                 if (el) el.innerHTML = accountOptionsHTML;
             });
+            syncSplitDisplayNameDefault();
+        }
+
+        function syncSplitDisplayNameDefault() {
+            const sel = document.getElementById('split-account-select');
+            const dispInput = document.getElementById('split-display-name-input');
+            if (!sel || !dispInput) return;
+            const acc = appData.accounts.find(a => a.id === sel.value);
+            if (acc) dispInput.value = acc.name;
         }
 
         function calculateMonthlySummary() {
@@ -1403,7 +1437,6 @@
             });
             const variable = filteredExpenses.reduce((sum, e) => sum + e.amount, 0);
 
-            // 1. 유효 통장 목록 연동 통장 쪼개기 금액 계산
             const filteredRules = appData.splitRules.filter(r => {
                 const acc = appData.accounts.find(a => a.id === r.accountId);
                 const owner = acc ? acc.owner : 'common';
@@ -1421,13 +1454,13 @@
             document.getElementById('sum-variable-expenses').innerText = `${variable.toLocaleString()} 원`;
             document.getElementById('sum-net-income').innerText = `${emergencyBalance.toLocaleString()} 원`;
 
-            // 1. 설정 탭의 통장 쪼개기 배분 결과 정보 동적 표기
             const splitContainer = document.getElementById('account-split-container');
             if (splitContainer) {
                 let html = filteredRules.map(rule => {
                     const acc = appData.accounts.find(a => a.id === rule.accountId);
                     const bankName = acc ? acc.bank : '통장';
-                    const nameDisplay = acc ? acc.name : (rule.purpose || '통장 배분');
+                    const nameDisplay = rule.displayName || (acc ? acc.name : '통장 배분');
+                    const purposeText = rule.purpose ? ` · 표기 목적: ${rule.purpose}` : '';
                     const ownerBadge = getAccountOwnerBadge(acc ? acc.owner : 'common');
 
                     return `
@@ -1437,7 +1470,7 @@
                                     <span class="font-bold text-slate-800">[${bankName}] ${nameDisplay}</span>
                                     ${ownerBadge}
                                 </div>
-                                <span class="text-[10px] text-slate-400">${rule.purpose || '자동 배분'}</span>
+                                <span class="text-[10px] text-slate-400">자동 배분${purposeText}</span>
                             </div>
                             <span class="text-xs sm:text-sm font-extrabold text-slate-900">${rule.amount.toLocaleString()} 원</span>
                         </div>
@@ -1678,7 +1711,8 @@
             body.innerHTML = filteredRules.map((rule) => {
                 const acc = appData.accounts.find(a => a.id === rule.accountId);
                 const bankName = acc ? acc.bank : '-';
-                const purposeName = acc ? acc.name : (rule.purpose || '-');
+                const displayName = rule.displayName || (acc ? acc.name : '-');
+                const purposeName = rule.purpose || '-';
                 const ownerBadge = getAccountOwnerBadge(acc ? acc.owner : 'common');
 
                 return `
@@ -1686,7 +1720,8 @@
                         <td class="p-2.5 text-slate-400 cursor-grab"><i class="fa-solid fa-grip-lines"></i></td>
                         <td class="p-2.5">${ownerBadge}</td>
                         <td class="p-2.5 font-bold text-indigo-600">${bankName}</td>
-                        <td class="p-2.5 font-bold text-slate-800">${purposeName}</td>
+                        <td class="p-2.5 font-bold text-slate-800">${displayName}</td>
+                        <td class="p-2.5 font-medium text-slate-600">${purposeName}</td>
                         <td class="p-2.5 text-right font-extrabold text-emerald-700">${rule.amount.toLocaleString()} 원</td>
                         <td class="p-2.5 text-center"><button onclick="deleteSplitRule('${rule.id}')" class="text-rose-400 hover:text-rose-600"><i class="fa-solid fa-trash-can"></i></button></td>
                     </tr>
@@ -1695,19 +1730,22 @@
             makeTableDraggable('split-rules-list-body', appData.splitRules, renderSplitRules);
         }
 
-        // 1. 설정 탭 통장 쪼개기 규칙 추가 - 유효 통장 목록 선택 드롭다운 연동
         function addSplitRule() {
             const accountId = document.getElementById('split-account-select').value;
+            const displayNameRaw = document.getElementById('split-display-name-input').value.trim();
             const purpose = document.getElementById('split-purpose-input').value.trim();
             const amount = parseFloat(document.getElementById('split-amount-input').value);
             if (!accountId || !amount) return;
 
             const acc = appData.accounts.find(a => a.id === accountId);
+            const displayName = displayNameRaw || (acc ? acc.name : '통장 표시명');
+
             appData.splitRules.push({
                 id: 's_' + Date.now(),
                 accountId: accountId,
                 amount: amount,
-                purpose: purpose || (acc ? acc.name : '통장 배분')
+                displayName: displayName,
+                purpose: purpose
             });
 
             saveDataSync();
@@ -1715,6 +1753,7 @@
             calculateMonthlySummary();
             document.getElementById('split-purpose-input').value = '';
             document.getElementById('split-amount-input').value = '';
+            syncSplitDisplayNameDefault();
         }
 
         function deleteSplitRule(id) {
@@ -1975,9 +2014,22 @@
         }
 
         function renderReviewDashboard() {
-            const sal = parseFloat(document.getElementById('input-salary')?.value) || 8000000;
-            const bon = parseFloat(document.getElementById('input-bonus')?.value) || 500000;
-            const totalIn = sal + bon;
+            const monthInput = document.getElementById('review-selected-month');
+            const availableMonths = Object.keys(monthlyDataMap).sort();
+            if (!reviewSelectedMonth || !monthlyDataMap[reviewSelectedMonth]) {
+                reviewSelectedMonth = monthlyDataMap[currentMonth]
+                    ? currentMonth
+                    : (availableMonths[availableMonths.length - 1] || currentMonth);
+            }
+            if (monthInput) monthInput.value = reviewSelectedMonth;
+
+            if (!Array.isArray(reviewCompareMonths) || reviewCompareMonths.length === 0) {
+                reviewCompareMonths = availableMonths.length > 0 ? [...availableMonths] : [reviewSelectedMonth];
+            }
+
+            const targetMonth = reviewSelectedMonth;
+            const mData = monthlyDataMap[targetMonth] || { salary: 0, bonus: 0, expenses: [] };
+            const totalIn = (mData.salary || 0) + (mData.bonus || 0);
 
             const filteredSchedules = appData.schedules.filter(s => {
                 if (currentMode === 'euna') return s.owner === 'euna' || s.owner === 'common';
@@ -1986,7 +2038,8 @@
             });
             const fixed = filteredSchedules.reduce((sum, s) => sum + s.amount, 0);
 
-            const filteredExpenses = appData.expenses.filter(e => {
+            const monthExpenses = mData.expenses || [];
+            const filteredExpenses = monthExpenses.filter(e => {
                 if (currentMode === 'euna') return e.owner === 'euna' || e.owner === 'common';
                 if (currentMode === 'taejun') return e.owner === 'taejun';
                 return true;
@@ -1997,26 +2050,102 @@
             const savingsRate = totalIn > 0 ? (((totalIn - totalExp) / totalIn) * 100).toFixed(1) : 0;
             const expRate = totalIn > 0 ? ((totalExp / totalIn) * 100).toFixed(1) : 0;
 
+            const sortedHist = [...appData.assetHistory].sort((a, b) => a.month.localeCompare(b.month));
+            const curHist = sortedHist.find(h => h.month === targetMonth);
+            const prevHist = sortedHist.filter(h => h.month < targetMonth).pop();
+            const growthEl = document.getElementById('rev-net-growth');
+            if (growthEl) {
+                if (curHist && prevHist) {
+                    const curNet = (curHist.eunaFin + curHist.taejunFin + curHist.commonFin + curHist.re) - curHist.debt;
+                    const prevNet = (prevHist.eunaFin + prevHist.taejunFin + prevHist.commonFin + prevHist.re) - prevHist.debt;
+                    const diff = curNet - prevNet;
+                    growthEl.innerText = `${diff >= 0 ? '+' : ''}${diff.toLocaleString()} 원`;
+                } else {
+                    growthEl.innerText = '0 원';
+                }
+            }
+
             document.getElementById('rev-total-income').innerText = `${totalIn.toLocaleString()} 원`;
             document.getElementById('rev-total-expense').innerText = `${totalExp.toLocaleString()} 원`;
             document.getElementById('rev-savings-rate').innerText = `${savingsRate} %`;
             document.getElementById('rev-expense-rate').innerText = `${expRate} %`;
 
-            renderReviewMonthCheckboxes();
+            renderReviewActiveChips();
             renderReviewComparisonChart();
         }
 
-        function renderReviewMonthCheckboxes() {
-            const container = document.getElementById('review-month-checkboxes');
-            if (!container) return;
-            const months = Object.keys(monthlyDataMap).sort();
-            if (months.length === 0) months.push(currentMonth);
+        function onReviewMonthChange() {
+            const val = document.getElementById('review-selected-month')?.value;
+            if (!val) return;
+            reviewSelectedMonth = val;
+            if (!reviewCompareMonths.includes(val)) {
+                reviewCompareMonths.push(val);
+                reviewCompareMonths.sort();
+            }
+            renderReviewDashboard();
+        }
 
-            container.innerHTML = months.map(m => `
-                <label class="flex items-center gap-1.5 font-bold text-slate-700 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200 cursor-pointer text-xs">
-                    <input type="checkbox" value="${m}" checked onchange="renderReviewComparisonChart()" class="w-4 h-4 text-indigo-600 rounded border-slate-300"> ${formatDateShort(m)}
-                </label>
+        function addSelectedMonthToReviewCompare() {
+            const val = document.getElementById('review-selected-month')?.value;
+            if (!val) return;
+            reviewSelectedMonth = val;
+            if (!reviewCompareMonths.includes(val)) {
+                reviewCompareMonths.push(val);
+                reviewCompareMonths.sort();
+            }
+            renderReviewActiveChips();
+            renderReviewComparisonChart();
+        }
+
+        function removeMonthFromReviewCompare(m) {
+            if (reviewCompareMonths.length <= 1) return;
+            reviewCompareMonths = reviewCompareMonths.filter(x => x !== m);
+            renderReviewActiveChips();
+            renderReviewComparisonChart();
+        }
+
+        function renderReviewActiveChips() {
+            const container = document.getElementById('review-active-compare-chips');
+            if (!container) return;
+            container.innerHTML = reviewCompareMonths.map(m => `
+                <span class="inline-flex items-center gap-1 bg-indigo-50 text-indigo-800 border border-indigo-200 px-2.5 py-1 rounded-lg font-bold text-[11px]">
+                    ${formatDateShort(m)}
+                    ${reviewCompareMonths.length > 1 ? `<button type="button" onclick="removeMonthFromReviewCompare('${m}')" class="text-indigo-500 hover:text-rose-600 ml-0.5"><i class="fa-solid fa-xmark"></i></button>` : ''}
+                </span>
             `).join('');
+        }
+
+        function deleteConfirmedMonthRecord() {
+            const targetMonth = document.getElementById('review-selected-month')?.value || reviewSelectedMonth;
+            if (!targetMonth) return;
+
+            const hasMonthly = Boolean(monthlyDataMap[targetMonth]);
+            const hasAssetHist = appData.assetHistory.some(h => h.month === targetMonth);
+
+            if (!hasMonthly && !hasAssetHist) {
+                alert(`${formatDateShort(targetMonth)}에 삭제할 확정 기록이 없습니다.`);
+                return;
+            }
+
+            if (!confirm(`${formatDateShort(targetMonth)}의 확정 기록(월간 리뷰/자산 확정 내역)을 삭제하시겠습니까?`)) {
+                return;
+            }
+
+            if (hasMonthly) {
+                delete monthlyDataMap[targetMonth];
+            }
+            if (hasAssetHist) {
+                appData.assetHistory = appData.assetHistory.filter(h => h.month !== targetMonth);
+            }
+            reviewCompareMonths = reviewCompareMonths.filter(m => m !== targetMonth);
+
+            if (currentMonth === targetMonth) {
+                loadMonthlyData();
+            }
+            saveDataSync();
+            renderAssetChartsAndTables();
+            renderReviewDashboard();
+            alert(`${formatDateShort(targetMonth)} 확정 기록이 삭제되었습니다.`);
         }
 
         function renderReviewComparisonChart() {
@@ -2024,8 +2153,7 @@
             if (!ctx) return;
             if (reviewComparisonChart) reviewComparisonChart.destroy();
 
-            const checkedBoxes = document.querySelectorAll('#review-month-checkboxes input[type="checkbox"]:checked');
-            const selectedMonths = Array.from(checkedBoxes).map(cb => cb.value);
+            const selectedMonths = reviewCompareMonths.length > 0 ? reviewCompareMonths : [reviewSelectedMonth];
 
             const categories = reviewExpType === 'variable' ? appData.categories : appData.fixedCategories;
             const datasets = selectedMonths.map((m, idx) => {
@@ -2034,7 +2162,7 @@
                     if (reviewExpType === 'variable') {
                         const mData = monthlyDataMap[m];
                         if (!mData) return 0;
-                        return mData.expenses.filter(e => e.category === cat).reduce((s, e) => s + e.amount, 0);
+                        return (mData.expenses || []).filter(e => e.category === cat).reduce((s, e) => s + e.amount, 0);
                     } else {
                         return appData.schedules.filter(s => s.category === cat).reduce((s, sc) => s + sc.amount, 0);
                     }
@@ -2082,7 +2210,6 @@
             }
         }
 
-        // 4. 파이/도넛 차트 라벨선 & 화면 이탈 방지 강화
         function renderAssetPieChart() {
             const selectedMonth = document.getElementById('asset-pie-month-select')?.value || currentMonth;
             const ctx = document.getElementById('asset-pie-chart-main');
@@ -2123,7 +2250,7 @@
                             anchor: 'end',
                             align: 'end',
                             offset: 8,
-                            clamp: true, // 화면 이탈 방지
+                            clamp: true,
                             borderWidth: 1,
                             borderColor: '#e2e8f0',
                             borderRadius: 6,
@@ -2140,7 +2267,6 @@
             });
         }
 
-        // 3. 드롭다운 연월 표기 26.04월 형식으로 매핑
         function updateMonthSelectDropdowns() {
             const allMonthsKeys = ['2026-01', '2026-02', '2026-03', '2026-04', '2026-05', '2026-06', '2026-07', '2026-08', '2026-09', '2026-10', '2026-11', '2026-12'];
             const optionsHTML = allMonthsKeys.map(m => `<option value="${m}">${formatDateShort(m)}</option>`).join('');
@@ -2375,6 +2501,7 @@
             const yr = today.getFullYear();
             const mo = String(today.getMonth() + 1).padStart(2, '0');
             document.getElementById('selected-month').value = `${yr}-${mo}`;
+            reviewSelectedMonth = `${yr}-${mo}`;
             loadMonthlyData();
             updateScheduleAccountSelect();
             renderSplitRules();
