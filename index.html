@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>은아 & 태준 가계부 v2.0 PRO</title>
+    <title>은아 & 태준 가계부 v3.0 PRO</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Chart.js -->
@@ -55,7 +55,7 @@
                     <div>
                         <div class="flex items-center gap-1.5 sm:gap-2">
                             <h1 class="font-bold text-sm sm:text-lg tracking-tight">은아 & 태준 가계부</h1>
-                            <span class="text-[10px] sm:text-[11px] bg-emerald-500 text-slate-900 px-1.5 py-0.5 rounded font-black"> v2.0 PRO </span>
+                            <span class="text-[10px] sm:text-[11px] bg-emerald-500 text-slate-900 px-1.5 py-0.5 rounded font-black"> v3.0 PRO </span>
                             <span id="firebase-status-badge" class="text-[9px] sm:text-[10px] px-2 py-0.5 rounded-full font-bold flex items-center gap-1 bg-amber-500/20 text-amber-300 border border-amber-400/30">
                                 <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span> 연결 확인 중...
                             </span>
@@ -299,10 +299,11 @@
 
             <!-- 저축 포트폴리오 -->
             <div class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-sm space-y-4">
-                <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                <div class="flex flex-wrap justify-between items-center gap-2 border-b border-slate-100 pb-3">
                     <h2 class="text-sm font-bold text-slate-800 flex items-center gap-1.5">
                         <i class="fa-solid fa-piggy-bank text-sky-600"></i> 저축 포트폴리오 (예/적금 & 청약)
                     </h2>
+                    <span class="text-[11px] text-slate-400 font-medium">항목을 더블클릭하면 바로 수정할 수 있습니다</span>
                 </div>
                 <div class="bg-slate-50/80 p-3.5 rounded-xl border border-slate-200/80">
                     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 gap-2.5 text-xs">
@@ -310,7 +311,7 @@
                         <select id="sav-account" class="border border-slate-300 p-2 rounded-lg bg-white font-medium text-slate-800"></select>
                         <input type="number" id="sav-monthly" placeholder="월 납입액" class="border border-slate-300 p-2 rounded-lg bg-white text-right">
                         <input type="number" id="sav-rate" step="0.1" placeholder="이자율 (%)" class="border border-slate-300 p-2 rounded-lg bg-white text-right font-semibold text-sky-700">
-                        <input type="number" id="sav-total" placeholder="현재 금액" class="border border-slate-300 p-2 rounded-lg bg-white text-right font-bold text-slate-800">
+                        <input type="number" id="sav-total" placeholder="현재 금액" class="border border-slate-300 p-2 rounded-lg bg-white text-right font-bold text-sky-700">
                         <button onclick="addSavingsItem()" class="bg-sky-600 hover:bg-sky-700 text-white font-bold rounded-lg p-2 transition shadow-sm flex items-center justify-center gap-1">
                             <i class="fa-solid fa-plus text-xs"></i> 저축 추가
                         </button>
@@ -338,7 +339,7 @@
             <!-- 주식 포트폴리오 -->
             <div class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-sm space-y-4">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-slate-100 pb-3">
-                    <div class="flex items-center gap-3">
+                    <div class="flex flex-wrap items-center gap-3">
                         <h2 class="text-sm font-bold text-slate-800 flex items-center gap-1.5">
                             <i class="fa-solid fa-chart-pie text-emerald-600"></i> 미국주식 & 국내주식 포트폴리오
                         </h2>
@@ -348,12 +349,13 @@
                             <option value="KR">국내주식 (KR)</option>
                         </select>
                     </div>
+                    <span class="text-[11px] text-slate-400 font-medium">행을 더블클릭하면 값 수정 가능 (수익액 자동 계산)</span>
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
                     <div class="lg:col-span-2 space-y-4">
                         <div class="bg-slate-50/80 p-3.5 rounded-xl border border-slate-200/80">
-                            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-7 gap-2 text-xs">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-8 gap-2 text-xs">
                                 <select id="stock-market" class="border border-slate-300 p-2 rounded-lg bg-white font-bold text-slate-700">
                                     <option value="US">미국 ($)</option>
                                     <option value="KR">국내 (원)</option>
@@ -361,7 +363,8 @@
                                 <input type="text" id="stock-name" placeholder="종목명" class="border border-slate-300 p-2 rounded-lg bg-white font-bold text-slate-800 md:col-span-2">
                                 <select id="stock-account" class="border border-slate-300 p-2 rounded-lg bg-white font-medium text-slate-800"></select>
                                 <input type="number" id="stock-qty" placeholder="수량" class="border border-slate-300 p-2 rounded-lg bg-white text-right">
-                                <input type="number" id="stock-eval" placeholder="평가금액(달러/원)" class="border border-slate-300 p-2 rounded-lg bg-white text-right font-bold text-slate-800">
+                                <input type="number" step="any" id="stock-eval" placeholder="평가금액" class="border border-slate-300 p-2 rounded-lg bg-white text-right font-bold text-sky-700">
+                                <input type="number" step="any" id="stock-rate" placeholder="수익률(%)" class="border border-slate-300 p-2 rounded-lg bg-white text-right font-semibold text-rose-600">
                                 <button onclick="addStockItem()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg p-2 transition shadow-sm flex items-center justify-center gap-1">
                                     <i class="fa-solid fa-plus text-xs"></i> 추가
                                 </button>
@@ -369,7 +372,7 @@
                         </div>
 
                         <div class="overflow-x-auto">
-                            <table class="w-full text-left text-xs border-collapse min-w-[650px]">
+                            <table class="w-full text-left text-xs border-collapse min-w-[680px]">
                                 <thead>
                                     <tr class="bg-slate-50 text-slate-500 border-b border-slate-100 font-semibold">
                                         <th class="p-3 w-8"></th>
@@ -380,6 +383,7 @@
                                         <th class="p-3 text-right">평가 금액 (원화)</th>
                                         <th class="p-3 text-right">추정 평단가</th>
                                         <th class="p-3 text-right">수익률</th>
+                                        <th class="p-3 text-right">수익액</th>
                                         <th class="p-3 text-center">삭제</th>
                                     </tr>
                                 </thead>
@@ -399,20 +403,22 @@
 
             <!-- 노후 준비 개인연금 -->
             <div class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-sm space-y-4">
-                <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                <div class="flex flex-wrap justify-between items-center gap-2 border-b border-slate-100 pb-3">
                     <h2 class="text-sm font-bold text-slate-800 flex items-center gap-1.5">
                         <i class="fa-solid fa-shield-halved text-purple-600"></i> 노후 준비 개인연금 (연금저축/IRP)
                     </h2>
+                    <span class="text-[11px] text-slate-400 font-medium">행을 더블클릭하면 값 수정 가능 (수익액 자동 계산)</span>
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
                     <div class="lg:col-span-2 space-y-4">
                         <div class="bg-slate-50/80 p-3.5 rounded-xl border border-slate-200/80">
-                            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 gap-2 text-xs">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-7 gap-2 text-xs">
                                 <input type="text" id="pension-name" placeholder="종목명" class="md:col-span-2 border border-slate-300 p-2 rounded-lg bg-white font-bold text-slate-800">
                                 <select id="pension-account" class="border border-slate-300 p-2 rounded-lg bg-white font-medium text-slate-800"></select>
                                 <input type="number" id="pension-qty" placeholder="수량" class="border border-slate-300 p-2 rounded-lg bg-white text-right">
-                                <input type="number" id="pension-eval" placeholder="평가금액(원)" class="border border-slate-300 p-2 rounded-lg bg-white text-right font-bold text-slate-800">
+                                <input type="number" id="pension-eval" placeholder="평가금액(원)" class="border border-slate-300 p-2 rounded-lg bg-white text-right font-bold text-sky-700">
+                                <input type="number" step="any" id="pension-rate" placeholder="수익률(%)" class="border border-slate-300 p-2 rounded-lg bg-white text-right font-semibold text-purple-700">
                                 <button onclick="addPensionItem()" class="bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-lg p-2 transition shadow-sm flex items-center justify-center gap-1">
                                     <i class="fa-solid fa-plus text-xs"></i> 추가
                                 </button>
@@ -420,7 +426,7 @@
                         </div>
 
                         <div class="overflow-x-auto">
-                            <table class="w-full text-left text-xs border-collapse min-w-[600px]">
+                            <table class="w-full text-left text-xs border-collapse min-w-[650px]">
                                 <thead>
                                     <tr class="bg-slate-50 text-slate-500 border-b border-slate-100 font-semibold">
                                         <th class="p-3 w-8"></th>
@@ -431,6 +437,7 @@
                                         <th class="p-3 text-right">평가 금액</th>
                                         <th class="p-3 text-right">추정 평단가</th>
                                         <th class="p-3 text-right">수익률</th>
+                                        <th class="p-3 text-right">수익액</th>
                                         <th class="p-3 text-center">삭제</th>
                                     </tr>
                                 </thead>
@@ -483,26 +490,100 @@
                 </div>
             </div>
 
-            <div class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200 shadow-sm space-y-4">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-slate-100 pb-3">
-                    <h3 class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
-                        <i class="fa-solid fa-chart-bar text-navy-800"></i> 월별 카테고리 지출 변화 비교
+            <!-- 카테고리별 월간 지출 비교 -->
+            <div class="bg-white rounded-2xl p-4 sm:p-6 border border-slate-200/80 shadow-sm space-y-4">
+                <div class="flex flex-wrap justify-between items-center gap-3 pb-1">
+                    <h3 class="text-sm sm:text-base font-black text-slate-800 flex items-center gap-2">
+                        <i class="fa-solid fa-chart-column text-indigo-600"></i> 카테고리별 월간 지출 비교
                     </h3>
-                    <div class="flex items-center gap-3">
-                        <div class="bg-slate-100 p-1 rounded-lg flex gap-1">
-                            <button onclick="setReviewExpenseType('variable')" id="rev-btn-var" class="px-3 py-1 rounded-md text-xs font-bold bg-white text-navy-950 shadow-sm">변동 지출</button>
-                            <button onclick="setReviewExpenseType('fixed')" id="rev-btn-fix" class="px-3 py-1 rounded-md text-xs font-bold text-slate-600 hover:text-white">고정 지출</button>
-                        </div>
+                    <div class="bg-slate-100 p-1 rounded-xl flex items-center gap-1 border border-slate-200/70 text-xs font-bold">
+                        <button onclick="setReviewExpenseType('variable')" id="rev-btn-var" class="px-3 py-1.5 rounded-lg bg-white text-slate-900 shadow-sm transition">변동 지출</button>
+                        <button onclick="setReviewExpenseType('fixed')" id="rev-btn-fix" class="px-3 py-1.5 rounded-lg text-slate-500 hover:text-slate-800 transition">고정 지출</button>
                     </div>
                 </div>
 
-                <div class="space-y-2">
-                    <label class="block text-xs font-bold text-slate-600">비교 대상 월 선택 (다중 선택 가능):</label>
-                    <div id="review-month-checkboxes" class="flex flex-wrap gap-3 text-xs"></div>
+                <!-- 대상 월 선택 컨트롤 바 -->
+                <div class="bg-slate-50/90 border border-slate-200/80 rounded-2xl p-3 sm:px-4 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <span class="text-xs font-bold text-slate-700 mr-1">대상 월 선택:</span>
+                        <input type="month" id="review-target-month-picker" value="2026-10" class="bg-white border border-slate-300 rounded-xl px-3 py-1.5 text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <button onclick="addReviewComparisonMonth()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition shadow-sm flex items-center gap-1">
+                            + 비교에 추가
+                        </button>
+                        <button onclick="deleteConfirmedMonthRecord()" class="bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition shadow-sm flex items-center gap-1">
+                            <i class="fa-regular fa-trash-can text-[11px]"></i> 확정 기록 삭제
+                        </button>
+                    </div>
+
+                    <!-- 선택된 비교 월 칩 목록 -->
+                    <div id="review-selected-month-chips" class="flex flex-wrap items-center gap-2"></div>
                 </div>
 
                 <div class="h-80 relative pt-2">
                     <canvas id="review-comparison-chart"></canvas>
+                </div>
+            </div>
+
+            <!-- 지난달 다짐 점검 & 다음 달 목표 다짐 작성 -->
+            <div class="bg-white rounded-2xl p-4 sm:p-6 border border-slate-200/80 shadow-sm space-y-5">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-1">
+                    <h3 class="text-sm sm:text-base font-black text-slate-800 flex items-center gap-2">
+                        <span class="w-5 h-5 rounded-full border-2 border-indigo-600 flex items-center justify-center text-indigo-600 text-[10px]">
+                            <i class="fa-solid fa-bullseye"></i>
+                        </span>
+                        지난달 다짐 점검 & 다음 달 목표 다짐 작성
+                    </h3>
+                    <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+                        <button onclick="loadPreviousMonthResolutions()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 text-xs font-bold px-3.5 py-2 rounded-xl transition">
+                            지난달 다짐 불러오기
+                        </button>
+                        <button onclick="saveMonthlyReflection()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-4 py-2 rounded-xl transition shadow-sm">
+                            회고 및 다음 달 다짐 저장
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    <!-- 좌측: 지난달 다짐 체크리스트 (점검) -->
+                    <div class="border border-slate-200/90 rounded-2xl p-4 sm:p-5 bg-white flex flex-col justify-between min-h-[210px]">
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="text-xs sm:text-sm font-extrabold text-slate-800">지난달 다짐 체크리스트 (점검)</span>
+                            <span id="prev-checklist-month-tag" class="text-[11px] font-bold text-slate-400">[2026-11 기준]</span>
+                        </div>
+                        <div id="prev-resolution-checklist-body" class="flex-grow flex items-center">
+                            <p class="text-xs text-slate-400 font-medium">저장된 지난달 다짐이 없습니다. '지난달 다짐 불러오기'를 눌러보세요.</p>
+                        </div>
+                    </div>
+
+                    <!-- 우측: 다음 달 목표/다짐 (총 3가지) -->
+                    <div class="border border-slate-200/90 rounded-2xl p-4 sm:p-5 bg-white space-y-3">
+                        <div class="text-xs sm:text-sm font-extrabold text-slate-800 mb-2">다음 달 목표/다짐 (총 3가지)</div>
+
+                        <div class="flex items-center gap-3">
+                            <span class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 font-extrabold text-xs flex items-center justify-center shrink-0">1</span>
+                            <input type="text" id="next-goal-1" placeholder="예: 외식 횟수 주 2회로 제한하기" class="w-full border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 font-extrabold text-xs flex items-center justify-center shrink-0">2</span>
+                            <input type="text" id="next-goal-2" placeholder="예: 비상금 통장에서 추가 지출 안 하기" class="w-full border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 font-extrabold text-xs flex items-center justify-center shrink-0">3</span>
+                            <input type="text" id="next-goal-3" placeholder="예: 주식 저가 매수 적립 30만원 달성" class="w-full border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 하단: 은아 & 태준 월간 한줄 회고 -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 pt-1">
+                    <div class="space-y-2">
+                        <label for="euna-one-line-review" class="block text-xs sm:text-sm font-extrabold text-rose-700">은아의 월간 한줄 회고</label>
+                        <textarea id="euna-one-line-review" rows="3" placeholder="이번 달 지출 및 자산에 대한 은아의 한줄 회고..." class="w-full border border-slate-200 rounded-2xl p-3.5 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-rose-400 resize-y min-h-[76px]"></textarea>
+                    </div>
+                    <div class="space-y-2">
+                        <label for="taejun-one-line-review" class="block text-xs sm:text-sm font-extrabold text-sky-700">태준의 월간 한줄 회고</label>
+                        <textarea id="taejun-one-line-review" rows="3" placeholder="이번 달 지출 및 자산에 대한 태준의 한줄 회고..." class="w-full border border-slate-200 rounded-2xl p-3.5 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-400 resize-y min-h-[76px]"></textarea>
+                    </div>
                 </div>
             </div>
         </section>
@@ -905,7 +986,7 @@
     </main>
 
     <footer class="mt-auto py-4 text-center text-xs text-slate-400 border-t border-slate-200 bg-white">
-        © 2026 은아 & 태준 가계부 v2.0 PRO
+        © 2026 은아 & 태준 가계부 v3.0 PRO
     </footer>
 
     <!-- Firebase SDK v10 (ES Modules) -->
@@ -917,9 +998,12 @@
     </script>
 
     <script>
-        const STORAGE_KEY_MAIN = 'SMART_LEDGER_V20_DATA';
-        const STORAGE_KEY_MONTHLY = 'SMART_LEDGER_V20_MONTHLY_MAP';
-        const STORAGE_KEY_FIREBASE_CONFIG = 'SMART_LEDGER_V20_FIREBASE_CONFIG';
+        const STORAGE_KEY_MAIN = 'SMART_LEDGER_V30_DATA';
+        const STORAGE_KEY_MONTHLY = 'SMART_LEDGER_V30_MONTHLY_MAP';
+        const STORAGE_KEY_FIREBASE_CONFIG = 'SMART_LEDGER_V30_FIREBASE_CONFIG';
+        const LEGACY_STORAGE_KEY_MAIN = 'SMART_LEDGER_V20_DATA';
+        const LEGACY_STORAGE_KEY_MONTHLY = 'SMART_LEDGER_V20_MONTHLY_MAP';
+        const LEGACY_STORAGE_KEY_FIREBASE_CONFIG = 'SMART_LEDGER_V20_FIREBASE_CONFIG';
 
         const DEFAULT_FIREBASE_CONFIG = {
             apiKey: "AIzaSyCPYkBo2JIvyTwzASt8dF47w-XWZYS3b_I",
@@ -945,6 +1029,9 @@
         let chartYearlySavings = null;
 
         let reviewExpType = 'variable'; 
+        let reviewCompareMonths = ['2026-10', '2026-11', '2026-12'];
+        let loadedChecklistSourceMonth = null;
+
         let kbRealEstatePrice = 780000000;
         let currentExchangeRate = 1380;
 
@@ -953,6 +1040,9 @@
         let firebaseAppInstance = null;
         let isFirebaseConnected = false;
         let draggedIndex = null;
+        let editingSavingsId = null;
+        let editingStockId = null;
+        let editingPensionId = null;
 
         const defaultAppData = {
             accounts: [
@@ -974,7 +1064,7 @@
             expenses: [
                 { id: 1793334493331, date: "2026-10-24", category: "생필품", accountId: "acc_1793332856223", title: "휴지 구매", amount: 20000, owner: "common" }
             ],
-            categories: ["생필품", "경조사", "집밥", "배달/외식/포장", "모임비 (친구/회사)", "데이트", "카페/간식"],
+            categories: ["생필품", "경조사", "집밥", "배달/외식/포장", "모임비 (친구/회사)", "데이트", "카페/간식", "기타"],
             fixedCategories: ["주담대 원리금", "아파트 관리비", "통신비", "보험료", "구독료", "교통비(톨비/유류비)", "취미 (수영)"],
             splitRules: [
                 { id: "s_1794133467383", accountId: "acc_1793332882188", amount: 300000, purpose: "개인 용돈" },
@@ -1019,7 +1109,8 @@
                 { month: "2026-08", eunaPen: 5000000, taejunPen: 8000000, commonPen: 0 },
                 { month: "2026-09", eunaPen: 5200000, taejunPen: 8300000, commonPen: 0 },
                 { month: "2026-10", eunaPen: 20038099, taejunPen: 8500000, commonPen: 0 }
-            ]
+            ],
+            reflections: {}
         };
 
         const defaultMonthlyMap = {
@@ -1029,19 +1120,32 @@
             '2026-04': { salary: 3939310, bonus: 0, expenses: [] },
             '2026-05': { salary: 4000000, bonus: 0, expenses: [] },
             '2026-10': { salary: 8000000, bonus: 500000, expenses: defaultAppData.expenses },
+            '2026-11': {
+                salary: 8000000,
+                bonus: 0,
+                expenses: [
+                    { id: 1794200000001, date: "2026-11-05", category: "기타", accountId: "acc_1793332856223", title: "기타 지출", amount: 169000, owner: "common" }
+                ]
+            },
             '2026-12': { salary: 12240763, bonus: 0, expenses: [] }
         };
 
         let appData = {};
         let monthlyDataMap = {};
 
-        // 3. 날짜 포맷팅 함수: 2026-04 -> 26.04월
         function formatDateShort(dateStr) {
             if (!dateStr || !dateStr.includes('-')) return dateStr;
             const parts = dateStr.split('-');
             const year = parts[0].slice(-2);
             const month = parts[1];
             return `${year}.${month}월`;
+        }
+
+        function getAdjacentMonth(monthStr, offsetMonths) {
+            if (!monthStr || !monthStr.includes('-')) return monthStr;
+            const [yr, mo] = monthStr.split('-').map(Number);
+            const d = new Date(yr, mo - 1 + offsetMonths, 1);
+            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
         }
 
         function saveToLocalStorage() {
@@ -1071,10 +1175,13 @@
 
         function loadFromLocalStorage() {
             try {
-                const savedMain = localStorage.getItem(STORAGE_KEY_MAIN);
-                const savedMonthly = localStorage.getItem(STORAGE_KEY_MONTHLY);
+                const savedMain = localStorage.getItem(STORAGE_KEY_MAIN) || localStorage.getItem(LEGACY_STORAGE_KEY_MAIN);
+                const savedMonthly = localStorage.getItem(STORAGE_KEY_MONTHLY) || localStorage.getItem(LEGACY_STORAGE_KEY_MONTHLY);
                 if (savedMain) appData = JSON.parse(savedMain);
                 else appData = JSON.parse(JSON.stringify(defaultAppData));
+
+                if (!appData.reflections) appData.reflections = {};
+                if (!appData.categories.includes('기타')) appData.categories.push('기타');
 
                 if (savedMonthly) monthlyDataMap = JSON.parse(savedMonthly);
                 else monthlyDataMap = JSON.parse(JSON.stringify(defaultMonthlyMap));
@@ -1096,15 +1203,21 @@
             renderSchedules();
             renderSettingsAccounts();
             renderSplitRules();
+            if (!document.getElementById('tab-review')?.classList.contains('hidden')) {
+                renderReviewDashboard();
+            }
         }
 
-        // 2. 리스트 드래그 앤 드롭 (Drag & Drop) 순서 변경 바인딩
         function makeTableDraggable(tableBodyId, dataArray, renderCallback) {
             const tbody = document.getElementById(tableBodyId);
             if (!tbody) return;
 
             const rows = tbody.querySelectorAll('tr');
             rows.forEach((row, index) => {
+                if (row.getAttribute('data-editing') === 'true') {
+                    row.setAttribute('draggable', 'false');
+                    return;
+                }
                 row.classList.add('draggable-row');
                 row.setAttribute('draggable', 'true');
                 row.setAttribute('data-index', index);
@@ -1170,7 +1283,10 @@
                 unsubscribeSnapshot = onSnapshot(docRef, (snapshot) => {
                     if (snapshot.exists()) {
                         const data = snapshot.data();
-                        if (data.appData) appData = data.appData;
+                        if (data.appData) {
+                            appData = data.appData;
+                            if (!appData.reflections) appData.reflections = {};
+                        }
                         if (data.monthlyDataMap) monthlyDataMap = data.monthlyDataMap;
                         saveToLocalStorage();
                         refreshAllUI();
@@ -1220,6 +1336,7 @@
             isFirebaseConnected = false;
             dbInstance = null;
             localStorage.removeItem(STORAGE_KEY_FIREBASE_CONFIG);
+            localStorage.removeItem(LEGACY_STORAGE_KEY_FIREBASE_CONFIG);
             updateFirebaseUIStatus(false, "오프라인 (Local)");
             alert("Firebase 연동이 해제되었습니다.");
         }
@@ -1247,6 +1364,26 @@
             if (owner === 'euna') return '<span class="bg-rose-100 text-rose-700 px-1.5 py-0.5 rounded text-[10px] font-bold">은아</span>';
             if (owner === 'taejun') return '<span class="bg-sky-100 text-sky-700 px-1.5 py-0.5 rounded text-[10px] font-bold">태준</span>';
             return '<span class="bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded text-[10px] font-bold">공통</span>';
+        }
+
+        function parseRatePercent(rateInput) {
+            if (rateInput === undefined || rateInput === null) return 0;
+            const cleaned = String(rateInput).replace('%', '').replace(/,/g, '').trim();
+            const num = parseFloat(cleaned);
+            return isNaN(num) ? 0 : num;
+        }
+
+        function formatRateDisplay(rateInput) {
+            const pct = parseRatePercent(rateInput);
+            const sign = pct > 0 ? '+' : '';
+            return `${sign}${pct.toFixed(2)}%`;
+        }
+
+        function calculateProfitAmount(evalWon, rateInput) {
+            const pct = parseRatePercent(rateInput);
+            const r = pct / 100;
+            if (1 + r === 0) return 0;
+            return Math.round(evalWon * (r / (1 + r)));
         }
 
         function setMode(mode) {
@@ -1318,6 +1455,11 @@
                 const prevShortText = formatDateShort(`${prevDate.getFullYear()}-${String(prevDate.getMonth() + 1).padStart(2, '0')}`);
                 document.getElementById('btn-save-prev-asset-label').innerText = `${prevShortText} 자산으로 확정/기록`;
 
+                const picker = document.getElementById('review-target-month-picker');
+                if (picker && !picker.dataset.userPicked) {
+                    picker.value = currentMonth;
+                }
+
                 renderAccountBalances();
                 renderVariableExpenses();
                 calculateMonthlySummary();
@@ -1327,7 +1469,6 @@
             }
         }
 
-        // 1. 유효 통장 목록에 등록된 계좌만 표시
         function renderAccountBalances() {
             const container = document.getElementById('account-balance-inputs');
             if (!container) return;
@@ -1356,7 +1497,6 @@
             }
         }
 
-        // 1. 모든 셀렉트 박스가 유효 통장 목록과 완전 매핑되도록 업데이트
         function renderAccountSelects() {
             const catSelect = document.getElementById('var-exp-category');
             if (catSelect) catSelect.innerHTML = appData.categories.map(c => `<option value="${c}">${c}</option>`).join('');
@@ -1403,7 +1543,6 @@
             });
             const variable = filteredExpenses.reduce((sum, e) => sum + e.amount, 0);
 
-            // 1. 유효 통장 목록 연동 통장 쪼개기 금액 계산
             const filteredRules = appData.splitRules.filter(r => {
                 const acc = appData.accounts.find(a => a.id === r.accountId);
                 const owner = acc ? acc.owner : 'common';
@@ -1421,7 +1560,6 @@
             document.getElementById('sum-variable-expenses').innerText = `${variable.toLocaleString()} 원`;
             document.getElementById('sum-net-income').innerText = `${emergencyBalance.toLocaleString()} 원`;
 
-            // 1. 설정 탭의 통장 쪼개기 배분 결과 정보 동적 표기
             const splitContainer = document.getElementById('account-split-container');
             if (splitContainer) {
                 let html = filteredRules.map(rule => {
@@ -1695,7 +1833,6 @@
             makeTableDraggable('split-rules-list-body', appData.splitRules, renderSplitRules);
         }
 
-        // 1. 설정 탭 통장 쪼개기 규칙 추가 - 유효 통장 목록 선택 드롭다운 연동
         function addSplitRule() {
             const accountId = document.getElementById('split-account-select').value;
             const purpose = document.getElementById('split-purpose-input').value.trim();
@@ -1786,13 +1923,193 @@
             renderAccountSelects();
         }
 
+        function startEditSavings(id) {
+            editingSavingsId = id;
+            editingStockId = null;
+            editingPensionId = null;
+            renderInvestments();
+            const nameInput = document.getElementById(`edit-sav-name-${id}`);
+            if (nameInput) nameInput.focus();
+        }
+
+        function cancelEditSavings() {
+            editingSavingsId = null;
+            renderInvestments();
+        }
+
+        function saveEditSavings(id) {
+            const item = appData.savings.find(s => s.id === id);
+            if (!item) return;
+
+            const name = document.getElementById(`edit-sav-name-${id}`)?.value.trim();
+            const accId = document.getElementById(`edit-sav-acc-${id}`)?.value;
+            const monthly = parseFloat(document.getElementById(`edit-sav-monthly-${id}`)?.value) || 0;
+            const rate = parseFloat(document.getElementById(`edit-sav-rate-${id}`)?.value) || 0;
+            const total = parseFloat(document.getElementById(`edit-sav-total-${id}`)?.value) || 0;
+
+            if (!name) return alert("상품명을 입력해주세요.");
+
+            const acc = appData.accounts.find(a => a.id === accId);
+            item.name = name;
+            item.accountId = accId;
+            item.owner = acc ? acc.owner : item.owner;
+            item.monthly = monthly;
+            item.rate = rate;
+            item.total = total;
+
+            editingSavingsId = null;
+            saveDataSync();
+            renderInvestments();
+        }
+
+        function handleSavingsEditKeydown(event, id) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                saveEditSavings(id);
+            } else if (event.key === 'Escape') {
+                event.preventDefault();
+                cancelEditSavings();
+            }
+        }
+
+        function startEditStock(id) {
+            editingStockId = id;
+            editingSavingsId = null;
+            editingPensionId = null;
+            renderInvestments();
+            const nameInput = document.getElementById(`edit-stk-name-${id}`);
+            if (nameInput) nameInput.focus();
+        }
+
+        function cancelEditStock() {
+            editingStockId = null;
+            renderInvestments();
+        }
+
+        function saveEditStock(id) {
+            const item = appData.stocks.find(s => s.id === id);
+            if (!item) return;
+
+            const market = document.getElementById(`edit-stk-market-${id}`)?.value || item.market;
+            const name = document.getElementById(`edit-stk-name-${id}`)?.value.trim();
+            const accId = document.getElementById(`edit-stk-acc-${id}`)?.value;
+            const qty = parseFloat(document.getElementById(`edit-stk-qty-${id}`)?.value) || 0;
+            const evalVal = parseFloat(document.getElementById(`edit-stk-eval-${id}`)?.value) || 0;
+            const rateRaw = document.getElementById(`edit-stk-rate-${id}`)?.value.trim();
+
+            if (!name) return alert("종목명을 입력해주세요.");
+
+            const acc = appData.accounts.find(a => a.id === accId);
+            item.market = market;
+            item.name = name;
+            item.accountId = accId;
+            item.owner = acc ? acc.owner : item.owner;
+            item.qty = qty;
+            item.eval = evalVal;
+            item.rate = rateRaw !== '' ? formatRateDisplay(rateRaw) : '+0.00%';
+
+            editingStockId = null;
+            saveDataSync();
+            renderInvestments();
+        }
+
+        function handleStockEditKeydown(event, id) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                saveEditStock(id);
+            } else if (event.key === 'Escape') {
+                event.preventDefault();
+                cancelEditStock();
+            }
+        }
+
+        function startEditPension(id) {
+            editingPensionId = id;
+            editingSavingsId = null;
+            editingStockId = null;
+            renderInvestments();
+            const nameInput = document.getElementById(`edit-pen-name-${id}`);
+            if (nameInput) nameInput.focus();
+        }
+
+        function cancelEditPension() {
+            editingPensionId = null;
+            renderInvestments();
+        }
+
+        function saveEditPension(id) {
+            const item = appData.pensions.find(p => p.id === id);
+            if (!item) return;
+
+            const name = document.getElementById(`edit-pen-name-${id}`)?.value.trim();
+            const accId = document.getElementById(`edit-pen-acc-${id}`)?.value;
+            const qty = parseFloat(document.getElementById(`edit-pen-qty-${id}`)?.value) || 0;
+            const evalVal = parseFloat(document.getElementById(`edit-pen-eval-${id}`)?.value) || 0;
+            const rateRaw = document.getElementById(`edit-pen-rate-${id}`)?.value.trim();
+
+            if (!name) return alert("종목명을 입력해주세요.");
+
+            const acc = appData.accounts.find(a => a.id === accId);
+            item.name = name;
+            item.accountId = accId;
+            item.owner = acc ? acc.owner : item.owner;
+            item.qty = qty;
+            item.eval = evalVal;
+            item.rate = rateRaw !== '' ? formatRateDisplay(rateRaw) : '+0.00%';
+
+            editingPensionId = null;
+            saveDataSync();
+            renderInvestments();
+        }
+
+        function handlePensionEditKeydown(event, id) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                saveEditPension(id);
+            } else if (event.key === 'Escape') {
+                event.preventDefault();
+                cancelEditPension();
+            }
+        }
+
         function renderInvestments() {
             const savBody = document.getElementById('savings-table-body');
             if (savBody) {
                 savBody.innerHTML = appData.savings.map((s) => {
                     const acc = appData.accounts.find(a => a.id === s.accountId);
+                    if (editingSavingsId === s.id) {
+                        const accOpts = appData.accounts.map(a => {
+                            const selected = a.id === s.accountId ? 'selected' : '';
+                            return `<option value="${a.id}" ${selected}>[${a.bank || '통장'}] ${a.name}</option>`;
+                        }).join('');
+                        return `
+                            <tr data-editing="true" class="bg-sky-50/70 transition text-xs" onkeydown="handleSavingsEditKeydown(event, ${s.id})">
+                                <td class="p-2.5 text-sky-600"><i class="fa-solid fa-pen"></i></td>
+                                <td class="p-2.5">${getAccountOwnerBadge(s.owner)}</td>
+                                <td class="p-2.5">
+                                    <input type="text" id="edit-sav-name-${s.id}" value="${s.name}" class="w-full border border-sky-300 rounded px-2 py-1 bg-white font-bold text-slate-800">
+                                </td>
+                                <td class="p-2.5">
+                                    <select id="edit-sav-acc-${s.id}" class="w-full border border-sky-300 rounded px-1.5 py-1 bg-white text-slate-800">${accOpts}</select>
+                                </td>
+                                <td class="p-2.5 text-right">
+                                    <input type="number" id="edit-sav-monthly-${s.id}" value="${s.monthly || 0}" class="w-24 border border-sky-300 rounded px-2 py-1 bg-white text-right">
+                                </td>
+                                <td class="p-2.5 text-right">
+                                    <input type="number" step="0.1" id="edit-sav-rate-${s.id}" value="${s.rate || 0}" class="w-20 border border-sky-300 rounded px-2 py-1 bg-white text-right font-semibold text-sky-700">
+                                </td>
+                                <td class="p-2.5 text-right">
+                                    <input type="number" id="edit-sav-total-${s.id}" value="${s.total || 0}" class="w-28 border border-sky-300 rounded px-2 py-1 bg-white text-right font-bold text-sky-700">
+                                </td>
+                                <td class="p-2.5 text-center whitespace-nowrap">
+                                    <button onclick="saveEditSavings(${s.id})" class="bg-sky-600 hover:bg-sky-700 text-white px-2 py-1 rounded text-[11px] font-bold mr-1">저장</button>
+                                    <button onclick="cancelEditSavings()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-2 py-1 rounded text-[11px] font-bold">취소</button>
+                                </td>
+                            </tr>
+                        `;
+                    }
                     return `
-                        <tr class="hover:bg-slate-50 transition text-xs">
+                        <tr ondblclick="startEditSavings(${s.id})" title="더블클릭하여 수정" class="hover:bg-slate-50 transition text-xs cursor-pointer">
                             <td class="p-2.5 text-slate-400 cursor-grab"><i class="fa-solid fa-grip-lines"></i></td>
                             <td class="p-2.5">${getAccountOwnerBadge(s.owner)}</td>
                             <td class="p-2.5 font-bold text-slate-800">${s.name}</td>
@@ -1800,7 +2117,7 @@
                             <td class="p-2.5 text-right font-medium">${(s.monthly || 0).toLocaleString()} 원</td>
                             <td class="p-2.5 text-right font-bold text-sky-600">${s.rate ? s.rate.toFixed(1) + '%' : '-'}</td>
                             <td class="p-2.5 text-right font-black text-sky-700">${(s.total || 0).toLocaleString()} 원</td>
-                            <td class="p-2.5 text-center"><button onclick="deleteInvestment('savings', ${s.id})" class="text-rose-400 hover:text-rose-600"><i class="fa-solid fa-trash-can"></i></button></td>
+                            <td class="p-2.5 text-center"><button onclick="event.stopPropagation(); deleteInvestment('savings', ${s.id})" class="text-rose-400 hover:text-rose-600"><i class="fa-solid fa-trash-can"></i></button></td>
                         </tr>
                     `;
                 }).join('');
@@ -1825,21 +2142,63 @@
                     const marketBadge = isUS ? '<span class="bg-slate-900 text-white font-extrabold px-1.5 py-0.5 rounded text-[9px] mr-1">US</span>' : '<span class="bg-slate-800 text-white font-extrabold px-1.5 py-0.5 rounded text-[9px] mr-1">KR</span>';
                     const acc = appData.accounts.find(a => a.id === st.accountId);
 
-                    const rateVal = String(st.rate || '+0.00%');
-                    const isNegative = rateVal.trim().startsWith('-');
-                    const rateColorClass = isNegative ? 'text-emerald-600' : 'text-rose-600';
+                    const pct = parseRatePercent(st.rate);
+                    const rateFormatted = formatRateDisplay(st.rate);
+                    const rateColorClass = pct < 0 ? 'text-emerald-600' : 'text-rose-600';
+                    const profitWon = calculateProfitAmount(evalWon, st.rate);
+                    const profitSign = profitWon > 0 ? '+' : '';
+
+                    if (editingStockId === st.id) {
+                        const accOpts = appData.accounts.map(a => {
+                            const selected = a.id === st.accountId ? 'selected' : '';
+                            return `<option value="${a.id}" ${selected}>[${a.bank || '통장'}] ${a.name}</option>`;
+                        }).join('');
+                        return `
+                            <tr data-editing="true" class="bg-sky-50/70 transition text-xs" onkeydown="handleStockEditKeydown(event, ${st.id})">
+                                <td class="p-2.5 text-sky-600"><i class="fa-solid fa-pen"></i></td>
+                                <td class="p-2.5">
+                                    <select id="edit-stk-market-${st.id}" class="border border-sky-300 rounded px-1.5 py-1 bg-white font-bold text-slate-700 text-[11px]">
+                                        <option value="US" ${st.market === 'US' ? 'selected' : ''}>US ($)</option>
+                                        <option value="KR" ${st.market === 'KR' ? 'selected' : ''}>KR (원)</option>
+                                    </select>
+                                </td>
+                                <td class="p-2.5">
+                                    <input type="text" id="edit-stk-name-${st.id}" value="${st.name}" class="w-full min-w-[110px] border border-sky-300 rounded px-2 py-1 bg-white font-bold text-slate-800">
+                                </td>
+                                <td class="p-2.5">
+                                    <select id="edit-stk-acc-${st.id}" class="w-full border border-sky-300 rounded px-1.5 py-1 bg-white text-slate-800">${accOpts}</select>
+                                </td>
+                                <td class="p-2.5 text-right">
+                                    <input type="number" step="any" id="edit-stk-qty-${st.id}" value="${st.qty || 0}" class="w-16 border border-sky-300 rounded px-1.5 py-1 bg-white text-right font-bold">
+                                </td>
+                                <td class="p-2.5 text-right">
+                                    <input type="number" step="any" id="edit-stk-eval-${st.id}" value="${st.eval || 0}" class="w-24 border border-sky-300 rounded px-1.5 py-1 bg-white text-right font-bold text-sky-700">
+                                </td>
+                                <td class="p-2.5 text-right font-semibold text-slate-400">${estPriceWon.toLocaleString()} 원</td>
+                                <td class="p-2.5 text-right">
+                                    <input type="number" step="any" id="edit-stk-rate-${st.id}" value="${pct}" class="w-20 border border-sky-300 rounded px-1.5 py-1 bg-white text-right font-bold ${rateColorClass}">
+                                </td>
+                                <td class="p-2.5 text-right font-extrabold ${rateColorClass} whitespace-nowrap">${profitSign}${profitWon.toLocaleString()} 원</td>
+                                <td class="p-2.5 text-center whitespace-nowrap">
+                                    <button onclick="saveEditStock(${st.id})" class="bg-sky-600 hover:bg-sky-700 text-white px-2 py-1 rounded text-[11px] font-bold mr-1">저장</button>
+                                    <button onclick="cancelEditStock()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-2 py-1 rounded text-[11px] font-bold">취소</button>
+                                </td>
+                            </tr>
+                        `;
+                    }
 
                     return `
-                        <tr class="hover:bg-slate-50 transition text-xs">
+                        <tr ondblclick="startEditStock(${st.id})" title="더블클릭하여 수정" class="hover:bg-slate-50 transition text-xs cursor-pointer">
                             <td class="p-2.5 text-slate-400 cursor-grab"><i class="fa-solid fa-grip-lines"></i></td>
                             <td class="p-2.5"><div class="flex items-center">${marketBadge}${getAccountOwnerBadge(st.owner)}</div></td>
                             <td class="p-2.5 font-bold text-slate-800">${st.name}</td>
                             <td class="p-2.5 font-semibold text-slate-600">${acc ? `[${acc.bank || ''}] ${acc.name}` : '-'}</td>
                             <td class="p-2.5 text-right font-bold text-slate-800">${qty} 주</td>
-                            <td class="p-2.5 text-right font-black text-emerald-600">${evalWon.toLocaleString()} 원</td>
+                            <td class="p-2.5 text-right font-black text-sky-700">${evalWon.toLocaleString()} 원</td>
                             <td class="p-2.5 text-right font-semibold text-slate-600">${estPriceWon.toLocaleString()} 원</td>
-                            <td class="p-2.5 text-right font-bold ${rateColorClass}">${rateVal}</td>
-                            <td class="p-2.5 text-center"><button onclick="deleteInvestment('stocks', ${st.id})" class="text-rose-400 hover:text-rose-600"><i class="fa-solid fa-trash-can"></i></button></td>
+                            <td class="p-2.5 text-right font-bold ${rateColorClass}">${rateFormatted}</td>
+                            <td class="p-2.5 text-right font-extrabold ${rateColorClass}">${profitSign}${profitWon.toLocaleString()} 원</td>
+                            <td class="p-2.5 text-center"><button onclick="event.stopPropagation(); deleteInvestment('stocks', ${st.id})" class="text-rose-400 hover:text-rose-600"><i class="fa-solid fa-trash-can"></i></button></td>
                         </tr>
                     `;
                 }).join('');
@@ -1859,21 +2218,58 @@
                     const estPrice = Math.round(p.eval / qty);
                     const acc = appData.accounts.find(a => a.id === p.accountId);
 
-                    const rateVal = String(p.rate || '+0.00%');
-                    const isNegative = rateVal.trim().startsWith('-');
-                    const rateColorClass = isNegative ? 'text-emerald-600' : 'text-rose-600';
+                    const pct = parseRatePercent(p.rate);
+                    const rateFormatted = formatRateDisplay(p.rate);
+                    const rateColorClass = pct < 0 ? 'text-emerald-600' : 'text-rose-600';
+                    const profitWon = calculateProfitAmount(p.eval, p.rate);
+                    const profitSign = profitWon > 0 ? '+' : '';
+
+                    if (editingPensionId === p.id) {
+                        const accOpts = appData.accounts.map(a => {
+                            const selected = a.id === p.accountId ? 'selected' : '';
+                            return `<option value="${a.id}" ${selected}>[${a.bank || '통장'}] ${a.name}</option>`;
+                        }).join('');
+                        return `
+                            <tr data-editing="true" class="bg-sky-50/70 transition text-xs" onkeydown="handlePensionEditKeydown(event, ${p.id})">
+                                <td class="p-2.5 text-sky-600"><i class="fa-solid fa-pen"></i></td>
+                                <td class="p-2.5">${getAccountOwnerBadge(p.owner)}</td>
+                                <td class="p-2.5">
+                                    <input type="text" id="edit-pen-name-${p.id}" value="${p.name}" class="w-full min-w-[120px] border border-sky-300 rounded px-2 py-1 bg-white font-bold text-slate-800">
+                                </td>
+                                <td class="p-2.5">
+                                    <select id="edit-pen-acc-${p.id}" class="w-full border border-sky-300 rounded px-1.5 py-1 bg-white text-slate-800">${accOpts}</select>
+                                </td>
+                                <td class="p-2.5 text-right">
+                                    <input type="number" step="any" id="edit-pen-qty-${p.id}" value="${p.qty || 0}" class="w-16 border border-sky-300 rounded px-1.5 py-1 bg-white text-right font-bold">
+                                </td>
+                                <td class="p-2.5 text-right">
+                                    <input type="number" id="edit-pen-eval-${p.id}" value="${p.eval || 0}" class="w-24 border border-sky-300 rounded px-1.5 py-1 bg-white text-right font-bold text-sky-700">
+                                </td>
+                                <td class="p-2.5 text-right font-semibold text-slate-400">${estPrice.toLocaleString()} 원</td>
+                                <td class="p-2.5 text-right">
+                                    <input type="number" step="any" id="edit-pen-rate-${p.id}" value="${pct}" class="w-20 border border-sky-300 rounded px-1.5 py-1 bg-white text-right font-bold ${rateColorClass}">
+                                </td>
+                                <td class="p-2.5 text-right font-extrabold ${rateColorClass} whitespace-nowrap">${profitSign}${profitWon.toLocaleString()} 원</td>
+                                <td class="p-2.5 text-center whitespace-nowrap">
+                                    <button onclick="saveEditPension(${p.id})" class="bg-sky-600 hover:bg-sky-700 text-white px-2 py-1 rounded text-[11px] font-bold mr-1">저장</button>
+                                    <button onclick="cancelEditPension()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-2 py-1 rounded text-[11px] font-bold">취소</button>
+                                </td>
+                            </tr>
+                        `;
+                    }
 
                     return `
-                        <tr class="hover:bg-slate-50 transition text-xs">
+                        <tr ondblclick="startEditPension(${p.id})" title="더블클릭하여 수정" class="hover:bg-slate-50 transition text-xs cursor-pointer">
                             <td class="p-2.5 text-slate-400 cursor-grab"><i class="fa-solid fa-grip-lines"></i></td>
                             <td class="p-2.5">${getAccountOwnerBadge(p.owner)}</td>
                             <td class="p-2.5 font-bold text-slate-800">${p.name}</td>
                             <td class="p-2.5 font-semibold text-slate-600">${acc ? `[${acc.bank || ''}] ${acc.name}` : '-'}</td>
                             <td class="p-2.5 text-right font-bold text-slate-800">${qty} 주</td>
-                            <td class="p-2.5 text-right font-black text-purple-600">${p.eval.toLocaleString()} 원</td>
+                            <td class="p-2.5 text-right font-black text-sky-700">${p.eval.toLocaleString()} 원</td>
                             <td class="p-2.5 text-right font-semibold text-slate-600">${estPrice.toLocaleString()} 원</td>
-                            <td class="p-2.5 text-right font-bold ${rateColorClass}">${rateVal}</td>
-                            <td class="p-2.5 text-center"><button onclick="deleteInvestment('pensions', ${p.id})" class="text-rose-400 hover:text-rose-600"><i class="fa-solid fa-trash-can"></i></button></td>
+                            <td class="p-2.5 text-right font-bold ${rateColorClass}">${rateFormatted}</td>
+                            <td class="p-2.5 text-right font-extrabold ${rateColorClass}">${profitSign}${profitWon.toLocaleString()} 원</td>
+                            <td class="p-2.5 text-center"><button onclick="event.stopPropagation(); deleteInvestment('pensions', ${p.id})" class="text-rose-400 hover:text-rose-600"><i class="fa-solid fa-trash-can"></i></button></td>
                         </tr>
                     `;
                 }).join('');
@@ -1888,13 +2284,43 @@
             if (stockPieChart) stockPieChart.destroy();
             const labels = stocksList.map(s => s.name);
             const data = stocksList.map(s => s.market === 'US' ? Math.round(s.eval * currentExchangeRate) : s.eval);
+            const totalVal = data.reduce((a, b) => a + b, 0);
+
             stockPieChart = new Chart(ctx.getContext('2d'), {
                 type: 'doughnut',
                 data: {
                     labels: labels.length > 0 ? labels : ['보유 종목 없음'],
-                    datasets: [{ data: data.length > 0 ? data : [1], backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#ec4899', '#8b5cf6', '#6366f1'] }]
+                    datasets: [{
+                        data: totalVal > 0 ? data : [1],
+                        backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#ec4899', '#8b5cf6', '#6366f1']
+                    }]
                 },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top', labels: { boxWidth: 10, font: { size: 9 } } } } }
+                plugins: [ChartDataLabels],
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'top', labels: { boxWidth: 10, font: { size: 9 } } },
+                        datalabels: {
+                            color: '#ffffff',
+                            font: { size: 9, weight: 'bold' },
+                            formatter: (value) => {
+                                if (totalVal <= 0 || value <= 0) return '';
+                                const pct = ((value / totalVal) * 100).toFixed(1);
+                                return pct >= 4 ? `${pct}%` : '';
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: (context) => {
+                                    const val = context.parsed || 0;
+                                    const pct = totalVal > 0 ? ((val / totalVal) * 100).toFixed(1) : '0.0';
+                                    return `${context.label}: ${val.toLocaleString()}원 (${pct}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
             });
         }
 
@@ -1904,13 +2330,43 @@
             if (pensionPieChart) pensionPieChart.destroy();
             const labels = pensionList.map(p => p.name);
             const data = pensionList.map(p => p.eval);
+            const totalVal = data.reduce((a, b) => a + b, 0);
+
             pensionPieChart = new Chart(ctx.getContext('2d'), {
                 type: 'doughnut',
                 data: {
                     labels: labels.length > 0 ? labels : ['연금 항목 없음'],
-                    datasets: [{ data: data.length > 0 ? data : [1], backgroundColor: ['#8b5cf6', '#a855f7', '#c084fc', '#e879f9', '#f472b6'] }]
+                    datasets: [{
+                        data: totalVal > 0 ? data : [1],
+                        backgroundColor: ['#8b5cf6', '#a855f7', '#c084fc', '#e879f9', '#f472b6']
+                    }]
                 },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top', labels: { boxWidth: 10, font: { size: 9 } } } } }
+                plugins: [ChartDataLabels],
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'top', labels: { boxWidth: 10, font: { size: 9 } } },
+                        datalabels: {
+                            color: '#ffffff',
+                            font: { size: 9, weight: 'bold' },
+                            formatter: (value) => {
+                                if (totalVal <= 0 || value <= 0) return '';
+                                const pct = ((value / totalVal) * 100).toFixed(1);
+                                return pct >= 4 ? `${pct}%` : '';
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: (context) => {
+                                    const val = context.parsed || 0;
+                                    const pct = totalVal > 0 ? ((val / totalVal) * 100).toFixed(1) : '0.0';
+                                    return `${context.label}: ${val.toLocaleString()}원 (${pct}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
             });
         }
 
@@ -1925,6 +2381,10 @@
             appData.savings.push({ id: Date.now(), name, owner: acc ? acc.owner : 'common', accountId: accId, monthly, rate, total });
             saveDataSync();
             renderInvestments();
+            document.getElementById('sav-name').value = '';
+            document.getElementById('sav-monthly').value = '';
+            document.getElementById('sav-rate').value = '';
+            document.getElementById('sav-total').value = '';
         }
 
         function addStockItem() {
@@ -1933,11 +2393,17 @@
             const accId = document.getElementById('stock-account').value;
             const qty = parseFloat(document.getElementById('stock-qty').value) || 0;
             const evalAmt = parseFloat(document.getElementById('stock-eval').value) || 0;
+            const rateInput = document.getElementById('stock-rate').value.trim();
             if (!name) return;
             const acc = appData.accounts.find(a => a.id === accId);
-            appData.stocks.push({ id: Date.now(), market, name, owner: acc ? acc.owner : 'common', accountId: accId, qty, eval: evalAmt, rate: '+0.00%' });
+            const rateFormatted = rateInput ? formatRateDisplay(rateInput) : '+0.00%';
+            appData.stocks.push({ id: Date.now(), market, name, owner: acc ? acc.owner : 'common', accountId: accId, qty, eval: evalAmt, rate: rateFormatted });
             saveDataSync();
             renderInvestments();
+            document.getElementById('stock-name').value = '';
+            document.getElementById('stock-qty').value = '';
+            document.getElementById('stock-eval').value = '';
+            document.getElementById('stock-rate').value = '';
         }
 
         function addPensionItem() {
@@ -1945,16 +2411,25 @@
             const accId = document.getElementById('pension-account').value;
             const qty = parseFloat(document.getElementById('pension-qty').value) || 0;
             const evalAmt = parseFloat(document.getElementById('pension-eval').value) || 0;
+            const rateInput = document.getElementById('pension-rate').value.trim();
             if (!name) return;
             const acc = appData.accounts.find(a => a.id === accId);
-            appData.pensions.push({ id: Date.now(), name, owner: acc ? acc.owner : 'common', accountId: accId, qty, eval: evalAmt, rate: '+0.00%' });
+            const rateFormatted = rateInput ? formatRateDisplay(rateInput) : '+0.00%';
+            appData.pensions.push({ id: Date.now(), name, owner: acc ? acc.owner : 'common', accountId: accId, qty, eval: evalAmt, rate: rateFormatted });
             saveDataSync();
             renderInvestments();
+            document.getElementById('pension-name').value = '';
+            document.getElementById('pension-qty').value = '';
+            document.getElementById('pension-eval').value = '';
+            document.getElementById('pension-rate').value = '';
         }
 
         function deleteInvestment(type, id) {
             if (appData[type]) {
                 appData[type] = appData[type].filter(item => item.id !== id);
+                if (type === 'savings' && editingSavingsId === id) editingSavingsId = null;
+                if (type === 'stocks' && editingStockId === id) editingStockId = null;
+                if (type === 'pensions' && editingPensionId === id) editingPensionId = null;
                 saveDataSync();
                 renderInvestments();
             }
@@ -1965,13 +2440,72 @@
             const btnVar = document.getElementById('rev-btn-var');
             const btnFix = document.getElementById('rev-btn-fix');
             if (type === 'variable') {
-                btnVar.className = "px-3 py-1 rounded-md text-xs font-bold bg-white text-navy-950 shadow-sm";
-                btnFix.className = "px-3 py-1 rounded-md text-xs font-bold text-slate-600 hover:text-white";
+                btnVar.className = "px-3 py-1.5 rounded-lg bg-white text-slate-900 shadow-sm transition";
+                btnFix.className = "px-3 py-1.5 rounded-lg text-slate-500 hover:text-slate-800 transition";
             } else {
-                btnVar.className = "px-3 py-1 rounded-md text-xs font-bold text-slate-600 hover:text-white";
-                btnFix.className = "px-3 py-1 rounded-md text-xs font-bold bg-white text-navy-950 shadow-sm";
+                btnVar.className = "px-3 py-1.5 rounded-lg text-slate-500 hover:text-slate-800 transition";
+                btnFix.className = "px-3 py-1.5 rounded-lg bg-white text-slate-900 shadow-sm transition";
             }
             renderReviewComparisonChart();
+        }
+
+        function addReviewComparisonMonth() {
+            const picker = document.getElementById('review-target-month-picker');
+            if (!picker || !picker.value) return;
+            picker.dataset.userPicked = 'true';
+            const val = picker.value;
+            if (!reviewCompareMonths.includes(val)) {
+                reviewCompareMonths.push(val);
+                reviewCompareMonths.sort();
+            }
+            renderReviewMonthChips();
+            renderReviewComparisonChart();
+        }
+
+        function removeReviewComparisonMonth(monthStr) {
+            reviewCompareMonths = reviewCompareMonths.filter(m => m !== monthStr);
+            renderReviewMonthChips();
+            renderReviewComparisonChart();
+        }
+
+        function deleteConfirmedMonthRecord() {
+            const picker = document.getElementById('review-target-month-picker');
+            const targetM = picker?.value || currentMonth;
+            if (!targetM) return;
+
+            if (confirm(`${formatDateShort(targetM)}의 확정 기록(수입/지출 내역 및 비교 목록)을 삭제하시겠습니까?`)) {
+                if (monthlyDataMap[targetM]) {
+                    delete monthlyDataMap[targetM];
+                }
+                if (targetM === currentMonth) {
+                    appData.expenses = [];
+                    document.getElementById('input-salary').value = '';
+                    document.getElementById('input-bonus').value = '';
+                }
+                reviewCompareMonths = reviewCompareMonths.filter(m => m !== targetM);
+                saveDataSync();
+                renderReviewMonthChips();
+                renderReviewComparisonChart();
+                calculateMonthlySummary();
+                renderVariableExpenses();
+                renderCalendar();
+                alert(`${formatDateShort(targetM)} 기록이 삭제되었습니다.`);
+            }
+        }
+
+        function renderReviewMonthChips() {
+            const chipContainer = document.getElementById('review-selected-month-chips');
+            if (!chipContainer) return;
+            if (reviewCompareMonths.length === 0) {
+                chipContainer.innerHTML = `<span class="text-[11px] text-slate-400 font-medium">비교할 월을 추가하세요.</span>`;
+                return;
+            }
+            chipContainer.innerHTML = reviewCompareMonths.map(m => `
+                <span class="inline-flex items-center gap-1.5 bg-indigo-50 text-indigo-700 border border-indigo-200/80 px-3 py-1 rounded-full text-xs font-bold">
+                    ${formatDateShort(m)}
+                    <button type="button" onclick="removeReviewComparisonMonth('${m}')" class="text-indigo-400 hover:text-indigo-700 font-extrabold leading-none" title="비교에서 제거">×</button>
+                </span>
+            `).join('');
         }
 
         function renderReviewDashboard() {
@@ -2002,21 +2536,14 @@
             document.getElementById('rev-savings-rate').innerText = `${savingsRate} %`;
             document.getElementById('rev-expense-rate').innerText = `${expRate} %`;
 
-            renderReviewMonthCheckboxes();
+            const picker = document.getElementById('review-target-month-picker');
+            if (picker && !picker.dataset.userPicked) {
+                picker.value = currentMonth;
+            }
+
+            renderReviewMonthChips();
             renderReviewComparisonChart();
-        }
-
-        function renderReviewMonthCheckboxes() {
-            const container = document.getElementById('review-month-checkboxes');
-            if (!container) return;
-            const months = Object.keys(monthlyDataMap).sort();
-            if (months.length === 0) months.push(currentMonth);
-
-            container.innerHTML = months.map(m => `
-                <label class="flex items-center gap-1.5 font-bold text-slate-700 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200 cursor-pointer text-xs">
-                    <input type="checkbox" value="${m}" checked onchange="renderReviewComparisonChart()" class="w-4 h-4 text-indigo-600 rounded border-slate-300"> ${formatDateShort(m)}
-                </label>
-            `).join('');
+            loadReflectionInputsForCurrentMonth();
         }
 
         function renderReviewComparisonChart() {
@@ -2024,34 +2551,164 @@
             if (!ctx) return;
             if (reviewComparisonChart) reviewComparisonChart.destroy();
 
-            const checkedBoxes = document.querySelectorAll('#review-month-checkboxes input[type="checkbox"]:checked');
-            const selectedMonths = Array.from(checkedBoxes).map(cb => cb.value);
+            const selectedMonths = reviewCompareMonths;
+            const categories = reviewExpType === 'variable'
+                ? ["생필품", "경조사", "집밥", "배달/외식/포장", "모임비 (친구/회사)", "데이트", "카페/간식", "기타"]
+                : appData.fixedCategories;
 
-            const categories = reviewExpType === 'variable' ? appData.categories : appData.fixedCategories;
+            const palette = ['#bbf7d0', '#fde047', '#fed7aa', '#fbcfe8', '#c7d2fe', '#a5f3fc'];
+
             const datasets = selectedMonths.map((m, idx) => {
-                const colors = ['#a7f3d0', '#fde047', '#fed7aa', '#fbcfe8', '#c7d2fe'];
-                let data = categories.map(cat => {
+                const data = categories.map(cat => {
                     if (reviewExpType === 'variable') {
                         const mData = monthlyDataMap[m];
-                        if (!mData) return 0;
-                        return mData.expenses.filter(e => e.category === cat).reduce((s, e) => s + e.amount, 0);
+                        if (!mData || !Array.isArray(mData.expenses)) return 0;
+                        return mData.expenses
+                            .filter(e => {
+                                if (e.category !== cat) return false;
+                                if (currentMode === 'euna') return e.owner === 'euna' || e.owner === 'common';
+                                if (currentMode === 'taejun') return e.owner === 'taejun';
+                                return true;
+                            })
+                            .reduce((s, e) => s + (e.amount || 0), 0);
                     } else {
-                        return appData.schedules.filter(s => s.category === cat).reduce((s, sc) => s + sc.amount, 0);
+                        return appData.schedules
+                            .filter(s => {
+                                if (s.category !== cat) return false;
+                                if (currentMode === 'euna') return s.owner === 'euna' || s.owner === 'common';
+                                if (currentMode === 'taejun') return s.owner === 'taejun';
+                                return true;
+                            })
+                            .reduce((s, sc) => s + (sc.amount || 0), 0);
                     }
                 });
                 return {
                     label: formatDateShort(m),
                     data: data,
-                    backgroundColor: colors[idx % colors.length],
-                    borderRadius: 4
+                    backgroundColor: palette[idx % palette.length],
+                    borderRadius: 4,
+                    maxBarThickness: 36
                 };
             });
 
             reviewComparisonChart = new Chart(ctx.getContext('2d'), {
                 type: 'bar',
                 data: { labels: categories, datasets: datasets },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' } } }
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: { boxWidth: 22, boxHeight: 12, font: { size: 11, weight: 'bold' } }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: (v) => Number(v).toLocaleString()
+                            }
+                        }
+                    }
+                }
             });
+        }
+
+        function loadReflectionInputsForCurrentMonth() {
+            if (!appData.reflections) appData.reflections = {};
+            const rec = appData.reflections[currentMonth] || { nextGoals: ['', '', ''], eunaReview: '', taejunReview: '', checkedPrevGoals: [] };
+
+            document.getElementById('next-goal-1').value = rec.nextGoals?.[0] || '';
+            document.getElementById('next-goal-2').value = rec.nextGoals?.[1] || '';
+            document.getElementById('next-goal-3').value = rec.nextGoals?.[2] || '';
+            document.getElementById('euna-one-line-review').value = rec.eunaReview || '';
+            document.getElementById('taejun-one-line-review').value = rec.taejunReview || '';
+
+            const nextMonthStr = getAdjacentMonth(currentMonth, 1);
+            const tagEl = document.getElementById('prev-checklist-month-tag');
+            if (tagEl) tagEl.innerText = `[${nextMonthStr} 기준]`;
+
+            if (loadedChecklistSourceMonth === currentMonth) {
+                renderPreviousResolutionChecklist(currentMonth, rec.checkedPrevGoals || []);
+            } else {
+                renderEmptyPreviousChecklist();
+            }
+        }
+
+        function renderEmptyPreviousChecklist() {
+            const body = document.getElementById('prev-resolution-checklist-body');
+            if (!body) return;
+            body.className = "flex-grow flex items-center";
+            body.innerHTML = `<p class="text-xs text-slate-400 font-medium">저장된 지난달 다짐이 없습니다. '지난달 다짐 불러오기'를 눌러보세요.</p>`;
+        }
+
+        function loadPreviousMonthResolutions() {
+            const prevMonthStr = getAdjacentMonth(currentMonth, -1);
+            const prevRec = appData.reflections?.[prevMonthStr];
+            const goals = (prevRec?.nextGoals || []).filter(g => g && g.trim() !== '');
+
+            if (goals.length === 0) {
+                loadedChecklistSourceMonth = null;
+                renderEmptyPreviousChecklist();
+                alert(`${formatDateShort(prevMonthStr)}에 저장된 다음 달 다짐이 없습니다.`);
+                return;
+            }
+
+            loadedChecklistSourceMonth = currentMonth;
+            const currentRec = appData.reflections?.[currentMonth] || {};
+            renderPreviousResolutionChecklist(prevMonthStr, currentRec.checkedPrevGoals || []);
+        }
+
+        function renderPreviousResolutionChecklist(sourceMonthStr, checkedIndices) {
+            const body = document.getElementById('prev-resolution-checklist-body');
+            if (!body) return;
+            const prevRec = appData.reflections?.[sourceMonthStr];
+            const goals = (prevRec?.nextGoals || []).map((g, i) => ({ text: g, idx: i })).filter(item => item.text && item.text.trim() !== '');
+
+            if (goals.length === 0) {
+                renderEmptyPreviousChecklist();
+                return;
+            }
+
+            body.className = "flex-grow flex flex-col justify-center space-y-2 pt-1";
+            body.innerHTML = goals.map(item => {
+                const isChecked = checkedIndices.includes(item.idx);
+                return `
+                    <label class="flex items-center gap-2.5 text-xs font-semibold text-slate-700 cursor-pointer bg-slate-50 px-3 py-2 rounded-xl border border-slate-200/70">
+                        <input type="checkbox" data-goal-idx="${item.idx}" ${isChecked ? 'checked' : ''} class="w-4 h-4 text-indigo-600 rounded border-slate-300">
+                        <span class="${isChecked ? 'line-through text-slate-400' : ''}">${item.text}</span>
+                    </label>
+                `;
+            }).join('');
+        }
+
+        function saveMonthlyReflection() {
+            if (!appData.reflections) appData.reflections = {};
+
+            const g1 = document.getElementById('next-goal-1').value.trim();
+            const g2 = document.getElementById('next-goal-2').value.trim();
+            const g3 = document.getElementById('next-goal-3').value.trim();
+            const eunaReview = document.getElementById('euna-one-line-review').value.trim();
+            const taejunReview = document.getElementById('taejun-one-line-review').value.trim();
+
+            const checkedBoxes = document.querySelectorAll('#prev-resolution-checklist-body input[type="checkbox"]:checked');
+            const checkedPrevGoals = Array.from(checkedBoxes).map(cb => parseInt(cb.getAttribute('data-goal-idx')));
+
+            appData.reflections[currentMonth] = {
+                nextGoals: [g1, g2, g3],
+                eunaReview,
+                taejunReview,
+                checkedPrevGoals,
+                updatedAt: new Date().toISOString()
+            };
+
+            saveDataSync();
+            if (loadedChecklistSourceMonth === currentMonth) {
+                const prevMonthStr = getAdjacentMonth(currentMonth, -1);
+                renderPreviousResolutionChecklist(prevMonthStr, checkedPrevGoals);
+            }
+            alert(`${formatDateShort(currentMonth)} 회고 및 다음 달 다짐이 저장되었습니다.`);
         }
 
         function updateKBRealEstatePrice() {
@@ -2082,7 +2739,6 @@
             }
         }
 
-        // 4. 파이/도넛 차트 라벨선 & 화면 이탈 방지 강화
         function renderAssetPieChart() {
             const selectedMonth = document.getElementById('asset-pie-month-select')?.value || currentMonth;
             const ctx = document.getElementById('asset-pie-chart-main');
@@ -2123,7 +2779,7 @@
                             anchor: 'end',
                             align: 'end',
                             offset: 8,
-                            clamp: true, // 화면 이탈 방지
+                            clamp: true,
                             borderWidth: 1,
                             borderColor: '#e2e8f0',
                             borderRadius: 6,
@@ -2140,7 +2796,6 @@
             });
         }
 
-        // 3. 드롭다운 연월 표기 26.04월 형식으로 매핑
         function updateMonthSelectDropdowns() {
             const allMonthsKeys = ['2026-01', '2026-02', '2026-03', '2026-04', '2026-05', '2026-06', '2026-07', '2026-08', '2026-09', '2026-10', '2026-11', '2026-12'];
             const optionsHTML = allMonthsKeys.map(m => `<option value="${m}">${formatDateShort(m)}</option>`).join('');
@@ -2328,7 +2983,7 @@
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData, null, 2));
             const dl = document.createElement('a');
             dl.setAttribute("href", dataStr);
-            dl.setAttribute("download", `smart_ledger_backup_${currentMonth}.json`);
+            dl.setAttribute("download", `smart_ledger_v3_backup_${currentMonth}.json`);
             document.body.appendChild(dl);
             dl.click();
             dl.remove();
@@ -2339,6 +2994,7 @@
             fr.onload = function(e) {
                 try {
                     appData = JSON.parse(e.target.result);
+                    if (!appData.reflections) appData.reflections = {};
                     saveDataSync();
                     refreshAllUI();
                     alert('데이터 복원 및 동기화가 완료되었습니다.');
@@ -2360,7 +3016,7 @@
             const configTextarea = document.getElementById('firebase-config-json');
             if (configTextarea) configTextarea.value = JSON.stringify(DEFAULT_FIREBASE_CONFIG, null, 2);
 
-            const savedConfig = localStorage.getItem(STORAGE_KEY_FIREBASE_CONFIG);
+            const savedConfig = localStorage.getItem(STORAGE_KEY_FIREBASE_CONFIG) || localStorage.getItem(LEGACY_STORAGE_KEY_FIREBASE_CONFIG);
             let activeConfig = DEFAULT_FIREBASE_CONFIG;
             if (savedConfig) {
                 try {
