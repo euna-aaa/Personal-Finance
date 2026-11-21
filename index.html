@@ -496,7 +496,7 @@
                     </div>
                 </div>
 
-                <!-- 2) 월 선택 (달력 month input) + 비교 추가 + 확정 기록 삭제 -->
+                <!-- 월 선택 (달력 month input) + 비교 추가 + 확정 기록 삭제 -->
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 bg-slate-50/80 p-3 rounded-xl border border-slate-200/70">
                     <div class="flex flex-wrap items-center gap-2 text-xs">
                         <span class="font-bold text-slate-700">대상 월 선택:</span>
@@ -800,6 +800,37 @@
                 </div>
             </div>
 
+            <!-- 고정 지출 카테고리 관리 & 변동 지출 카테고리 관리 (2단 카드) -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+                <!-- 고정 지출 카테고리 관리 -->
+                <div class="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200/80 shadow-sm space-y-4">
+                    <h2 class="text-sm font-black text-slate-800 flex items-center gap-2">
+                        <i class="fa-solid fa-lock text-indigo-500"></i> 고정 지출 카테고리 관리
+                    </h2>
+                    <div class="flex items-center gap-2.5 text-xs">
+                        <input type="text" id="new-fixed-category-input" onkeydown="if(event.key==='Enter') addCategoryItem('fixed')" placeholder="카테고리명" class="flex-grow border border-slate-300 rounded-xl px-3.5 py-2.5 bg-white text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-900 transition">
+                        <button type="button" onclick="addCategoryItem('fixed')" class="bg-slate-950 hover:bg-slate-800 text-white font-bold px-4 py-2.5 rounded-xl transition shrink-0">
+                            추가
+                        </button>
+                    </div>
+                    <div id="fixed-category-list" class="divide-y divide-slate-100"></div>
+                </div>
+
+                <!-- 변동 지출 카테고리 관리 -->
+                <div class="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200/80 shadow-sm space-y-4">
+                    <h2 class="text-sm font-black text-slate-800 flex items-center gap-2">
+                        <i class="fa-solid fa-tag text-amber-500"></i> 변동 지출 카테고리 관리
+                    </h2>
+                    <div class="flex items-center gap-2.5 text-xs">
+                        <input type="text" id="new-var-category-input" onkeydown="if(event.key==='Enter') addCategoryItem('variable')" placeholder="카테고리명" class="flex-grow border border-slate-300 rounded-xl px-3.5 py-2.5 bg-white text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-900 transition">
+                        <button type="button" onclick="addCategoryItem('variable')" class="bg-slate-950 hover:bg-slate-800 text-white font-bold px-4 py-2.5 rounded-xl transition shrink-0">
+                            추가
+                        </button>
+                    </div>
+                    <div id="var-category-list" class="divide-y divide-slate-100"></div>
+                </div>
+            </div>
+
             <!-- 통장 쪼개기 설정 카드 -->
             <div class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-sm space-y-4">
                 <div class="border-b border-slate-100 pb-3">
@@ -1096,6 +1127,13 @@
                 if (savedMonthly) monthlyDataMap = JSON.parse(savedMonthly);
                 else monthlyDataMap = JSON.parse(JSON.stringify(defaultMonthlyMap));
 
+                if (!Array.isArray(appData.categories)) {
+                    appData.categories = [...defaultAppData.categories];
+                }
+                if (!Array.isArray(appData.fixedCategories)) {
+                    appData.fixedCategories = [...defaultAppData.fixedCategories];
+                }
+
                 if (!Array.isArray(appData.splitRules)) appData.splitRules = [];
                 appData.splitRules = appData.splitRules.map(rule => {
                     const acc = (appData.accounts || []).find(a => a.id === rule.accountId);
@@ -1123,6 +1161,66 @@
             renderSchedules();
             renderSettingsAccounts();
             renderSplitRules();
+            renderCategoryManagers();
+        }
+
+        function renderCategoryManagers() {
+            const fixedList = document.getElementById('fixed-category-list');
+            if (fixedList) {
+                fixedList.innerHTML = (appData.fixedCategories || []).map((cat, idx) => `
+                    <div class="py-3 px-1 flex items-center justify-between text-xs sm:text-sm font-semibold text-slate-800">
+                        <span>${cat}</span>
+                        <button type="button" onclick="deleteCategoryItem('fixed', ${idx})" aria-label="${cat} 삭제" class="text-rose-500 hover:text-rose-700 p-1 transition">
+                            <i class="fa-regular fa-trash-can"></i>
+                        </button>
+                    </div>
+                `).join('');
+            }
+
+            const varList = document.getElementById('var-category-list');
+            if (varList) {
+                varList.innerHTML = (appData.categories || []).map((cat, idx) => `
+                    <div class="py-3 px-1 flex items-center justify-between text-xs sm:text-sm font-semibold text-slate-800">
+                        <span>${cat}</span>
+                        <button type="button" onclick="deleteCategoryItem('variable', ${idx})" aria-label="${cat} 삭제" class="text-rose-500 hover:text-rose-700 p-1 transition">
+                            <i class="fa-regular fa-trash-can"></i>
+                        </button>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function addCategoryItem(type) {
+            const isFixed = type === 'fixed';
+            const inputEl = document.getElementById(isFixed ? 'new-fixed-category-input' : 'new-var-category-input');
+            if (!inputEl) return;
+            const name = inputEl.value.trim();
+            if (!name) return;
+
+            const targetArr = isFixed ? appData.fixedCategories : appData.categories;
+            if (targetArr.includes(name)) {
+                alert('이미 등록된 카테고리입니다.');
+                return;
+            }
+
+            targetArr.push(name);
+            inputEl.value = '';
+            saveDataSync();
+            renderCategoryManagers();
+            renderAccountSelects();
+            renderReviewComparisonChart();
+        }
+
+        function deleteCategoryItem(type, index) {
+            const isFixed = type === 'fixed';
+            const targetArr = isFixed ? appData.fixedCategories : appData.categories;
+            if (!Array.isArray(targetArr) || index < 0 || index >= targetArr.length) return;
+
+            targetArr.splice(index, 1);
+            saveDataSync();
+            renderCategoryManagers();
+            renderAccountSelects();
+            renderReviewComparisonChart();
         }
 
         function makeTableDraggable(tableBodyId, dataArray, renderCallback) {
@@ -1307,6 +1405,7 @@
             if (tabId === 'settings') {
                 renderSettingsAccounts();
                 renderSplitRules();
+                renderCategoryManagers();
                 syncSplitDisplayNameDefault();
             }
         }
@@ -1384,10 +1483,10 @@
 
         function renderAccountSelects() {
             const catSelect = document.getElementById('var-exp-category');
-            if (catSelect) catSelect.innerHTML = appData.categories.map(c => `<option value="${c}">${c}</option>`).join('');
+            if (catSelect) catSelect.innerHTML = (appData.categories || []).map(c => `<option value="${c}">${c}</option>`).join('');
 
             const fixCatSelect = document.getElementById('sch-category');
-            if (fixCatSelect) fixCatSelect.innerHTML = appData.fixedCategories.map(c => `<option value="${c}">${c}</option>`).join('');
+            if (fixCatSelect) fixCatSelect.innerHTML = (appData.fixedCategories || []).map(c => `<option value="${c}">${c}</option>`).join('');
 
             const filteredAccs = appData.accounts.filter(a => {
                 if (currentMode === 'euna') return a.owner === 'euna' || a.owner === 'common';
@@ -2155,7 +2254,7 @@
 
             const selectedMonths = reviewCompareMonths.length > 0 ? reviewCompareMonths : [reviewSelectedMonth];
 
-            const categories = reviewExpType === 'variable' ? appData.categories : appData.fixedCategories;
+            const categories = reviewExpType === 'variable' ? (appData.categories || []) : (appData.fixedCategories || []);
             const datasets = selectedMonths.map((m, idx) => {
                 const colors = ['#a7f3d0', '#fde047', '#fed7aa', '#fbcfe8', '#c7d2fe'];
                 let data = categories.map(cat => {
@@ -2505,6 +2604,7 @@
             loadMonthlyData();
             updateScheduleAccountSelect();
             renderSplitRules();
+            renderCategoryManagers();
         };
     </script>
 </body>
